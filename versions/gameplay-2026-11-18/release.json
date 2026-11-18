@@ -1,0 +1,11 @@
+{
+  "source": "344c1aed05ac1596bf501e83b5b9aaa31f2311f8",
+  "createdAt": "2026-11-18T13:23:42.021Z",
+  "games": [
+    "snake",
+    "pong",
+    "cards",
+    "chess",
+    "rescue"
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "name": "xiamimate-game-agent-lab",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node scripts/launch.mjs",
+    "test": "node --test test/*.test.mjs",
+    "bench": "node scripts/benchmark.mjs",
+    "bench:model": "node scripts/verify-models.mjs",
+    "bench:cards": "node scripts/check-card-balance.mjs",
+    "bench:cards:model": "node scripts/verify-card-models.mjs",
+    "check:browser": "node scripts/browser-check.mjs",
+    "check:cards": "node scripts/check-card-browser.mjs",
+    "check:table": "node scripts/check-card-interaction.mjs",
+    "check:effects": "node scripts/check-card-effects.mjs",
+    "build": "node scripts/build.mjs",
+    "check:round3": "node scripts/check-round3-browser.mjs",
+    "bench:round3": "node scripts/check-round3-balance.mjs",
+    "bench:rescue": "node scripts/check-rescue.mjs",
+    "check:rescue": "node scripts/check-rescue-browser.mjs",
+    "build:pages": "node scripts/build.mjs --static",
+    "preview:background": "node scripts/launch.mjs --background --no-model",
+    "check:polish": "node scripts/check-polish-browser.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
+}

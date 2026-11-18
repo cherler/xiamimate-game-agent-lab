@@ -1,4 +1,5 @@
-import {CARDS,CARD_LIST,STARTERS,HEROES,PRESETS,KEYWORDS} from '../src/catalog.mjs';
+import {localGameStorage as localStorage,sessionGameStorage as sessionStorage} from './storage.mjs';
+import {CARDS,CARD_LIST,STARTERS,HEROES,PRESETS,KEYWORDS,POWER_ALTERNATIVES} from '../src/catalog.mjs';
 import {cardInfo as lookupCard,cardActions,chooseCard,cardCandidates,cardActionText,validateDeck} from '../src/cards.mjs';
 import {beginStrategy,advanceStrategy,sealStrategy,replayStrategy} from '../src/strategy.mjs';
 import {portrait} from './art.mjs';
@@ -16,14 +17,14 @@ let battleKey='',battleStarted=0,battleTimer=null;
 let presentedState=null,presenting=false,actionHistory=[],queuedSelection=null,suspendedCard=null;
 const me=()=>room?room.actor:0;
 const state=()=>presentedState||(room?view?.state:match?.state);
-const cardInfo=id=>lookupCard(id,state()?.version||3);
+const cardInfo=id=>lookupCard(id,state()?.version||4);
 const freshSeed=()=>crypto.getRandomValues(new Uint32Array(1))[0];
 window.addEventListener('keydown',e=>{if(active&&kind==='cards'&&e.key==='Escape'&&!root().querySelector('dialog[open]')){selected=null;cancelCardDrag();render();}});
 const escape=s=>String(s??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('"','&quot;');
 function savedDeck(f){try{const d=JSON.parse(localStorage.getItem('glimmer-deck-'+f));if(validateDeck(f,d))return d;}catch{}return STARTERS[f];}
 function savedDraft(){try{const deck=JSON.parse(localStorage.getItem('glimmer-draft-'+faction));return validateDeck(faction,deck)?deck:null;}catch{return null;}}
 function config(){return {faction,deck:deckKey==='custom'?savedDeck(faction):deckKey==='draft'?savedDraft()||STARTERS[faction]:PRESETS.find(d=>d.id===deckKey)?.deck||STARTERS[faction]};}
-const palette=id=>id.startsWith('F')||id==='T03'?'forest':id.startsWith('S')||['T04','T05'].includes(id)?'starlight':id.startsWith('N')||id==='T06'?'neutral':'workshop';
+const palette=id=>id.startsWith('F')||['T03','T07'].includes(id)?'forest':id.startsWith('S')||['T04','T05'].includes(id)?'starlight':id.startsWith('N')||id==='T06'?'neutral':'workshop';
 function curveHTML(deck){const counts=manaCurve(deck);return `<div class="mana-curve" aria-label="费用曲线">${counts.map((n,i)=>`<div title="${i===6?'6 费及以上':i+' 费'}：${n} 张"><b>${n}</b><i style="height:${Math.max(3,n*7)}px"></i><span>${i===6?'6+':i}</span></div>`).join('')}</div>`;}
 
 function rememberRoom(value){try{const key='glimmer-room-'+kind;value?sessionStorage.setItem(key,JSON.stringify(value)):sessionStorage.removeItem(key);}catch{}}
@@ -57,7 +58,7 @@ const canAct=()=>active&&!busy&&!presenting&&!recordToWatch&&state()?.winner===n
 function actionForSelection(s){
  if(!s||s.phase!=='play')return [];
  const actions=cardActions(s,me());if(!selected)return [];
- return actions.filter(a=>selected==='power'?a.type==='power':a.uid===selected);
+ return actions.filter(a=>selected==='power'?a.type==='power'&&!a.mode:a.uid===selected&&a.type!=='cycle');
 }
 function targetButton(target,content,cls='',attrs=''){
  const a=actionForSelection(state()).find(a=>a.target===target);
@@ -79,14 +80,15 @@ function handCard(c,s){
  return `<button class="hand-card ${palette(info.id)} ${isChosen?'chosen':''} ${isM?'opening-card':playable?'playable':'unavailable'}" data-hand="${c.uid}" data-source="${c.uid}" data-piece="${c.uid}" data-cost="${info.cost}" aria-label="${info.name}，${info.cost} 能量${playable?'，可打出':''}" aria-pressed="${isChosen}"><span class="mana-orb">${info.cost}</span>${portrait(info.id)}<span class="card-name">${info.name}</span><span class="card-text">${info.effect}</span><span class="card-bottom">${info.kind==='unit'?statIcons(info.attack,info.health):`<span class="spell-symbol">${glyph('spark')}</span>`}</span>${isM?`<span class="mulligan-mark">${glyph(isChosen?'swap':'check')}</span>`:combo?`<span class="combo-ready" title="连奏就绪">${glyph('chain')}</span>`:playable?`<span class="play-ready">${glyph('up')}</span>`:''}</button>`;
 }
 function heroHTML(s,side){
- const p=s.players[side],ours=side===me(),h=HEROES[p.faction],guards=p.board.some(u=>u.guard),powerReady=ours&&canAct()&&cardActions(s,me()).some(a=>a.type==='power');
+ const p=s.players[side],ours=side===me(),h=HEROES[p.faction],guards=p.board.some(u=>u.guard),powerReady=ours&&canAct()&&cardActions(s,me()).some(a=>a.type==='power'&&!a.mode);
  const art={W:'W03',F:'F03',S:'S05'}[p.faction];
  const cost=ours?(selected==='power'?2:cardInfo(p.hand.find(c=>c.uid===selected)?.cardId)?.cost||0):0;
  const energy=`<div class="crystal-meter" aria-label="${ours?'你的':'对手'}能量 ${p.mana}，基础上限 ${p.maxMana}${p.mana>p.maxMana?'，含临时能量 '+(p.mana-p.maxMana):''}"><span class="crystals">${Array.from({length:8},(_,i)=>`<i class="${i<p.mana?'filled':i<p.maxMana?'spent':'locked'} ${i<cost&&i<p.mana?'reserved':''} ${i>=p.maxMana&&i<p.mana?'temporary':''}" ${i>=p.maxMana&&i<p.mana?'title="本回合临时能量"':''}>${glyph('gem')}</i>`).join('')}</span><b>${p.mana}<small> / ${Math.max(p.maxMana,p.mana)}</small></b></div>`;
  const hero=targetButton('h'+side,`<span class="hero-owner">${ours?'你':'对手'}</span><span class="hero-portrait">${portrait(art)}</span><span class="hero-caption"><span>${h.name}</span><span class="hero-health">${glyph('heart')}<b>${Math.max(0,p.hp)}</b><small>/20</small></span><span class="hero-life"><i style="width:${Math.max(0,p.hp)/20*100}%"></i></span></span>${guards?`<span class="hero-guard">${glyph('shield')}</span>`:''}`,'hero '+(s.turn===side&&s.phase==='play'?'active-hero':''),`data-hp="${p.hp}" data-attack="0"`);
  const backs=`<div class="enemy-hand" aria-label="对手 ${p.hand.length} 张手牌">${p.hand.map((_,i)=>`<i class="card-back" style="--fan:${i-(p.hand.length-1)/2}">${glyph('spark')}</i>`).join('')}<b>${p.hand.length}</b></div>`;
+ const alternate=POWER_ALTERNATIVES[p.faction],alternateReady=ours&&canAct()&&cardActions(s,me()).some(a=>a.type==='power'&&a.mode);
  const power=ours?`<button id="card-power" ${p.faction==='S'?'':'data-source="power"'} data-piece="power" class="power-button ${powerReady?'power-ready':''} ${selected==='power'?'chosen':''}" aria-label="${h.power}，2 能量" title="${escape(h.text)}" ${powerReady?'':'disabled'}>${glyph(p.faction==='F'?'heart':p.faction==='S'?'spark':'sword')}<span class="power-name">${h.power}</span><b class="mana-orb">2</b>${p.powerUsed?`<i>${glyph('check')}</i>`:''}</button>`:'';
- return `<div class="hero-row ${ours?'own':'enemy'}">${ours?energy:backs}${hero}<div class="hero-side">${ours?power:energy}<span class="deck-stack" title="牌库" aria-label="牌库 ${p.deckCount??p.deck.length} 张">${glyph('cards')}<b>${p.deckCount??p.deck.length}</b></span></div></div>`;
+ return `<div class="hero-row ${ours?'own':'enemy'}">${ours?energy:backs}${hero}<div class="hero-side">${ours?power+(s.version>=4?`<button id="card-power-alt" class="power-alternative" title="${escape(alternate.text)}" aria-label="${alternate.name}，2 能量" ${alternateReady?'':'disabled'}>${glyph(alternate.icon)}<b>${alternate.name}</b><small>${alternate.outcome}</small><em>2</em></button>`:''):energy}<span class="deck-stack" title="牌库" aria-label="牌库 ${p.deckCount??p.deck.length} 张">${glyph('cards')}<b>${p.deckCount??p.deck.length}</b></span></div></div>`;
 }
 function renderCards(){
  const handScroll=root().querySelector('.hand')?.scrollLeft||0;
@@ -97,7 +99,7 @@ function renderCards(){
  const status=presenting?'效果结算中':finished?(s.winner===-1?'平局':s.winner===actor?'胜利':'落败'):opening?'起手牌':recordToWatch?'回放':ownTurn?'你的回合':'对手回合';
  function slots(side){const units=s.players[side].board,ours=side===actor;return units.map(u=>unitCard(u,side)).join('')+Array.from({length:5-units.length},(_,i)=>{const ready=ours&&i===0&&isUnit&&!!noTarget&&canAct();return `<${ready?'button':'div'} class="board-slot ${ready?'drop-ready':''} ${ours&&i===0&&ownTurn&&!selected&&available.some(a=>a.type==='play'&&cardInfo(p.hand.find(c=>c.uid===a.uid)?.cardId)?.kind==='unit')?'empty-ready':''}" ${ready?'data-drop="unit" id="card-play" aria-label="放入战场"':''}>${ready?`<span class="summon-ghost">${portrait(info.id)}${statIcons(info.attack,info.health)}</span>${glyph('plus')}`:glyph(ours?'plus':'shield')}</${ready?'button':'div'}>`;}).join('');}
  root().innerHTML=`<div class="card-topbar"><h1>微光牌局</h1>${!room&&!recordToWatch&&opponent==='rule'?`<span class="card-level-tag">${{practice:'练习对手',standard:'标准对手',challenge:'挑战对手'}[cardDifficulty]}</span>`:''}<div class="deck-selects"><select id="card-faction" aria-label="你的阵营" ${room||recordToWatch||s?.phase==='play'&&s.winner===null?'disabled':''}>${Object.entries(HEROES).map(([id,h])=>`<option value="${id}" ${shownFaction===id?'selected':''}>${h.faction}</option>`).join('')}</select><select id="card-preset" aria-label="卡组" ${room||recordToWatch||s?.phase==='play'&&s.winner===null?'disabled':''}>${room||recordToWatch?`<option selected>${recordToWatch?'回放卡组':'好友局卡组'}</option>`:''}${PRESETS.filter(d=>d.faction===shownFaction).map(d=>`<option value="${d.id}" ${!room&&!recordToWatch&&deckKey===d.id?'selected':''}>${d.name}</option>`).join('')}<option value="custom" ${!room&&!recordToWatch&&deckKey==='custom'?'selected':''}>我的自组卡牌</option>${savedDraft()?`<option value="draft" ${!room&&!recordToWatch&&deckKey==='draft'?'selected':''}>我的轮抽卡组</option>`:''}</select></div><div class="card-toolbar"><button class="quiet" id="card-library">${glyph('cards')}<span>图鉴</span></button><button class="quiet" id="card-draft" ${room||recordToWatch||s?.phase==='play'&&s.winner===null?'disabled':''}>${glyph('swap')}<span>轮抽</span></button><button class="quiet" id="card-settings" aria-label="卡组与对战设置">${glyph('gear')}</button></div></div>
- ${timelineHTML(actionHistory,actor)}<section class="card-table visual-table ${ownTurn?'your-turn':'their-turn'} ${opening?'opening-table':''} ${selected?'has-selection':''}" aria-label="卡牌战场">
+ ${s?.version>=4?`<div class="card-tactics-bar"><span>${p.powerUsed?'英雄技能已用':'英雄技能二选一'}</span><button id="card-cycle" title="每回合一次：花费 1 能量，将所选手牌放到牌库底，再抽 1 张。生成牌不能调度。" ${canAct()&&available.some(a=>a.type==='cycle'&&a.uid===selected)?'':'disabled'}>${glyph('swap')}${p.cycled?'本回合已调度':selectedHand?'调度 · '+cardInfo(selectedHand.cardId).name:'选手牌调度'}<b>1 ${glyph('gem')}</b></button></div>`:''}${timelineHTML(actionHistory,actor)}<section class="card-table visual-table ${ownTurn?'your-turn':'their-turn'} ${opening?'opening-table':''} ${selected?'has-selection':''}" aria-label="卡牌战场">
  ${s?`${heroHTML(s,1-actor)}<div class="battle-row enemy-row">${slots(1-actor)}</div>
  <div class="table-divider"><span class="round-medallion">${glyph('sun')}<b>${Math.max(p.turns,enemy.turns)||1}</b></span><span class="turn-indicator" role="status">${glyph(opening?'cards':ownTurn?'sun':'moon')}${status}${!ownTurn&&!opening&&!finished?'<i class="thinking-dots">•••</i>':''}</span><div class="turn-actions">${selected?`<button id="card-cancel" class="table-small" aria-label="取消选择">${glyph('cross')}</button>${info?`<button id="card-inspect" class="table-small" aria-label="查看所选卡牌">${glyph('eye')}</button>`:''}`:''}${opening?`<button class="turn-button opening-start" id="card-keep" ${!canAct()||s.kept[actor]?'disabled':''}>${glyph('arrow')}<b>${s.kept[actor]?'等待':'开局'}</b>${mulligan.size?`<span>${glyph('swap')}${mulligan.size}</span>`:''}</button>`:`<button class="turn-button ${done?'turn-complete':''}" id="card-end" ${!canAct()||!ownTurn||finished?'disabled':''}>${glyph(done?'check':'arrow')}<b>结束回合</b></button>`}</div></div>
  <div class="battle-row own-row">${slots(actor)}</div>${heroHTML(s,actor)}<div class="hand" aria-label="你的手牌">${p.hand.map(c=>handCard(c,s)).join('')}</div>
@@ -113,7 +115,9 @@ function renderCards(){
  root().querySelectorAll('[data-target]').forEach(b=>b.onclick=()=>{const a=actionForSelection(s).find(a=>a.target===b.dataset.target);if(a)apply(a);});
  root().querySelectorAll('[data-choice]').forEach(b=>b.onclick=()=>apply(moves.find(a=>a.id===b.dataset.choice)));
  bind('card-play',()=>apply(noTarget));bind('card-end',()=>apply({id:'end',type:'end'}));bind('card-keep',()=>apply({type:'mulligan',replace:[...mulligan]}));
- bind('card-power',()=>{const options=cardActions(s,actor).filter(a=>a.type==='power');if(options.length===1&&options[0].target===null)apply(options[0]);else{selected=selected==='power'?null:'power';render();}});
+ bind('card-cycle',()=>{const action=available.find(a=>a.type==='cycle'&&a.uid===selected);if(action)apply(action);});
+ bind('card-power-alt',()=>{const action=available.find(a=>a.type==='power'&&a.mode);if(action)apply(action);});
+ bind('card-power',()=>{const options=cardActions(s,actor).filter(a=>a.type==='power'&&!a.mode);if(options.length===1&&options[0].target===null)apply(options[0]);else{selected=selected==='power'?null:'power';render();}});
  bind('card-cancel',()=>{selected=null;render();});bind('card-inspect',()=>inspectCard(selectedUnit||selectedHand));bind('card-again',newMatch);bind('card-leave',newMatch);
  bind('card-faction',e=>{faction=e.target.value;deckKey=PRESETS.find(d=>d.faction===faction).id;newMatch();},'change');bind('card-preset',e=>{deckKey=e.target.value;newMatch();},'change');
  bind('card-library',()=>editDeck(false));bind('card-draft',startDraft);bind('card-settings',cardSettings);

@@ -26,7 +26,12 @@
     "preview:background": "node scripts/launch.mjs --background --no-model",
     "check:polish": "node scripts/check-polish-browser.mjs",
     "deploy:pages": "node scripts/publish-pages.mjs",
-    "check:extraction": "node scripts/check-rescue-extraction-browser.mjs"
+    "check:extraction": "node scripts/check-rescue-extraction-browser.mjs",
+    "build:compare": "node scripts/build-comparison.mjs",
+    "deploy:preview": "node scripts/publish-preview.mjs",
+    "rollback:pages": "node scripts/rollback-pages.mjs",
+    "check:gameplay": "node scripts/check-gameplay-browser.mjs",
+    "bench:gameplay": "node scripts/compare-gameplay.mjs"
   },
   "devDependencies": {
     "esbuild": "0.28.2"

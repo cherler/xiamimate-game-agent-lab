@@ -7,7 +7,7 @@ export function portrait(id='N01'){
   const n=Number(id.slice(1))||1,spell=['S02','S06','S07','S08','S11','T05'].includes(id),c=['#7b6ba4','#7b91bc','#aa82af'][n%3];
   return `<svg viewBox="0 0 140 90" aria-hidden="true"><ellipse cx="70" cy="80" rx="38" ry="5" fill="#514267" opacity=".18"/><circle cx="70" cy="44" r="32" fill="none" stroke="${c}" stroke-width="2" opacity=".5"/>${spell?`<path d="M70 7L79 33L109 38L86 54L90 81L70 65L49 81L53 54L31 38L61 33Z" fill="${c}"/><circle cx="70" cy="44" r="11" fill="#eee6fb"/>`:`<path d="M40 77L49 39H91L101 77Z" fill="${c}"/><path d="M42 37L70 8L98 37Z" fill="${c}"/><rect x="53" y="39" width="34" height="22" rx="8" fill="#ebe5ee"/><circle cx="62" cy="49" r="3" fill="#514267"/><circle cx="78" cy="49" r="3" fill="#514267"/><path d="M104 26V75" stroke="#a99970" stroke-width="4"/><path d="M104 14L108 24L119 26L109 31L104 42L100 31L89 26L100 23Z" fill="#e2c979"/>`}<circle cx="25" cy="19" r="3" fill="#b0a1d0"/><circle cx="119" cy="63" r="3" fill="#b0a1d0"/></svg>`;
  }
- id=({N09:'N03',N10:'N04',F09:'F01',F10:'F03',F11:'F05',T03:'F01',W09:'W03',W10:'W05'})[id]||id;
+ id=({N09:'N03',N10:'N04',F09:'F01',F10:'F03',F11:'F05',T03:'F01',T07:'F05',W09:'W03',W10:'W05'})[id]||id;
  const green=id.startsWith('F'),c=green?'#73ac87':'#cda45e',dark='#284b48',eye='#fff3cb';
  let shape='';
  if(['N03'].includes(id))shape=`<path d="M36 67Q10 23 50 39Q70 14 90 39Q130 23 104 67L83 78H57Z" fill="${c}"/><circle cx="57" cy="48" r="13" fill="${eye}"/><circle cx="83" cy="48" r="13" fill="${eye}"/><circle cx="59" cy="49" r="5" fill="${dark}"/><circle cx="81" cy="49" r="5" fill="${dark}"/><path d="M64 58L76 58L70 68Z" fill="#e17e58"/>`;

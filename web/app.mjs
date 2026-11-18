@@ -1,3 +1,5 @@
+import {localGameStorage as localStorage,sessionGameStorage as sessionStorage} from './storage.mjs';
+import './version-banner.mjs';
 import { begin, advance, seal, checkReplay, playback, GAMES, describeAction, pick } from '../src/arena.mjs';
 import { snakeMoves, safeOptions } from '../src/snake.mjs';
 import { planSnake, snakePlans } from '../src/snake-planner.mjs';
@@ -212,9 +214,9 @@ function frame(now){
   lastTime=now;requestAnimationFrame(frame);
 }
 function watch(record){
-  if(['rescue-1','rescue-2','rescue-3'].includes(record?.format)){watchRescue(record);saveCurrent();cancelDecision();mode='ready';closeChess();closeStrategy();$('arcade').hidden=true;$('strategy').hidden=true;$('rescue').hidden=false;document.querySelectorAll('[data-game]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.game==='rescue')));window.history.replaceState(null,'','#rescue');return;}
+  if(['rescue-1','rescue-2','rescue-3','rescue-4'].includes(record?.format)){watchRescue(record);saveCurrent();cancelDecision();mode='ready';closeChess();closeStrategy();$('arcade').hidden=true;$('strategy').hidden=true;$('rescue').hidden=false;document.querySelectorAll('[data-game]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.game==='rescue')));window.history.replaceState(null,'','#rescue');return;}
   closeRescue();$('rescue').hidden=true;
-  if(['glimmer-1','glimmer-2','glimmer-3'].includes(record?.format)){saveCurrent();cancelDecision();mode='ready';$('arcade').hidden=true;$('strategy').hidden=false;if(record.game==='chess'&&record.format==='glimmer-3'){closeStrategy();watchChess(record);}else{closeChess();watchStrategy(record,cap);}document.querySelectorAll('[data-game]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.game===record.game)));return;}
+  if(['glimmer-1','glimmer-2','glimmer-3','glimmer-4'].includes(record?.format)){saveCurrent();cancelDecision();mode='ready';$('arcade').hidden=true;$('strategy').hidden=false;if(record.game==='chess'&&['glimmer-3','glimmer-4'].includes(record.format)){closeStrategy();watchChess(record);}else{closeChess();watchStrategy(record,cap);}document.querySelectorAll('[data-game]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.game===record.game)));return;}
   closeChess();closeStrategy();$('arcade').hidden=false;$('strategy').hidden=true;checkReplay(record);saveCurrent();cancelDecision();game=record.game;opponentMenu();reset({stash:false});
   replayData=record;reader=playback(record);match=begin(game,record.seed,record.opening,record.rules);replayCursor=0;
   $('seed').value=record.seed;mode='replay';setTiming();refresh(true);paint();

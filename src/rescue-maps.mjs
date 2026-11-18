@@ -25,8 +25,8 @@ export const RESCUE_MAPS = [
   [{at:12,entry:0,count:8,fast:0},{at:30,entry:1,count:9,fast:1},{at:50,entry:2,count:9,fast:2},{at:71,entry:0,count:10,fast:2},{at:92,entry:2,count:12,fast:3}])
 ];
 const latestMaps=new Map();
-export function rescueMap(id,version=3){
- if(version>=3&&latestMaps.has(id))return latestMaps.get(id);
+export function rescueMap(id,version=4){
+ const key=version+':'+id;if(version>=3&&latestMaps.has(key))return latestMaps.get(key);
  let map=RESCUE_MAPS.find(m=>m.id===id);if(!map)throw Error('关卡不存在');
  if(id===2&&version>=2)map={...map,waves:[{at:5,entry:1,count:6,fast:1},{at:15,entry:0,count:8,fast:1},{at:33,entry:1,count:8,fast:1},{at:50,entry:0,count:10,fast:2}]};
  if(version>=3){
@@ -35,7 +35,9 @@ export function rescueMap(id,version=3){
    map={...map,tiles:tiles.map(row=>row.join('')),doors:[...map.doors,{id:'door2',x:4.5,y:9.5,cell:9*map.w+4,vertical:false}]};
   }
   const entrances=id===1?[...map.entrances,{x:3.5,y:1.5,name:'接应区北口',evacOnly:true}]:map.entrances;
-  const result={...map,entrances,extraction:{seconds:[16,18,20][id-1],warning:3,count:[6,10,8][id-1],fast:[1,2,2][id-1],entry:id===1?1:0}};latestMaps.set(id,result);return result;
+  const result={...map,entrances,extraction:{seconds:[16,18,20][id-1],warning:3,count:[6,10,8][id-1],fast:[1,2,2][id-1],entry:id===1?1:0}};
+  if(version>=4)result.supplies=[{id:'supply0',x:id===2?10.5:12.5,y:id===2?5.5:11.5}];
+  latestMaps.set(key,result);return result;
  }
  return map;
 }

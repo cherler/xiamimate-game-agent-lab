@@ -5,7 +5,7 @@ import {initRescue,commandRescue,stepRescue,replayRescue,rescueMap} from '../src
 
 const z=(x,y)=>({id:'z990',kind:'zombie',x,y,r:.23,hp:1000,maxHp:1000,fast:false,angle:0,path:[],goal:null,target:null,nav:-1,cooldown:0,hitTick:-100});
 function gathering(all=false,difficulty='normal'){
- let s=commandRescue(initRescue({difficulty}),{type:'start'});
+ let s=commandRescue(initRescue({difficulty,version:3}),{type:'start'});
  for(const [i,c] of s.civilians.entries())if(all||i===0)Object.assign(c,{x:2.2+i%4*.65,y:12.3+Math.floor(i/4)*.45,status:'following',leader:'s0'});
  s=stepRescue(s);return s;
 }
@@ -33,9 +33,9 @@ test('排队接驳的平民仍可能感染，未完成读秒不享受安全状�
  let s=quiet(gathering(false,'challenge'));const c=s.civilians[0];s.zombies=[z(c.x,c.y)];s.soldiers.forEach(u=>{u.reload=100;});s=stepRescue(s);assert.equal(s.civilians[0].status,'infected');assert.equal(s.lost,1);assert.equal(s.saved,0);
 });
 test('狂暴确实提高移动速度，不只是颜色变化',()=>{
- const base=commandRescue(initRescue(),{type:'start'});base.zombies=[z(3.5,6.5)];const rage=structuredClone(base);rage.evac.rageUntil=100;
+ const base=commandRescue(initRescue({version:3}),{type:'start'});base.zombies=[z(3.5,6.5)];const rage=structuredClone(base);rage.evac.rageUntil=100;
  const normal=stepRescue(base).zombies[0],fast=stepRescue(rage).zombies[0];assert.ok(Math.hypot(fast.x-3.5,fast.y-6.5)>Math.hypot(normal.x-3.5,normal.y-6.5));
 });
 test('新版不能靠空场或耗尽时限绕过平民撤离',()=>{
- let s=commandRescue(initRescue(),{type:'start'});s.schedule=[];s=stepRescue(s);assert.equal(s.winner,null);s.tick=1799;s=stepRescue(s);assert.equal(s.winner,false);assert.equal(s.reason,'撤离时间耗尽');
+ let s=commandRescue(initRescue({version:3}),{type:'start'});s.schedule=[];s=stepRescue(s);assert.equal(s.winner,null);s.tick=1799;s=stepRescue(s);assert.equal(s.winner,false);assert.equal(s.reason,'撤离时间耗尽');
 });

@@ -9,7 +9,7 @@ import {chromium} from './playwright.mjs';
 const url=process.env.ARENA_URL||'http://127.0.0.1:4843';
 const browser=await chromium.launch({headless:true});const context=await browser.newContext({viewport:{width:1280,height:1000}}),page=await context.newPage();const errors=[],checks=[];
 const track=p=>p.on('pageerror',e=>errors.push(e.message));track(page);
-async function download(p,button,file){const wait=p.waitForEvent('download');await button.click();const d=await wait;await d.saveAs(path.join(results,file));const rec=JSON.parse(await fs.readFile(path.join(results,file),'utf8'));['glimmer-1','glimmer-2','glimmer-3'].includes(rec.format)?replayStrategy(rec):checkReplay(rec);return rec;}
+async function download(p,button,file){const wait=p.waitForEvent('download');await button.click();const d=await wait;await d.saveAs(path.join(results,file));const rec=JSON.parse(await fs.readFile(path.join(results,file),'utf8'));['glimmer-1','glimmer-2','glimmer-3','glimmer-4'].includes(rec.format)?replayStrategy(rec):checkReplay(rec);return rec;}
 try{
  await Promise.all([page.waitForResponse(r=>r.url().endsWith('/api/providers')),page.goto(url)]);
  assert.equal(await page.locator('[data-game=boxes]').count(),0);assert.equal(await page.locator('[data-game]').count(),5);
@@ -33,7 +33,7 @@ try{
  await page.locator('[data-game=chess]').click();await page.waitForTimeout(400);
  for(let n=0;n<3;n++){const offers=page.locator('[data-buy]:enabled');if(await offers.count())await offers.first().click();}
  assert.ok(await page.locator('.ac-bench [data-uid]').count()>0);await page.locator('#ac-arrange').click();assert.ok(await page.locator('.ac-piece-layer .home-piece').count()>0);
- await page.screenshot({path:path.join(results,'微光棋阵桌面.png'),fullPage:true});await page.locator('#ac-ready').click();await page.locator('#ac-skip').waitFor();await page.waitForTimeout(400);await page.locator('#ac-skip').click();await page.locator('#ac-next').click();assert.match(await page.locator('.ac-round').innerText(),/第 2 轮/);await download(page,page.locator('#ac-export'),'browser-chess.json');checks.push('棋阵购买、布阵、战斗、跳过、经济结算和回放');
+ await page.screenshot({path:path.join(results,'微光棋阵桌面.png'),fullPage:true});await page.locator('#ac-ready').click();await page.locator('#ac-skip').waitFor();await page.waitForTimeout(400);await page.locator('#ac-skip').click();if(await page.locator('[data-loot]').count())await page.locator('[data-loot]').first().click();await page.locator('#ac-next').click();assert.match(await page.locator('.ac-round').innerText(),/第 2 轮/);await download(page,page.locator('#ac-export'),'browser-chess.json');checks.push('棋阵购买、布阵、战斗、跳过、经济结算和回放');
  await page.locator('#upload').setInputFiles(path.join(results,'browser-chess.json'));await page.waitForFunction(()=>document.querySelector('#ac-skip'));
  const firstFrame=await page.locator('.ac-piece-layer').innerHTML();await page.waitForFunction(before=>document.querySelector('.ac-piece-layer')?.innerHTML!==before,firstFrame,{timeout:5000});checks.push('棋阵载入动作回放后继续播放战斗帧');
  for(const game of ['cards','chess']){await page.setViewportSize({width:390,height:844});await page.locator('[data-game='+game+']').click();await page.waitForTimeout(350);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);await page.screenshot({path:path.join(results,game+'-mobile.png'),fullPage:true});}

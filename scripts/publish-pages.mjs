@@ -9,6 +9,7 @@ function git(args,input){
  return r.stdout.trim();
 }
 if(git(['status','--porcelain']))throw Error('先提交源码改动，再发布试玩版本。');
+if(git(['branch','--show-current'])!=='main')throw Error('试验分支请使用 npm run deploy:preview；正式入口只从 main 发布。');
 const remote=git(['remote','get-url','origin']);
 if(!/^(https:\/\/github\.com\/|git@github\.com:)[\w.-]+\/[\w.-]+(?:\.git)?$/.test(remote))throw Error('origin 必须是目标 GitHub 仓库。');
 const source=git(['rev-parse','HEAD']);

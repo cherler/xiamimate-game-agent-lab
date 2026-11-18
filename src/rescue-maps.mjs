@@ -24,9 +24,19 @@ export const RESCUE_MAPS = [
   [{x:19,y:11,n:10},{x:19,y:4,n:10}], [{x:3.5,y:1.5,name:'北仓入口'},{x:12.5,y:1.5,name:'连廊入口'},{x:21.5,y:1.5,name:'东馆入口'}],
   [{at:12,entry:0,count:8,fast:0},{at:30,entry:1,count:9,fast:1},{at:50,entry:2,count:9,fast:2},{at:71,entry:0,count:10,fast:2},{at:92,entry:2,count:12,fast:3}])
 ];
-export function rescueMap(id,version=2){
- const map=RESCUE_MAPS.find(m=>m.id===id);if(!map)throw Error('关卡不存在');
- if(id===2&&version>=2)return {...map,waves:[{at:5,entry:1,count:6,fast:1},{at:15,entry:0,count:8,fast:1},{at:33,entry:1,count:8,fast:1},{at:50,entry:0,count:10,fast:2}]};
+const latestMaps=new Map();
+export function rescueMap(id,version=3){
+ if(version>=3&&latestMaps.has(id))return latestMaps.get(id);
+ let map=RESCUE_MAPS.find(m=>m.id===id);if(!map)throw Error('关卡不存在');
+ if(id===2&&version>=2)map={...map,waves:[{at:5,entry:1,count:6,fast:1},{at:15,entry:0,count:8,fast:1},{at:33,entry:1,count:8,fast:1},{at:50,entry:0,count:10,fast:2}]};
+ if(version>=3){
+  if(id===1){
+   const tiles=map.tiles.map(row=>row.split(''));for(let x=1;x<8;x++)tiles[9][x]='#';tiles[9][4]='.';
+   map={...map,tiles:tiles.map(row=>row.join('')),doors:[...map.doors,{id:'door2',x:4.5,y:9.5,cell:9*map.w+4,vertical:false}]};
+  }
+  const entrances=id===1?[...map.entrances,{x:3.5,y:1.5,name:'接应区北口',evacOnly:true}]:map.entrances;
+  const result={...map,entrances,extraction:{seconds:[16,18,20][id-1],warning:3,count:[6,10,8][id-1],fast:[1,2,2][id-1],entry:id===1?1:0}};latestMaps.set(id,result);return result;
+ }
  return map;
 }
 export const insideExit=(m,u)=>u.x>=m.exit.x&&u.x<=m.exit.x+m.exit.w&&u.y>=m.exit.y&&u.y<=m.exit.y+m.exit.h;

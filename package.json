@@ -24,7 +24,8 @@
     "check:rescue": "node scripts/check-rescue-browser.mjs",
     "build:pages": "node scripts/build.mjs --static",
     "preview:background": "node scripts/launch.mjs --background --no-model",
-    "check:polish": "node scripts/check-polish-browser.mjs"
+    "check:polish": "node scripts/check-polish-browser.mjs",
+    "deploy:pages": "node scripts/publish-pages.mjs"
   },
   "devDependencies": {
     "esbuild": "0.28.2"

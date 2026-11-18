@@ -37,7 +37,7 @@ npm run build:pages
 
 发布 `site/` 目录即可。全部画面、样式和游戏逻辑打包在单个 HTML 内，不依赖外部素材地址，支持 GitHub Pages 的仓库子路径。
 
-本仓库使用 `gh-pages` 分支根目录发布。发布页和源码分开维护，源代码在 `main`；提交源代码本身不会自动更新试玩页。备用的 Actions 模板位于 [docs/examples/pages-workflow.yml](docs/examples/pages-workflow.yml)。
+本仓库使用 `gh-pages` 分支根目录发布。发布页和源码分开维护，源代码在 `main`；提交源代码本身不会自动更新试玩页。维护者提交并推送源码后，运行 `npm run deploy:pages` 即可生成并推送新的试玩版本。备用的 Actions 模板位于 [docs/examples/pages-workflow.yml](docs/examples/pages-workflow.yml)。
 
 ## 可选模型与好友房
 

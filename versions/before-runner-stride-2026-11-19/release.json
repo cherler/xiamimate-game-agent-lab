@@ -1,0 +1,16 @@
+{
+  "source": "02193231824c21684cd8d57ffe07fb7ac722daed",
+  "channel": "main",
+  "previousPages": "6ca69d1e8e13b387031baf095d68fc614dfd5b79",
+  "createdAt": "2026-11-19T07:29:45.364Z",
+  "games": [
+    "snake",
+    "pong",
+    "cards",
+    "chess",
+    "rescue",
+    "kart",
+    "dance",
+    "runner"
+  ]
+}

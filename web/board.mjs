@@ -66,11 +66,27 @@ export function draw(canvas,s,{selected=-1,previous=null,progress=1,view='left',
     rounded(c,0,0,WIDTH,HEIGHT,14,'#245365');
     c.strokeStyle='#7aa2ab';c.lineWidth=3;c.strokeRect(13,13,WIDTH-26,HEIGHT-26);
     c.setLineDash([11,13]);line(c,500,19,500,581,3,'#77a2a9');c.setLineDash([]);
-    for(const i of [0,1])rounded(c,i===0?29:955,s.paddles[i]-HALF,16,HALF*2,8,color[i]);
-    for(let k=4;k>0;k--)circle(c,s.ball[0]-s.ball[2]*k*.7,s.ball[1]-s.ball[3]*k*.7,Math.max(2,9-k*1.5),'#ffdc80'+['','99','66','44','22'][k]);
-    circle(c,s.ball[0],s.ball[1],10,'#ffdc80');
+    const ink={normal:'#ffdc80',power:'#ffb95c',spin:'#c8adff'},shot=!s.serve?s.lastHit?.kind||'normal':'normal';
+    for(const i of [0,1]){
+      const x=i===0?29:955,armed=s.armed?.[i],dash=s.dash?.[i]>0;
+      if(dash&&!reduced){const motion=s.paddles[i]-(previous?.paddles?.[i]??s.paddles[i]);for(let k=3;k>0;k--)rounded(c,x,s.paddles[i]-HALF-motion*k*.8,16,HALF*2,8,color[i]+['','88','55','22'][k]);}
+      if(armed||dash)rounded(c,x-5,s.paddles[i]-HALF-5,26,HALF*2+10,12,(dash?color[i]:ink[armed])+'77');
+      rounded(c,x,s.paddles[i]-HALF,16,HALF*2,8,armed?ink[armed]:color[i]);
+    }
+    if(s.flight){
+      const points=reduced?s.flight.slice(-3):s.flight;for(let i=1;i<points.length;i++){c.globalAlpha=i/points.length*.7;line(c,...points[i-1],...points[i],3+i/points.length*5,ink[shot]);}c.globalAlpha=1;
+    }else for(let k=4;k>0;k--)circle(c,s.ball[0]-s.ball[2]*k*.7,s.ball[1]-s.ball[3]*k*.7,Math.max(2,9-k*1.5),'#ffdc80'+['','99','66','44','22'][k]);
+    circle(c,s.ball[0],s.ball[1],10,ink[shot]);
+    if(shot==='spin'){
+      const angle=reduced?0:s.tick*.28*Math.sign(s.curve||1);line(c,s.ball[0]+Math.cos(angle)*7,s.ball[1]+Math.sin(angle)*7,s.ball[0]-Math.cos(angle)*7,s.ball[1]-Math.sin(angle)*7,3,'#fff3ff');
+      c.strokeStyle='#c8adff';c.lineWidth=2;c.beginPath();c.arc(s.ball[0],s.ball[1],17,angle,angle+Math.PI*1.3);c.stroke();
+    }
+    if(s.lastHit&&s.tick-s.lastHit.tick<14){const age=s.tick-s.lastHit.tick;c.globalAlpha=1-age/14;c.strokeStyle=ink[s.lastHit.kind];c.lineWidth=4;c.beginPath();c.arc(s.lastHit.side===0?47:953,s.paddles[s.lastHit.side],reduced?22:14+age*2,0,Math.PI*2);c.stroke();c.globalAlpha=1;}
     c.restore();
     if(s.serve){const [x,y]=pongPoint(view,500,300);c.fillStyle='#e4f2ef';c.font='600 17px system-ui';c.textAlign='center';c.fillText('准备接球',g.x+x*g.scale,g.y+y*g.scale-28);}
     const [px,py]=pongPoint(view,88,s.paddles[0]);c.fillStyle=color[0];c.font='700 12px system-ui';c.textAlign='center';c.fillText('你',g.x+px*g.scale,g.y+py*g.scale+4);
+    if(s.version>=3){
+      for(const i of [0,1]){const hit=s.lastHit?.side===i&&s.tick-s.lastHit.tick<48&&s.lastHit.kind!=='normal'?s.lastHit.kind:null,kind=hit||s.armed[i];if(!kind)continue;const [x,y]=pongPoint(view,i===0?145:855,s.paddles[i]);c.fillStyle=ink[kind];c.font='700 12px system-ui';c.textAlign='center';c.fillText((hit?'':'待击 · ')+(kind==='power'?'快球':'旋球'),g.x+x*g.scale,g.y+y*g.scale-12);}
+    }
   }
 }

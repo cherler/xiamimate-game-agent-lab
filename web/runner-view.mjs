@@ -1,7 +1,7 @@
 import {runnerScene,jumpHeight} from '../src/runner.mjs';
 import {runnerImpact} from './runner-feedback.mjs';
 import {poly,oval,box,stroke,star,blend,clamp} from './runner-paint.mjs';
-import {runnerWorld,worldBackdrop,worldScenery} from './runner-world.mjs';
+import {runnerWorld,runnerRoadSections,worldBackdrop,worldScenery} from './runner-world.mjs';
 import {drawCourier} from './runner-courier.mjs';
 export {drawCourier,courierPose} from './runner-courier.mjs';
 const ink='#315765';
@@ -112,8 +112,9 @@ export function drawRunner(canvas,s,{reduced=false,effects=[],impact=null,landed
  c.fillStyle=blend(zone.ground,route.next.ground,blendTo);c.fillRect(0,horizon,w,h-horizon);
  // Scenic props are painted before the road, so canopies and stalls cannot cover a lane.
  for(let row=Math.floor((s.z+240)/32);row>=Math.floor(s.z/32);row--){const z=row*32;for(const side of [-1,1])worldScenery(c,project,z,side,worldAt(z));}
- for(let z=s.z+256;z>s.z-2;z-=8){
-  const near=Math.max(s.z-2,z-8),theme=worldAt(z),station=theme.id==='station';
+ const roadSections=runnerRoadSections(s.z);
+ for(const {near,far:z,worldZ} of roadSections){
+  const theme=worldAt(worldZ),station=theme.id==='station';
   if(station)for(const side of [-1,1]){const l=side<0?-8:5.3,r=side<0?-5.3:8;floorQuad(c,project,l,r,near,z,'#8b9c97');floorQuad(c,project,side*5.5-.12,side*5.5+.12,near,z,'#c9b98e');}
   floorQuad(c,project,-5.3,5.3,near,z,station?'#263e4b':theme.edge);
   for(let lane=0;lane<3;lane++){
@@ -125,7 +126,7 @@ export function drawRunner(canvas,s,{reduced=false,effects=[],impact=null,landed
   const theme=worldAt(z);for(let lane=0;lane<3;lane++){const x=(lane-1)*3.4,p=project(x,z),q=p.scale;c.save();c.globalAlpha=theme.id==='station'?.65:theme.id==='river'?.28:.13;stroke(c,theme.id==='station'?'#283f4b':'#f9e8c2',Math.max(1,q*(theme.id==='station'?.21:.045)),[[p.x-q*1.2,p.y],[p.x+q*1.2,p.y]]);c.restore();}
  }
  // Each station lane has its own pair of rails; sleepers stop at that track's edge.
- for(let z=s.z+256;z>s.z-2;z-=8)if(worldAt(z).id==='station'){const near=Math.max(s.z-2,z-8);for(let lane=0;lane<3;lane++)for(const side of [-1,1]){const x=(lane-1)*3.4+side*.88;floorQuad(c,project,x-.065,x+.065,near,z,'#253b46');floorQuad(c,project,x-.023,x+.035,near,z,'#b2c5c8');}}
+ for(const {near,far:z,worldZ} of roadSections)if(worldAt(worldZ).id==='station')for(let lane=0;lane<3;lane++)for(const side of [-1,1]){const x=(lane-1)*3.4+side*.88;floorQuad(c,project,x-.065,x+.065,near,z,'#253b46');floorQuad(c,project,x-.023,x+.035,near,z,'#b2c5c8');}
  const objects=runnerScene(s).flatMap(row=>[...row.obstacles.map(o=>({...o,object:'obstacle'})),...row.coins.map(o=>({...o,object:'coin'})),...(row.item?[{...row.item,object:'item'}]:[])]).filter(o=>o.z>s.z-(o.kind==='train'?14:4)&&o.z<s.z+230).sort((a,b)=>b.z-a.z);
  for(const o of objects)if(o.object==='obstacle'&&o.kind!=='gap'&&!s.cleared.includes(o.id)&&o.z<s.z+100){const f=runnerFootprint(o,s.version);if(f.far<s.z-2)continue;c.save();c.globalAlpha=.2;floorQuad(c,project,f.left,f.right,Math.max(s.z-2,f.near),f.far,o.kind==='arch'?'#82c4aa':'#e1a96b');c.restore();}
  for(const o of objects){const p=project((o.lane-1)*3.4,o.z),u=p.scale;if(o.object==='obstacle'){

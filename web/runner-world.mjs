@@ -11,6 +11,13 @@ export function runnerWorld(z,scenery='station',version=3){
  const index=Math.floor(Math.max(0,z)/400),count=version<3?3:RUNNER_WORLDS.length,offset=version<3?0:Math.max(0,RUNNER_WORLDS.findIndex(w=>w.id===scenery));
  return {index,zone:RUNNER_WORLDS[(index+offset)%count],next:RUNNER_WORLDS[(index+offset+1)%count],progress:(z-index*400)/400,remaining:Math.ceil((index+1)*400-z)};
 }
+// Scene boundaries belong to the world, not to strips that move with the camera.
+// A straight road needs one continuous polygon per scene, avoiding seams between equal-colour tiles.
+export function runnerRoadSections(z){
+ const far=z+256,sections=[];let near=z-2;
+ while(near<far){const end=Math.min(far,(Math.max(0,Math.floor(near/400))+1)*400);sections.push({near,far:end,worldZ:Math.max(0,(near+end)/2)});near=end;}
+ return sections.reverse();
+}
 export function worldBackdrop(c,w,h,zone){
  const horizon=h*.2;
  if(['forest','canyon','snow'].includes(zone.id)){

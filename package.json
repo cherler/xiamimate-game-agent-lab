@@ -33,7 +33,8 @@
     "check:gameplay": "node scripts/check-gameplay-browser.mjs",
     "bench:gameplay": "node scripts/compare-gameplay.mjs",
     "check:chess-screen": "node scripts/check-chess-screen.mjs",
-    "check:chess-phase": "node scripts/check-chess-phase-browser.mjs"
+    "check:chess-phase": "node scripts/check-chess-phase-browser.mjs",
+    "check:motion": "node scripts/check-motion-browser.mjs"
   },
   "devDependencies": {
     "esbuild": "0.28.2"

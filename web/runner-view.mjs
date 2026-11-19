@@ -107,7 +107,6 @@ export function drawRunner(canvas,s,{reduced=false,effects=[],impact=null,landed
   if(o.object==='coin'){const y=p.y-u*(.85+(o.height||0)*1.2);if(o.bonus){star(c,p.x,y,Math.max(3,u*.48),'#edb356');star(c,p.x,y,Math.max(2,u*.26),'#fff0b0');}else{oval(c,'#bd9552',p.x,y,Math.max(2,u*.25),Math.max(3,u*.35));oval(c,'#f6d581',p.x-u*.035,y-u*.025,Math.max(1,u*.19),Math.max(2,u*.28));}}
   else{oval(c,o.kind==='magnet'?'#83c7b3':'#8aabc5',p.x,p.y-u*1.3,Math.max(7,u*.65),Math.max(7,u*.65));c.fillStyle='#fff5c9';c.font=`bold ${Math.max(10,u*.9)}px system-ui`;c.textAlign='center';c.fillText(o.kind==='magnet'?'∩':'▰',p.x,p.y-u*1.02);}
  }
- hazardGuides(c,project,s,objects,dpr);
  const hero=project((s.x-1)*3.4,s.z),bodySize=Math.min(w/520,h/460),py=hero.y;
  // The shadow, boots, and lane marker share the same ground projection as the collision plane.
  stroke(c,'#f5dda0',Math.max(2,dpr*2),[[hero.x-bodySize*25,py+bodySize*5],[hero.x+bodySize*25,py+bodySize*5]]);
@@ -115,5 +114,7 @@ export function drawRunner(canvas,s,{reduced=false,effects=[],impact=null,landed
  c.save();if(hit?.fall){c.beginPath();c.rect(0,0,w,py);c.clip();}drawCourier(c,hero.x,py,bodySize,hit&&!hit.saved?{...s,roll:0,jump:-1}:s,{reduced,impact:hit,landedAt,turnAt,turnDirection});c.restore();impactBurst(c,hero,py,bodySize,hit,reduced);
  for(const e of effects){const t=(now-e.at)/600;if(t<0||t>1)continue;c.save();c.globalAlpha=1-t;const x=hero.x+(e.lane-s.x)*bodySize*18,y=py-bodySize*(142+t*45);star(c,x,y,bodySize*(e.value===2?8:5),'#f4c66f');c.fillStyle=ink;c.font=`bold ${Math.max(13,bodySize*14)}px system-ui`;c.textAlign='center';c.fillText('+'+e.value,x+bodySize*14,y+bodySize*4);c.restore();}
  if(s.invincible>0&&!reduced){c.strokeStyle='#d6f9c8';c.lineWidth=3;c.beginPath();c.arc(hero.x,py-65*bodySize,56*bodySize,0,Math.PI*2);c.stroke();}
+ // Keep the final approach cue visible even when the courier overlaps a low obstacle.
+ hazardGuides(c,project,s,objects,dpr);
  c.restore();if(hit?.flash){c.fillStyle=hit.saved?`rgba(133,223,195,${hit.flash})`:`rgba(235,148,104,${hit.flash})`;c.fillRect(0,0,w,h);}
 }

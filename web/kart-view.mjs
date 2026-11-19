@@ -1,5 +1,35 @@
 import {TRACKS,SEGMENT,curveAt} from '../src/kart.mjs';
 const colors=['#f4b953','#ee846f','#85bdd9','#90c9aa'];
+// Only interpolate what is drawn. Physics, collisions and recordings keep their fixed steps.
+export function kartRenderState(previous,current,alpha=1){
+ if(!previous||previous.track!==current.track||current.tick!==previous.tick+1||current.phase==='finished')return current;
+ const t=Math.max(0,Math.min(1,alpha));if(t===1)return current;
+ const mix=(a,b)=>a+(b-a)*t;
+ return {...current,time:mix(previous.time,current.time),cars:current.cars.map((car,i)=>{
+  const before=previous.cars[i];if(!before||before.id!==car.id)return car;
+  return {...car,z:mix(before.z,car.z),x:mix(before.x,car.x),speed:mix(before.speed,car.speed),slip:mix(before.slip,car.slip)};
+ })};
+}
+export function kartRoadPoints(state,w,h){
+ const player=state.cars[0],track=TRACKS[state.track],base=Math.floor(player.z/SEGMENT),fraction=player.z/SEGMENT-base;
+ const points=[],bend=curveAt(track,player.z)*.85;
+ // Integrate curvature from the camera's actual position, including its partial segment.
+ // The road and its tangent therefore agree on both sides of every segment boundary.
+ let worldX=.5*fraction*fraction*bend,slope=-fraction*bend;
+ for(let n=0;n<=95;n++){
+  const index=((base+n)%track.segments.length+track.segments.length)%track.segments.length,dz=(n-fraction)*SEGMENT+44;
+  const curve=track.segments[index].curve*.85,scale=w*.5/dz;
+  points.push({n,index,dz,worldX,slope,curve,x:w/2+(worldX-player.x*26)*scale,y:h*.29+40*h*.8/dz,width:34*scale,scale});
+  worldX+=slope+curve*.5;slope+=curve;
+ }
+ return points;
+}
+export function projectKartOpponent(car,player,points,w,h){
+ const dz=car.z-player.z+44;if(dz<=0)return null;
+ const segment=points[Math.max(0,Math.min(points.length-1,Math.floor((dz-points[0].dz)/SEGMENT)))];
+ const t=(dz-segment.dz)/SEGMENT,worldX=segment.worldX+segment.slope*t+segment.curve*t*t*.5,scale=w*.5/dz;
+ return {dz,scale,x:w/2+(worldX+(car.x-player.x)*26)*scale,y:h*.29+40*h*.8/dz};
+}
 function polygon(c,fill,points){c.fillStyle=fill;c.beginPath();points.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.closePath();c.fill();}
 export function kartSprite(c,x,y,size,color,turn=0,boost=false,time=0){
  c.save();c.translate(x,y);c.rotate(turn*.1);c.scale(size/100,size/100);
@@ -20,14 +50,7 @@ export function drawKart(canvas,state,{idle=false,reduced=false}={}){
  for(let i=0;i<5;i++){const x=((i*.26+state.time*.002)*w)%(w*1.3)-w*.1;c.fillStyle='#ffffffa8';c.beginPath();c.ellipse(x,h*(.09+(i%2)*.08),w*.06,h*.018,0,0,7);c.fill();}
  polygon(c,ridge?'#99a4c6':'#77b6b8',[[0,horizon+40],[0,horizon-10],[w*.12,horizon-70],[w*.28,horizon-15],[w*.5,horizon-95],[w*.71,horizon-22],[w*.9,horizon-60],[w,horizon],[w,horizon+40]]);
  c.fillStyle=ridge?'#9ebba9':'#83cbd4';c.fillRect(0,horizon,w,h-horizon);
- const base=Math.floor(player.z/SEGMENT),fraction=(player.z/SEGMENT-base),points=[];let roadX=0,dx=-fraction*curveAt(track,player.z)*.85;
- for(let n=0;n<=95;n++){
-  const index=((base+n)%track.segments.length+track.segments.length)%track.segments.length,dz=(n-fraction)*SEGMENT+44;
-  if(dz<=10)continue;
-  roadX+=dx;dx+=track.segments[index].curve*.85;
-  const scale=w*.5/dz;
-  points.push({n,index,dz,x:w/2+(roadX-player.x*26)*scale,y:horizon+40*h*.8/dz,width:34*scale,scale});
- }
+ const points=kartRoadPoints(state,w,h);
  for(let n=points.length-2;n>=0;n--){
   const a=points[n],b=points[n+1],alt=Math.floor(a.index/3)%2;
   polygon(c,alt?'#b0caa1':'#bad3a8',[[0,a.y],[w,a.y],[w,b.y],[0,b.y]]);
@@ -40,7 +63,7 @@ export function drawKart(canvas,state,{idle=false,reduced=false}={}){
  }
  // Opponents project onto the same curved road and are depth sorted.
  for(const other of state.cars.slice(1).map(car=>({car,dz:car.z-player.z})).filter(v=>v.dz>4&&v.dz<1700).sort((a,b)=>b.dz-a.dz)){
-  const p=points.reduce((a,b)=>Math.abs(a.dz-(other.dz+44))<Math.abs(b.dz-(other.dz+44))?a:b),x=p.x+other.car.x*26*p.scale;
+  const p=projectKartOpponent(other.car,player,points,w,h),x=p.x;
   kartSprite(c,x,p.y,Math.max(8,p.scale*7),colors[other.car.id],other.car.slip,other.car.boost>0,state.time);
   if(p.dz<600){c.font=`600 ${Math.max(10,Math.min(16,w*.016))}px system-ui`;c.textAlign='center';c.fillStyle='#244351';c.fillText(other.car.name,x,p.y-p.scale*6);}
  }

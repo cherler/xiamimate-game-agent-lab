@@ -2,8 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createRunner,stepRunner,sealRunner,replayRunner} from '../src/runner.mjs';
 import {runnerWorld,RUNNER_WORLDS} from '../web/runner-world.mjs';
-import {courierPose} from '../web/runner-courier.mjs';
-import {runnerProjection,runnerOcclusion} from '../web/runner-view.mjs';
+import {courierPose,courierBodyPoint} from '../web/runner-courier.mjs';
+import {runnerProjection,runnerVehicleGeometry,runnerLaneHazards} from '../web/runner-view.mjs';
 const active=()=>({...createRunner({seed:17}),phase:'running',countdown:0,speed:34,time:2,z:35});
 test('runner scenery: six distinct worlds can start a run and all six cycle without discontinuous distance',()=>{
  assert.equal(new Set(RUNNER_WORLDS.map(w=>w.id)).size,6);
@@ -13,9 +13,22 @@ test('runner scenery: six distinct worlds can start a run and all six cycle with
 test('runner camera: switching lanes cannot move lane boundaries; feet and obstacle ground share the same projection',()=>{
  for(const [w,h]of [[390,560],[1366,500],[320,300]]){const s=active(),a=runnerProjection(s,w,h),edges=[-1.7,1.7].map(x=>a(x,s.z));s.x=0;s.lane=0;const b=runnerProjection(s,w,h);assert.deepEqual(edges,[-1.7,1.7].map(x=>b(x,s.z)));const feet=b(-3.4,s.z),left=b(-5.1,s.z),right=b(-1.7,s.z);assert.ok(feet.x>left.x&&feet.x<right.x);assert.equal(feet.y,left.y);}
 });
-test('runner visibility: adjacent large objects fade smoothly, current-lane collisions stay opaque, small obstacles stay solid',()=>{
- const s=active(),train={kind:'train',lane:0,z:s.z+12};assert.ok(runnerOcclusion(s,train)<.4);assert.equal(runnerOcclusion(s,{...train,lane:1}),1);assert.equal(runnerOcclusion(s,{...train,z:s.z+100}),1);assert.equal(runnerOcclusion(s,{...train,kind:'barrier'}),1);
- let last=0;for(let x=1;x>=0;x-=.01){const alpha=runnerOcclusion({...s,x},train);assert.ok(alpha+1e-10>=last);assert.ok(alpha-last<.04||last===0);last=alpha;}assert.ok(last>.99);
+test('runner depth: left and right train faces mirror each other on a fixed perspective, even when speed changes',()=>{
+ const s=active(),project=runnerProjection(s,390,560),left=runnerVehicleGeometry({kind:'train',lane:0,z:56},project),right=runnerVehicleGeometry({kind:'train',lane:2,z:56},project);
+ assert.equal(left.side,1);assert.equal(right.side,-1);
+ for(const [a,b]of [[0,1],[1,0],[2,3],[3,2]])for(const face of ['front','back']){assert.ok(Math.abs(left[face][a].x+right[face][b].x-390)<1e-8);assert.equal(left[face][a].y,right[face][b].y);}
+ assert.deepEqual(project(-3.4,56),runnerProjection({...s,speed:52},390,560)(-3.4,56));
+});
+test('runner side collisions: passing the nose does not clear a carriage; the warning persists until the tail is past',()=>{
+ const s={...active(),z:60,x:0,lane:0},warn=runnerLaneHazards(s)[1];assert.equal(warn.obstacle.kind,'train');assert.equal(warn.alongside,true);assert.equal(warn.bounds.far,68);
+ let hit=s;for(let i=0;i<6&&hit.phase==='running';i++)hit=stepRunner(hit,i===0?['right']:[]);assert.equal(hit.phase,'finished');assert.equal(hit.reason.kind,'train');
+ let clear={...s,z:68.1};assert.notEqual(runnerLaneHazards(clear)[1]?.obstacle.id,warn.obstacle.id);for(let i=0;i<6;i++)clear=stepRunner(clear,i===0?['right']:[]);assert.equal(clear.phase,'running');assert.equal(clear.x,1);
+ assert.notEqual(runnerLaneHazards({...s,cleared:[warn.obstacle.id]})[1]?.obstacle.id,warn.obstacle.id);
+});
+test('runner posture: forward pitch moves the head and shoulders ahead of the hips without lifting stance feet',()=>{
+ const s=active(),pose=courierPose(s),hip=courierBodyPoint({x:0,h:36+pose.bob,z:0},pose),head=courierBodyPoint({x:0,h:94+pose.bob,z:14},pose),shoulder=courierBodyPoint(pose.arms[0].shoulder,pose);
+ assert.ok(pose.lean>.6&&pose.lean<.8);assert.ok(head.z>hip.z+40);assert.ok(shoulder.z>hip.z+25);assert.ok(head.h<94+pose.bob-15);assert.ok(pose.legs.filter(l=>l.stance).every(l=>l.foot.h===0));
+ assert.equal(courierPose(s,{reduced:true}).lean,pose.lean);assert.ok(courierPose({...s,phase:'countdown',countdown:3}).lean<pose.lean);
 });
 test('runner gait: stance feet remain grounded, swing legs recover, arms counter the front foot, and the cycle is continuous',()=>{
  const s=active(),snapshot=structuredClone(s);let swings=0,flight=0;

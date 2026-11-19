@@ -1,4 +1,4 @@
-// Promote the main build without removing archived previews or rollback snapshots.
+// Publish one playable release. Source branches keep history; old sites are not carried forward.
 import fs from 'node:fs';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
@@ -11,10 +11,8 @@ const build=spawnSync(process.execPath,['scripts/build.mjs','--static'],{cwd:pro
 const release={source,channel:'main',previousPages:parent,createdAt:new Date().toISOString(),games:['snake','pong','cards','chess','rescue','kart','dance','runner']};
 const files=new Map([
  ['.nojekyll',''],['index.html',fs.readFileSync(path.join(project,'site/index.html'))],
- ['release.json',JSON.stringify(release,null,2)+'\n'],['compare/index.html',fs.readFileSync(path.join(project,'web/compare.html'))]
+ ['release.json',JSON.stringify(release,null,2)+'\n']
 ]);
-const tree=addPagesFiles(parent,files);
-const archived=git(['ls-tree','-r','--name-only',parent]).split('\n').filter(f=>f.startsWith('versions/')||f.startsWith('preview/'));
-for(const file of archived)if(git(['rev-parse',parent+':'+file])!==git(['rev-parse',tree+':'+file]))throw Error('历史试玩发生变化，停止发布。');
+const tree=addPagesFiles(null,files);
 const commit=publishPagesTree(tree,parent,'Publish main games from '+source.slice(0,12));
-console.log(JSON.stringify({source,pagesCommit:commit,previousPages:parent,archivesPreserved:archived.length},null,2));
+console.log(JSON.stringify({source,pagesCommit:commit,previousPages:parent,entry:'/',publishedFiles:[...files.keys()]},null,2));

@@ -1,5 +1,4 @@
 import {localGameStorage as localStorage,sessionGameStorage as sessionStorage} from './storage.mjs';
-import './version-banner.mjs';
 import { begin, advance, seal, checkReplay, playback, GAMES, describeAction, pick } from '../src/arena.mjs';
 import { snakeMoves, safeOptions } from '../src/snake.mjs';
 import { planSnake, snakePlans } from '../src/snake-planner.mjs';

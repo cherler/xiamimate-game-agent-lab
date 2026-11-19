@@ -1,9 +1,0 @@
-{
-  "slug": "strategy-depth",
-  "branch": "gameplay/strategy-depth-2026-11-18",
-  "baselineTag": "baseline/gameplay-2026-11-18",
-  "baselineSource": "344c1aed05ac1596bf501e83b5b9aaa31f2311f8",
-  "baselinePages": "8d58659fd049d6d65be87c5238a0779ee2be3c27",
-  "baselinePath": "versions/gameplay-2026-11-18",
-  "storagePrefix": "gameplay-v1:"
-}

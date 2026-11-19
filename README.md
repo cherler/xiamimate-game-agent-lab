@@ -28,6 +28,8 @@
 
 同日更新：舞台改为音乐同步的四轨音符，赛车增加触屏自动油门，新增三道跑酷[微光疾行](https://cherler.github.io/xiamimate-game-agent-lab/#runner)。[更新前的七款游戏](https://cherler.github.io/xiamimate-game-agent-lab/versions/before-rhythm-runner-2026-11-19/)与源码基线均保留。详见 [触屏音游与跑酷首版](docs/触屏音游与跑酷首版.md)。
 
+赛车补充修复：对手按实际位置连续绘制，消除吸附路面分段产生的顿挫；弯道衔接与高刷新率画面同步平滑。详见 [赛车对手顿挫修复](docs/赛车对手顿挫修复.md)。
+
 ## 进度存在哪里
 
 在线单人进度保存在当前浏览器的本地存储，不是所有玩家共享一局。相同网站、相同浏览器个人资料会读取已有存档；换浏览器、换设备或使用无痕窗口会获得独立的新进度。清除网站数据也会清除存档，目前没有账号或云同步。同一浏览器的多个标签页共用存储，建议同一款游戏只开一个游玩标签。
@@ -83,6 +85,7 @@ npm run check:polish
 npm run check:chess-screen
 npm run check:chess-phase
 npm run check:motion
+npm run check:kart-motion
 ```
 
 本轮的对照与专项检查：

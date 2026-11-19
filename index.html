@@ -105,7 +105,7 @@ body.chess-mode #strategy{flex:1;min-height:0;display:flex;flex-direction:column
 .ac-piece-layer{position:absolute;inset:0;pointer-events:none;z-index:3}.ac-piece{position:absolute;left:calc(var(--col)*12.5%);top:calc(var(--row)*12.5%);width:12.5%;height:12.5%;border:0;border-radius:0;background:transparent;padding:0;display:block;pointer-events:auto;touch-action:none;transition:left .14s linear,top .14s linear;overflow:visible;min-width:0}
 .ac-avatar{position:absolute;inset:0 0 7px;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 2px 1px #264b3f40)}.ac-avatar:before{content:'';position:absolute;inset:auto 6% 1px;height:18%;border-radius:50%;background:#437b5c;box-shadow:0 1px 2px #253c3780}.enemy-piece .ac-avatar:before{background:#bc7757}.ac-avatar svg{width:100%;height:100%;position:relative;max-height:82px}.ac-stars{position:absolute;z-index:2;top:0;left:3px;line-height:1;font-size:clamp(9px,1.3cqh,14px);color:#8d6427;text-shadow:0 1px #fff8b6,0 0 3px #fff8b6;white-space:nowrap}.ac-unit-name{position:absolute;z-index:2;bottom:6px;left:0;right:0;text-align:center;font-size:clamp(8px,1.55cqh,12px);line-height:1.2;font-weight:700;color:#233f36;white-space:nowrap;text-shadow:0 1px #e3ebd6,0 -1px #e3ebd6,1px 0 #e3ebd6,-1px 0 #e3ebd6}.ac-health,.ac-mana{position:absolute;left:8%;bottom:2px;display:block;width:84%;height:4px;background:#455b48;border:1px solid #25443760;border-radius:2px;overflow:hidden}.ac-health>i{display:block;height:100%;background:#71c89a}.enemy-piece .ac-health>i{background:#df9473}.ac-mana{height:2px;border:0;bottom:-1px}.ac-mana>i{display:block;height:100%;background:#81b5d6}.ac-piece.picked{background:#f7e59b55;box-shadow:inset 0 0 0 3px #f3e1a2}.ac-shield{position:absolute;right:1px;top:9px;color:#f4d995}.ac-shield svg{width:12px}.ac-equipped{position:absolute;right:1px;bottom:17px;display:flex}.ac-equipped svg{width:11px;height:11px;background:#ebdfb6;border:1px solid #827651;border-radius:3px}
 .ac-bench{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));position:relative;min-height:0;background:#72896c;border-top:4px solid #59715b;padding:9px 3px 2px;gap:3px}.ac-bench-label{position:absolute;top:-3px;left:7px;font-size:9px;line-height:11px;color:#f3f2d8;background:#59715b;padding:0 5px;border-radius:0 0 4px 4px;z-index:4}.ac-bench-slot{position:relative;min-height:0;border:1px dashed #91aa83;border-radius:3px;display:grid;place-items:center;color:#7d956f;background:#d5deca}.ac-bench-slot .ac-piece{width:100%;height:100%;left:0;top:0}.ac-bench-slot .ac-unit-name{bottom:0}.ac-bench-slot .ac-avatar{bottom:4px}.ac-bench-slot .ac-health{display:none}
-.ac-hud{flex:none;background:#e0eae1;border:1px solid #b7c9b5;border-radius:7px;padding:3px 9px}
+.ac-hud{position:relative;flex:none;background:#e0eae1;border:1px solid #b7c9b5;border-radius:7px;padding:3px 9px}
 .ac-selection{height:26px;display:flex;align-items:center;gap:8px;color:#64775e;font-size:12px;overflow:hidden;white-space:nowrap}.ac-selection b{color:#355c45;font-size:12px}.ac-selection button{font-size:11px;padding:1px 6px}.ac-selection .ac-error{color:#a14436;overflow:hidden;text-overflow:ellipsis}
 .ac-economy{display:flex;align-items:center;gap:9px;min-height:37px}.ac-gold{display:grid;grid-template-columns:auto auto;column-gap:3px;align-items:center;flex:none;min-width:65px}.ac-gold>.table-icon{color:#a0782e;width:18px;height:18px}.ac-gold strong{font-size:23px;line-height:1;color:#80632d}.ac-gold>small{font-size:10px;color:#6a7f65;grid-column:1/-1}.ac-level{flex:1;min-width:70px}.ac-level>b{font-size:14px;display:flex;align-items:center;gap:5px}.ac-level small{font-size:11px;font-weight:500;color:#748874}.ac-level>i{display:block;background:#c5d3bf;height:4px;margin-top:4px;border-radius:4px;overflow:hidden}.ac-level>i>i{display:block;height:100%;background:#719aab}.ac-economy button{font-size:12px;display:flex;align-items:center;gap:4px;padding:6px 9px;white-space:nowrap;min-height:34px}.ac-economy .primary{flex:none;min-width:120px;justify-content:center}.ac-economy button b{color:#95742e;font-size:11px}
 .ac-combat-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:38px;border-top:1px solid #bfcfb9;margin-top:3px;padding-top:3px}.ac-combat-bar>span{font-size:11px;color:#5f765f;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ac-combat-bar>div{display:flex;gap:6px;align-items:center}.ac-combat-bar button{padding:5px 10px;font-size:12px;display:flex;gap:5px;align-items:center;white-space:nowrap}.ac-combat-bar select{width:auto;padding:4px;margin:0;font-size:11px}
@@ -113,7 +113,7 @@ body.chess-mode #strategy{flex:1;min-height:0;display:flex;flex-direction:column
 .ac-shop-heading{display:flex;align-items:center;gap:12px;margin-bottom:8px}.ac-shop-heading h2{font-size:16px}.ac-shop-heading span{font-size:12px;color:#6b7f64;flex:1}.ac-shop-heading button{margin-left:auto;padding:4px 8px;font-size:12px}.ac-shop{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}.ac-offer-wrap{position:relative;min-width:0}.ac-offer{position:relative;width:100%;height:100%;min-height:137px;background:#e5eadc;border:1px solid #9eaf96;border-bottom:4px solid var(--tier,#a5b0a0);border-radius:6px;padding:14px 4px 5px;display:flex;flex-direction:column;align-items:center;gap:3px}.ac-offer:disabled{opacity:.6}.ac-offer>svg{width:100%;height:48px}.ac-offer>b{font-size:14px;white-space:nowrap}.ac-offer>span:not(.ac-offer-cost){font-size:11px;color:#6c8067}.ac-offer-cost{position:absolute;top:4px;left:5px;font-weight:800;color:#89652c;font-size:15px;display:flex;align-items:center;gap:2px}.ac-offer-cost svg{width:12px;height:12px}.ac-offer>small{font-size:11px;color:#60765a;text-align:center}.ac-offer em{font-size:11px;font-style:normal;background:#d5dfbe;padding:1px 4px;border-radius:4px;color:#5e7147}.ac-offer.merge-ready{border-color:#c29c44;box-shadow:0 0 0 1px #e4c56c}.ac-offer.merge-ready em{background:#f0dca0;color:#796129}.ac-offer.sold{display:grid;place-items:center;font-size:13px;color:#a4b19c;border-style:dashed;background:transparent}.ac-preview-button{position:absolute;right:3px;top:3px;border:1px solid #9cad96;border-radius:4px;background:#f6f9ed;font-size:11px;padding:3px 5px;min-height:26px}.ac-shop-footer{display:flex;align-items:center;gap:6px;margin-top:8px}.ac-shop-footer button{padding:5px 9px;font-size:12px;white-space:nowrap;display:flex;align-items:center;gap:3px}.ac-shop-footer .locked{background:#e5d79e}.ac-shop-odds{display:flex;gap:10px;flex:1;font-size:10px;color:#74836d}.ac-shop-odds>span{border-bottom:2px solid var(--tier);padding-bottom:2px}.cost-1{--tier:#91a38b}.cost-2{--tier:#6ba57b}.cost-3{--tier:#689db9}.cost-4{--tier:#9b7bac}.cost-5{--tier:#c1a14f}
 .ac-sidebar{padding-right:3px}.ac-sidebar-heading{display:none}.ac-sidebar>section+section{border-top:1px solid #c8d7c3;margin-top:12px;padding-top:10px}.ac-synergy{display:grid;grid-template-columns:1fr auto;gap:2px 7px;border-left:3px solid #c2cebd;padding:5px 7px;margin:5px 0;color:#8a9a81}.ac-synergy b,.ac-synergy>span{font-size:12px}.ac-synergy small{grid-column:1/-1;font-size:11px;line-height:1.35}.ac-synergy:not(.active){border-style:dashed;opacity:.8}.ac-synergy.active{border-color:#49876a;background:#d1e7c5;color:#275c39}.ac-sidebar h2 small{font-size:11px;font-weight:400;color:#819179}.ac-detail-empty{min-height:62px;display:grid;place-content:center;justify-items:center;color:#8ca185;font-size:12px;gap:4px}.ac-detail>svg{width:60px;height:50px;float:right}.ac-detail h3{font-size:16px;margin:0 0 5px}.ac-detail h3 small{font-size:11px;color:#a28031}.ac-trait-pair{display:flex;gap:4px}.ac-trait-pair span{font-size:11px;color:#5a7855;border:1px solid #bdcdb6;border-radius:4px;padding:1px 5px}.ac-numbers{display:flex;gap:7px;flex-wrap:wrap;font-size:12px;margin:8px 0;clear:both}.ac-numbers span{display:flex;align-items:center;gap:2px}.ac-numbers svg{width:14px;height:14px}.ac-detail p{font-size:12px;color:#66785e;line-height:1.5}.ac-detail>button{display:block;width:100%;font-size:12px;margin-top:7px;padding:5px}.ac-detail .ac-sell{color:#956f3c;border-color:#d0bb90}.ac-detail-items span{display:flex;align-items:center;font-size:11px;gap:4px;margin-top:5px}.ac-detail-items svg{width:16px;height:16px}.ac-items>div{display:flex;flex-wrap:wrap;gap:5px}.ac-items button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px}.ac-items button>span{font-size:11px}.ac-items button.selected{background:#ebdda8;border-color:#c4a756}.ac-items>small{display:block;font-size:11px;margin-top:7px;color:#8b703b}.ac-muted{font-size:12px;color:#83947b}
 .ac-reward-panel{top:60px;left:8%;right:8%;padding:9px}.ac-reward-panel .ac-loot{margin:0;padding:10px}.ac-recap{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;background:#dce8d5;border:1px solid #a4b999;padding:7px;border-radius:6px;margin-top:6px}.ac-recap>div{display:flex;align-items:center;gap:5px;min-width:0}.ac-recap svg{width:38px;height:32px;flex:none}.ac-recap span{display:grid}.ac-recap small{font-size:10px;color:#60795c}.ac-recap b{font-size:12px}.ac-recap em{font-size:10px;font-style:normal;color:#6f6439}
-.ac-final{position:absolute;z-index:6;inset:0;background:#183f34c9;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#f2e8bb;backdrop-filter:blur(3px)}.ac-final>b{font-size:40px}.ac-final>span{font-size:14px}.ac-drag{position:fixed;z-index:20000;pointer-events:none;width:70px;height:70px;transform:translate(-50%,-60%);filter:drop-shadow(0 8px 5px #223a3160)}.ac-drag svg{width:100%;height:100%}
+.ac-final{position:absolute;z-index:6;inset:0;background:#183f34c9;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#f2e8bb;backdrop-filter:blur(3px)}.ac-final>b{font-size:40px}.ac-final>span{font-size:14px}.ac-drag{position:fixed;z-index:20000;pointer-events:none;width:70px;height:70px;transform:translate(-50%,-135%);filter:drop-shadow(0 8px 5px #223a3160)}.ac-drag svg{width:100%;height:100%}
 .ac-shots{position:absolute;inset:0;width:100%;height:100%;z-index:4;pointer-events:none}.ac-shots line{stroke:#f7eac6;stroke-width:3;stroke-linecap:round;animation:ac-shot .18s ease-out both}.ac-shots .cast{stroke:#b9cafa;stroke-width:7}.ac-shots .heal{stroke:#b4f1b2;stroke-width:4}@keyframes ac-shot{to{opacity:0}}.ac-fx{position:absolute;inset:0;pointer-events:none;z-index:8;overflow:hidden}.ac-float{position:absolute;transform:translate(-50%,-80%);color:#fff2c2;font-size:21px;font-weight:900;text-shadow:0 2px 2px #463327,1px 0 #463327;animation:ac-float .8s ease-out both}.ac-float.heal{color:#c5ffb8}.ac-float.cast{font-size:30px;color:#fff1a0}.ac-float.fallen{font-size:36px;color:#f7958f}@keyframes ac-float{0%{opacity:1;transform:translate(-50%,-40%) scale(1.2)}100%{opacity:0;transform:translate(-50%,-160%) scale(.9)}}
 #ac-preview{width:min(380px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto;border:1px solid #9cb28e;border-radius:12px;background:#eff4e8;color:#274634;padding:20px;text-align:center}#ac-preview::backdrop{background:#173b3780}.ac-preview-close{position:absolute;right:10px;top:10px}.ac-preview-art svg{width:130px;height:85px}#ac-preview h2{font-size:23px}#ac-preview .ac-numbers{justify-content:center}.ac-range{display:grid;grid-template-columns:repeat(9,1fr);gap:3px;width:150px;margin:10px auto}.ac-range i{height:14px;background:#d6dfd0;border-radius:2px;font-style:normal;font-size:12px}.ac-range .within{background:#a9c68a}.ac-range .origin{background:#4c8968;color:white}.ac-preview-skill{font-size:14px;line-height:1.6}.ac-preview-traits{display:flex;justify-content:center;gap:10px;font-size:12px;margin:10px 0}#ac-preview-buy{width:100%;margin-top:7px}
 @media(max-width:1100px){.ac-layout{grid-template-columns:126px minmax(0,1fr);gap:12px}#ac-info-toggle{display:flex}.ac-sidebar{display:none}.ac-sidebar.is-open{display:block;position:absolute;z-index:20;right:0;top:0;bottom:0;width:min(280px,85%);padding:12px;background:#f1f5eb;border:1px solid #91ad89;border-radius:9px;box-shadow:0 5px 20px #214c3e45}.ac-sidebar-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.ac-sidebar-heading button{padding:2px 8px}.ac-player{grid-template-columns:20px minmax(0,1fr) 24px}.ac-player-avatar svg{width:20px}.ac-player b{font-size:11px}.ac-top>div:first-child>span{display:none}}
@@ -128,6 +128,15 @@ body.chess-mode #strategy{flex:1;min-height:0;display:flex;flex-direction:column
 
 /* Deployment markings end at combat. Every cell then belongs to one battlefield. */
 .ac-board.is-combat .away-cell{filter:none}.ac-board.is-combat .ac-river{display:none}.ac-board.is-combat .ac-cell.in-range{box-shadow:inset 0 0 0 2px #d4ebbc;background-color:#a4c896}.ac-focus-path{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none}.ac-focus-path path{stroke:#f8e4a3;stroke-width:7;stroke-linecap:round;stroke-dasharray:10 9;fill:none}#ac-live-readout{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;max-width:55%}
+.ac-drop-dock{position:absolute;inset:0;z-index:20;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:7px;background:#e0eae1;border-radius:7px}
+.ac-drop-dock>div{min-height:44px;border:2px dashed #5d8b75;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#315943;background:#eaf3e7}
+.ac-drop-dock b{font-size:15px}.ac-drop-dock span{font-size:11px}.ac-drop-dock [data-chess-drop=sell]{background:#f8e9d5;border-color:#b47b38;color:#81501f}
+.ac-drop-dock [aria-disabled=true]{opacity:.45}.ac-drop-dock .is-drop-hover,.ac-bench.is-drop-hover{background:#c5ebce;outline:3px solid #3e9965;outline-offset:-3px}
+.ac-drop-dock [data-chess-drop=sell].is-drop-hover{background:#ffe0ab;outline-color:#b97527}.ac-cell.is-drop-hover{box-shadow:inset 0 0 0 4px #f5e7a9}
+.ac-dragging .ac-shop-panel,.ac-dragging .ac-sidebar.is-open{visibility:hidden}.ac-dragging .is-drag-source{opacity:.3}.ac-drag.invalid-drop{opacity:.65}
+@media(max-width:650px){.ac-drop-dock{gap:5px;padding:4px}.ac-drop-dock b{font-size:13px}.ac-drop-dock span{font-size:10px}}
+
+@media(max-height:820px) and (min-width:651px){.ac-drop-dock{grid-template-columns:1fr;grid-template-rows:1fr 1fr}.ac-drop-dock b{font-size:14px}}
 
 body.rescue-mode main,body.rescue-mode .head-inner{max-width:clamp(980px,calc(150svh - 390px),1432px)}
 .switcher{max-width:100%;flex-wrap:wrap}
@@ -148,6 +157,9 @@ body.rescue-mode main,body.rescue-mode .head-inner{max-width:clamp(980px,calc(15
 
 .rs-evac{--evac-color:#287d69;display:flex;align-items:center;gap:13px;padding:11px 14px;border-left:5px solid #244654;border-right:5px solid #244654;background:#eff6f0;color:#285b52}.rs-evac-dial{width:58px;height:58px;border-radius:50%;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle,#eff6f0 60%,transparent 62%),conic-gradient(var(--evac-color) var(--progress),#c8ddd3 0)}.rs-evac-dial b{font:750 24px ui-monospace,monospace;line-height:1.1}.rs-evac-dial small{font-size:9px}.rs-evac-info{flex:1;min-width:0}.rs-evac-info strong{display:block;font-size:14px}.rs-evac-info>span{display:block;font-size:11px;margin:5px 0;color:#69847c}.rs-evac-track{height:4px;border-radius:3px;background:#d0e0d7;overflow:hidden}.rs-evac-track i{display:block;height:100%;background:var(--evac-color)}.rs-rage-label{font-size:12px;white-space:nowrap;color:#6e8a80}.rs-evac.raging .rs-rage-label{color:#b04a31;background:#f9e3d4;border:1px solid #e3ad92;border-radius:5px;padding:5px 7px}.rs-evac.contested,.rs-evac.unguarded{--evac-color:#bd4a60;background:#fae8e8;color:#9a334d}.rs-evac.contested .rs-evac-dial,.rs-evac.unguarded .rs-evac-dial{background:radial-gradient(circle,#fae8e8 60%,transparent 62%),conic-gradient(var(--evac-color) var(--progress),#e7bcc6 0)}.rs-people .boarding{background:#f2ca6d;outline:2px solid #66ac91;outline-offset:1px}.rs-civil-count{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.rs-legacy{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:#f1e7cb;color:#816b37;font-size:12px}.rs-legacy button{font-size:12px}
 @media(max-width:720px){.rs-evac{gap:9px;padding:9px 7px;border-width:3px;flex-wrap:wrap}.rs-evac-dial{width:48px;height:48px}.rs-evac-dial b{font-size:21px}.rs-evac-info strong{font-size:12px}.rs-evac-info>span{font-size:10px}.rs-rage-label{font-size:10px}.rs-evac.raging .rs-rage-label{padding:4px 5px}.rs-evac .rs-rage-label{max-width:92px;white-space:normal;text-align:center}.rs-legacy button{min-height:34px}}
+.rs-control-status{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 3px;font-size:12px;color:#356780}.rs-control-status span{font-size:11px;color:#68808b}.rs-squads .part-selected{border-color:#438bac;border-style:dashed;background:#e9f3f8}.rs-squads kbd{font:inherit;font-size:10px;color:#658492}
+#rs-box-select{font-size:11px;white-space:nowrap;min-height:36px}#rs-box-select[aria-pressed=true]{background:#c5e7f4;border-color:#368aac}.rs-live-bar>div{flex:1}
+@media(max-width:720px){.rs-control-status{font-size:11px}.rs-control-status span{font-size:9px}.rs-live-bar{gap:4px}#rs-box-select{min-width:44px;min-height:44px;padding:5px}.rs-squads b{font-size:11px}}
 
 .card-tactics-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:5px 0;color:#506b64;font-size:12px}.card-tactics-bar button{display:flex;align-items:center;gap:7px;min-height:36px;padding:6px 12px;border:1px solid #8bb6ac;background:#e1efe8;color:#285c4a;border-radius:8px;font-size:12px}.card-tactics-bar button>b{display:flex;align-items:center;gap:3px;border-left:1px solid #a8c8bd;padding-left:8px}.card-tactics-bar .table-icon{width:16px;height:16px}.power-alternative{position:relative;width:76px;height:76px;padding:6px 4px;border:2px solid #9fb58d;background:#426852;color:#eef2d6;border-radius:15px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px}.power-alternative>.table-icon{width:24px;height:24px}.power-alternative>b{font-size:10px}.power-alternative>small{font-size:9px;line-height:1.2}.power-alternative>em{position:absolute;left:-4px;top:-6px;width:23px;height:23px;border-radius:50%;background:#3b7896;border:2px solid #c9e9ed;font-size:15px;font-style:normal}.power-alternative:enabled{box-shadow:0 0 0 2px #cbe6a75c}.power-alternative:disabled{opacity:.5}
 @media(max-width:760px){.card-tactics-bar{gap:5px;font-size:10px}.card-tactics-bar>span{max-width:95px}.card-tactics-bar button{font-size:10px;gap:4px;padding:5px 7px}.hero-row.own:has(.power-alternative) .hero-side{gap:4px}.hero-row.own:has(.power-alternative) .power-button{width:42px;height:56px}.power-alternative{width:42px;height:56px;border-width:1px;border-radius:10px;gap:2px;padding:3px 1px}.power-alternative>.table-icon{width:17px;height:17px}.power-alternative>b,.hero-row.own:has(.power-alternative) .power-name{font-size:7px}.power-alternative>small{font-size:7px}.power-alternative>em{width:18px;height:18px;font-size:12px;border-width:1px;top:-4px;left:-3px}}
@@ -231,7 +243,7 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
   <section id="dance" hidden></section>
   <section id="runner" hidden></section>
 </main>
-<script id="samples" type="application/json">{"snake":{"format":1,"rules":"round2.2","game":"snake","seed":41003,"opening":[],"frames":[[1,["right","left"]],[1,["right","left"]],[1,["right","left"]],[1,["right","down"]],[1,["down","right"]],[1,["left","down"]],[1,["down","right"]],[1,["right","right"]],[1,["right","right"]],[1,["right","up"]],[1,["up","right"]],[1,["up","up"]],[1,["up","up"]],[1,["up","up"]],[1,["up","up"]],[1,["up","up"]],[1,["right","up"]],[1,["right","left"]],[1,["right","down"]]],"decisions":[{"tick":0,"actor":0,"id":"right","source":"planner","ms":1.67},{"tick":0,"actor":1,"id":"left","source":"rule","ms":0.11},{"tick":1,"actor":0,"id":"right","source":"planner","ms":0.58},{"tick":1,"actor":1,"id":"left","source":"rule","ms":0.06},{"tick":2,"actor":0,"id":"right","source":"planner","ms":0.45},{"tick":2,"actor":1,"id":"left","source":"rule","ms":0.03},{"tick":3,"actor":0,"id":"right","source":"planner","ms":0.63},{"tick":3,"actor":1,"id":"down","source":"rule","ms":0.03},{"tick":4,"actor":0,"id":"down","source":"planner","ms":0.38},{"tick":4,"actor":1,"id":"right","source":"rule","ms":0.02},{"tick":5,"actor":0,"id":"left","source":"planner","ms":0.63},{"tick":5,"actor":1,"id":"down","source":"rule","ms":0.05},{"tick":6,"actor":0,"id":"down","source":"planner","ms":0.62},{"tick":6,"actor":1,"id":"right","source":"rule","ms":0.02},{"tick":7,"actor":0,"id":"right","source":"planner","ms":0.34},{"tick":7,"actor":1,"id":"right","source":"rule","ms":0.02},{"tick":8,"actor":0,"id":"right","source":"planner","ms":0.29},{"tick":8,"actor":1,"id":"right","source":"rule","ms":0.02},{"tick":9,"actor":0,"id":"right","source":"planner","ms":0.34},{"tick":9,"actor":1,"id":"up","source":"rule","ms":0.02},{"tick":10,"actor":0,"id":"up","source":"planner","ms":0.25},{"tick":10,"actor":1,"id":"right","source":"rule","ms":0.01},{"tick":11,"actor":0,"id":"up","source":"planner","ms":0.31},{"tick":11,"actor":1,"id":"up","source":"rule","ms":0.01},{"tick":12,"actor":0,"id":"up","source":"planner","ms":0.23},{"tick":12,"actor":1,"id":"up","source":"rule","ms":0.01},{"tick":13,"actor":0,"id":"up","source":"planner","ms":0.22},{"tick":13,"actor":1,"id":"up","source":"rule","ms":0.01},{"tick":14,"actor":0,"id":"up","source":"planner","ms":0.26},{"tick":14,"actor":1,"id":"up","source":"rule","ms":0.01},{"tick":15,"actor":0,"id":"up","source":"planner","ms":0.22},{"tick":15,"actor":1,"id":"up","source":"rule","ms":0.01},{"tick":16,"actor":0,"id":"right","source":"planner","ms":0.19},{"tick":16,"actor":1,"id":"up","source":"rule","ms":0.01},{"tick":17,"actor":0,"id":"right","source":"planner","ms":0.16},{"tick":17,"actor":1,"id":"left","source":"rule","ms":0.01},{"tick":18,"actor":0,"id":"right","source":"planner","ms":0.03},{"tick":18,"actor":1,"id":"down","source":"rule","ms":0.01}],"end":{"tick":19,"score":[2,1],"winner":1,"hash":"0996aa8a"}},"pong":{"format":1,"rules":"round2.2","game":"pong","seed":41003,"opening":[],"frames":[[72,[360,240]],[11,[360,90]],[46,[360,109]],[105,[257,240]],[7,[360,93]],[92,[360,74]],[14,[546,240]],[78,[527,240]],[20,[360,469]],[68,[360,488]],[9,[247,240]],[73,[266,240]],[26,[360,502]],[52,[360,521]],[34,[55,240]],[40,[74,240]],[21,[360,478]],[50,[360,459]],[13,[492,240]],[55,[511,240]],[9,[360,395]],[56,[360,414]],[22,[111,240]],[40,[130,240]],[59,[360,251]],[58,[350,240]],[55,[360,547]],[53,[437,240]],[5,[360,324]],[47,[360,343]],[19,[145,240]],[31,[164,240]],[48,[360,313]],[46,[432,240]],[46,[360,257]],[31,[56,240]],[13,[53,240]],[3,[360,149]],[40,[360,130]],[13,[221,240]],[28,[202,240]],[8,[360,379]],[33,[360,360]],[41,[547,240]],[42,[360,228]],[25,[105,240]],[16,[86,240]],[41,[360,154]],[41,[370,240]],[23,[360,444]],[18,[360,463]],[13,[528,240]],[29,[547,240]],[41,[360,547]],[14,[542,240]],[27,[547,240]],[41,[360,547]],[11,[493,240]],[30,[512,240]],[17,[360,415]],[24,[360,434]],[42,[308,240]],[41,[360,212]],[9,[227,240]],[32,[208,240]],[41,[360,291]],[41,[414,240]],[42,[360,53]],[41,[289,240]],[25,[360,483]],[16,[360,502]],[41,[334,240]],[41,[360,203]],[21,[135,240]],[20,[116,240]],[42,[360,184]],[41,[356,240]],[19,[360,449]],[22,[360,468]],[8,[227,240]],[33,[246,240]],[41,[360,148]],[42,[282,240]],[6,[360,370]],[35,[360,389]],[15,[165,240]],[26,[184,240]],[15,[360,69]],[26,[360,53]],[20,[151,240]],[21,[132,240]],[41,[360,205]],[42,[357,240]],[23,[360,465]],[18,[360,484]],[2,[258,240]],[39,[277,240]],[14,[360,69]],[27,[360,88]],[41,[279,240]],[15,[360,413]],[27,[360,432]],[41,[322,240]],[17,[360,53]],[24,[360,66]],[29,[84,240]],[12,[65,240]],[41,[360,165]],[4,[247,240]],[37,[228,240]],[24,[360,495]],[18,[360,476]],[41,[395,240]],[41,[360,328]],[26,[93,240]],[15,[112,240]],[41,[360,53]],[42,[291,240]],[16,[360,443]],[25,[360,462]],[11,[188,240]],[30,[207,240]],[13,[360,63]],[28,[360,53]],[9,[248,240]],[32,[229,240]],[41,[360,313]],[42,[434,240]],[15,[360,81]],[26,[360,100]],[6,[246,240]],[35,[227,240]],[41,[360,286]],[41,[547,240]],[42,[360,319]],[9,[212,240]],[32,[231,240]],[6,[360,158]],[35,[360,139]],[12,[240,240]],[29,[221,240]],[41,[360,278]],[41,[547,240]],[42,[360,244]],[41,[53,240]],[11,[360,93]],[30,[360,74]],[41,[266,240]],[34,[360,540]],[7,[360,547]],[3,[260,240]],[39,[279,240]],[14,[360,68]],[27,[360,87]],[5,[234,240]],[36,[215,240]],[34,[360,547]],[7,[360,546]],[41,[295,240]],[10,[360,103]],[31,[360,122]],[42,[53,240]],[19,[360,424]],[22,[360,405]],[41,[449,240]],[10,[360,105]],[31,[360,124]],[41,[275,240]],[42,[360,547]],[11,[510,240]],[30,[529,240]],[41,[360,277]],[28,[97,240]],[13,[116,240]],[4,[360,121]],[37,[360,102]],[41,[366,240]],[19,[360,448]],[23,[360,467]],[41,[400,240]],[6,[360,116]],[35,[360,135]],[41,[53,240]],[41,[360,200]],[42,[375,240]],[18,[360,451]],[23,[360,470]],[41,[421,240]],[41,[360,53]],[41,[336,240]],[24,[360,501]],[17,[360,520]],[26,[130,240]],[16,[149,240]],[41,[360,281]],[1,[472,240]],[40,[491,240]],[41,[360,53]],[24,[121,240]],[17,[102,240]],[42,[360,154]],[12,[493,240]],[29,[474,240]],[41,[360,314]],[23,[130,240]],[18,[149,240]],[41,[360,53]],[41,[381,240]],[16,[360,440]],[26,[360,459]],[19,[157,240]],[22,[176,240]],[41,[360,178]],[5,[455,240]],[36,[436,240]],[41,[360,547]],[25,[93,240]],[17,[112,240]],[10,[360,411]],[31,[360,392]],[12,[532,240]],[29,[547,240]],[8,[360,364]],[33,[360,383]],[13,[186,240]],[28,[205,240]],[9,[360,109]],[32,[360,90]],[42,[396,240]],[41,[360,547]],[41,[53,240]],[41,[360,165]],[41,[434,240]],[28,[360,512]],[14,[360,531]],[41,[449,240]],[9,[360,376]],[32,[360,395]],[41,[53,240]],[20,[360,488]],[21,[360,469]],[41,[547,240]],[42,[360,351]],[28,[84,240]],[4,[103,240]]],"decisions":[{"tick":0,"actor":0,"id":"lower","source":"planner","ms":0.01},{"tick":0,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":129,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":129,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":234,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":234,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":333,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":333,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":425,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":425,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":513,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":513,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":595,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":595,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":673,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":673,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":747,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":747,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":818,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":818,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":886,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":886,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":951,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":951,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1013,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1013,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":1072,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1072,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1130,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1130,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1185,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":1185,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1238,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1238,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1290,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":1290,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1340,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1340,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":1388,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":1388,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1434,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1434,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1480,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1480,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1524,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1524,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":1567,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1567,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1608,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1608,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":1649,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":1649,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1690,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1690,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1732,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1732,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1773,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1773,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":1814,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1814,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1855,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1855,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1896,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":1896,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1938,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1938,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1979,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":1979,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2020,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2020,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2061,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":2061,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2102,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2102,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2143,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":2143,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2185,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2185,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2226,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2226,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2267,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2267,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":2308,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":2308,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2349,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2349,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2391,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2391,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2432,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2432,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2473,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":2473,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2514,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2514,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2555,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2555,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2596,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2596,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":2638,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2638,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2679,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2679,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2720,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":2720,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2761,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2761,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":2802,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2802,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2844,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2844,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2885,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":2885,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2926,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2926,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":2967,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2967,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3008,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3008,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":3049,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3049,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3091,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3091,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3132,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":3132,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3173,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3173,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3214,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3214,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3255,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3255,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3297,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":3297,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3338,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3338,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3379,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3379,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3420,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3420,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":3461,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3461,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3502,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3502,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":3544,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":3544,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3585,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3585,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3626,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":3626,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3667,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3667,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":3708,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3708,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3750,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3750,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3791,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":3791,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3832,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3832,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":3873,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3873,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3914,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3914,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":3955,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":3955,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3997,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3997,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4038,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4038,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4079,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4079,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":4120,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":4120,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4161,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4161,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4203,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":4203,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4244,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4244,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":4285,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4285,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4326,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4326,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":4367,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":4367,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4408,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4408,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4450,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4450,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4491,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4491,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":4532,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4532,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4573,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4573,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4614,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":4614,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4656,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4656,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4697,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4697,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4738,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4738,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":4779,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":4779,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4820,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4820,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4861,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4861,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4903,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4903,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":4944,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":4944,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4985,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4985,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5026,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5026,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5067,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5067,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5109,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":5109,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5150,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5150,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5191,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":5191,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5232,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5232,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":5273,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5273,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5314,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5314,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5356,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":5356,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5397,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5397,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5438,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5438,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5479,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5479,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":5520,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5520,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5562,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5562,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5603,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":5603,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5644,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5644,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5685,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5685,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5726,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5726,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5767,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":5767,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5809,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5809,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":5850,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":5850,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5891,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5891,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5932,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5932,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5973,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5973,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":6015,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6015,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6056,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6056,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6097,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":6097,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6138,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6138,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":6179,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6179,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6220,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6220,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6262,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":6262,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6303,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6303,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":6344,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6344,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6385,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6385,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6426,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":6426,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6468,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6468,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":6509,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":6509,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6550,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6550,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6591,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":6591,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6632,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6632,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":6673,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6673,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6715,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6715,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6756,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":6756,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6797,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6797,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":6838,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6838,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6879,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6879,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6921,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":6921,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6962,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6962,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":7003,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":7003,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":7044,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":7044,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":7085,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":7085,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":7126,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":7126,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":7168,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":7168,"actor":1,"id":"upper","source":"rule","ms":0}],"end":{"tick":7200,"score":[0,0],"winner":-1,"hash":"f06ab229"}}}</script>
+<script id="samples" type="application/json">{"snake":{"format":1,"rules":"round2.3","game":"snake","seed":41003,"opening":[],"frames":[[1,["right","left"]],[1,["right","left"]],[1,["right","left"]],[1,["right","down"]],[1,["down","right"]],[1,["left","down"]],[1,["down","right"]],[1,["right","right"]],[1,["right","right"]],[1,["right","up"]],[1,["up","right"]],[1,["up","up"]],[1,["up","up"]],[1,["up","up"]],[1,["up","up"]],[1,["up","up"]],[1,["right","up"]],[1,["right","left"]],[1,["right","down"]]],"decisions":[{"tick":0,"actor":0,"id":"right","source":"planner","ms":1.64},{"tick":0,"actor":1,"id":"left","source":"rule","ms":0.13},{"tick":1,"actor":0,"id":"right","source":"planner","ms":1.13},{"tick":1,"actor":1,"id":"left","source":"rule","ms":0.15},{"tick":2,"actor":0,"id":"right","source":"planner","ms":0.91},{"tick":2,"actor":1,"id":"left","source":"rule","ms":0.03},{"tick":3,"actor":0,"id":"right","source":"planner","ms":0.93},{"tick":3,"actor":1,"id":"down","source":"rule","ms":0.1},{"tick":4,"actor":0,"id":"down","source":"planner","ms":1},{"tick":4,"actor":1,"id":"right","source":"rule","ms":0.06},{"tick":5,"actor":0,"id":"left","source":"planner","ms":0.82},{"tick":5,"actor":1,"id":"down","source":"rule","ms":0.04},{"tick":6,"actor":0,"id":"down","source":"planner","ms":0.69},{"tick":6,"actor":1,"id":"right","source":"rule","ms":0.03},{"tick":7,"actor":0,"id":"right","source":"planner","ms":0.24},{"tick":7,"actor":1,"id":"right","source":"rule","ms":0.02},{"tick":8,"actor":0,"id":"right","source":"planner","ms":0.32},{"tick":8,"actor":1,"id":"right","source":"rule","ms":0.02},{"tick":9,"actor":0,"id":"right","source":"planner","ms":0.23},{"tick":9,"actor":1,"id":"up","source":"rule","ms":0.02},{"tick":10,"actor":0,"id":"up","source":"planner","ms":0.56},{"tick":10,"actor":1,"id":"right","source":"rule","ms":0.05},{"tick":11,"actor":0,"id":"up","source":"planner","ms":0.33},{"tick":11,"actor":1,"id":"up","source":"rule","ms":0.01},{"tick":12,"actor":0,"id":"up","source":"planner","ms":0.23},{"tick":12,"actor":1,"id":"up","source":"rule","ms":0.01},{"tick":13,"actor":0,"id":"up","source":"planner","ms":0.22},{"tick":13,"actor":1,"id":"up","source":"rule","ms":0.01},{"tick":14,"actor":0,"id":"up","source":"planner","ms":0.22},{"tick":14,"actor":1,"id":"up","source":"rule","ms":0.01},{"tick":15,"actor":0,"id":"up","source":"planner","ms":0.22},{"tick":15,"actor":1,"id":"up","source":"rule","ms":0.01},{"tick":16,"actor":0,"id":"right","source":"planner","ms":0.23},{"tick":16,"actor":1,"id":"up","source":"rule","ms":0.01},{"tick":17,"actor":0,"id":"right","source":"planner","ms":0.19},{"tick":17,"actor":1,"id":"left","source":"rule","ms":0.01},{"tick":18,"actor":0,"id":"right","source":"planner","ms":0.03},{"tick":18,"actor":1,"id":"down","source":"rule","ms":0.01}],"end":{"tick":19,"score":[2,1],"winner":1,"hash":"0996aa8a"}},"pong":{"format":1,"rules":"round2.3","game":"pong","seed":41003,"opening":[],"frames":[[72,[360,240]],[6,[360,90]],[51,[360,109]],[105,[257,240]],[4,[360,93]],[95,[360,74]],[7,[546,240]],[85,[527,240]],[11,[360,469]],[77,[360,488]],[4,[247,240]],[78,[266,240]],[12,[360,502]],[66,[360,521]],[17,[55,240]],[57,[74,240]],[11,[360,478]],[60,[360,459]],[5,[492,240]],[63,[511,240]],[4,[360,395]],[61,[360,414]],[11,[111,240]],[51,[130,240]],[59,[360,251]],[58,[350,240]],[55,[360,547]],[53,[437,240]],[1,[360,324]],[51,[360,343]],[11,[145,240]],[39,[164,240]],[48,[360,313]],[46,[432,240]],[46,[360,257]],[17,[56,240]],[27,[53,240]],[2,[360,149]],[41,[360,130]],[5,[221,240]],[36,[202,240]],[5,[360,379]],[36,[360,360]],[41,[547,240]],[42,[360,228]],[13,[105,240]],[28,[86,240]],[41,[360,154]],[41,[370,240]],[10,[360,444]],[31,[360,463]],[8,[528,240]],[34,[547,240]],[41,[360,547]],[8,[542,240]],[33,[547,240]],[41,[360,547]],[8,[534,240]],[33,[547,240]],[17,[360,546]],[24,[360,547]],[8,[535,240]],[34,[547,240]],[10,[360,481]],[31,[360,500]],[13,[115,240]],[28,[134,240]],[41,[360,288]],[41,[413,240]],[42,[360,53]],[41,[288,240]],[12,[360,484]],[29,[360,503]],[41,[335,240]],[41,[360,204]],[12,[136,240]],[29,[117,240]],[42,[360,185]],[41,[357,240]],[9,[360,450]],[32,[360,469]],[3,[228,240]],[38,[247,240]],[41,[360,149]],[42,[283,240]],[4,[360,371]],[37,[360,390]],[8,[166,240]],[33,[185,240]],[7,[360,68]],[34,[360,53]],[10,[150,240]],[31,[131,240]],[41,[360,204]],[42,[356,240]],[11,[360,466]],[30,[360,485]],[2,[259,240]],[39,[278,240]],[8,[360,70]],[33,[360,89]],[41,[278,240]],[7,[360,412]],[35,[360,431]],[41,[321,240]],[8,[360,53]],[33,[360,65]],[14,[85,240]],[27,[66,240]],[1,[360,348]],[40,[360,329]],[41,[431,240]],[42,[360,309]],[11,[114,240]],[30,[133,240]],[41,[360,53]],[41,[53,240]],[2,[360,150]],[39,[360,131]],[5,[200,240]],[37,[181,240]],[41,[360,547]],[4,[223,240]],[37,[242,240]],[7,[360,55]],[34,[360,53]],[10,[158,240]],[31,[139,240]],[41,[360,223]],[42,[306,240]],[5,[360,394]],[36,[360,413]],[7,[204,240]],[34,[223,240]],[41,[360,169]],[4,[468,240]],[37,[449,240]],[42,[360,328]],[6,[178,240]],[35,[197,240]],[4,[360,124]],[37,[360,105]],[6,[206,240]],[35,[187,240]],[41,[360,244]],[41,[547,240]],[13,[360,496]],[29,[360,515]],[41,[302,240]],[41,[360,186]],[41,[53,240]],[2,[360,124]],[39,[360,105]],[2,[469,240]],[40,[450,240]],[11,[360,483]],[30,[360,502]],[13,[85,240]],[28,[104,240]],[41,[360,53]],[41,[53,240]],[2,[360,124]],[39,[360,105]],[42,[344,240]],[8,[360,424]],[33,[360,443]],[41,[338,240]],[9,[360,57]],[32,[360,76]],[41,[278,240]],[42,[360,547]],[41,[547,240]],[10,[360,458]],[31,[360,477]],[41,[318,240]],[5,[360,87]],[36,[360,106]],[17,[60,240]],[24,[53,240]],[42,[360,53]],[11,[137,240]],[30,[118,240]],[41,[360,262]],[6,[516,240]],[35,[535,240]],[41,[360,332]],[13,[117,240]],[29,[136,240]],[41,[360,249]],[7,[547,240]],[34,[528,240]],[9,[360,433]],[32,[360,452]],[41,[365,240]],[41,[360,317]],[12,[128,240]],[30,[147,240]],[41,[360,147]],[41,[547,240]],[16,[360,529]],[25,[360,547]],[2,[479,240]],[39,[498,240]],[5,[360,79]],[37,[360,98]],[41,[53,240]],[2,[360,131]],[39,[360,112]],[41,[359,240]],[41,[360,547]],[8,[533,240]],[33,[547,240]],[42,[360,547]],[41,[547,240]],[16,[360,546]],[25,[360,547]],[41,[547,240]],[41,[360,547]],[42,[547,240]],[41,[360,547]],[41,[547,240]],[41,[360,547]],[8,[535,240]],[33,[547,240]],[17,[360,540]],[24,[360,547]],[42,[547,240]],[41,[360,547]],[8,[531,240]],[33,[547,240]],[17,[360,546]],[24,[360,547]],[41,[547,240]],[17,[360,544]],[25,[360,547]],[8,[540,240]],[33,[547,240]],[41,[360,547]],[41,[547,240]],[41,[360,547]],[41,[547,240]],[42,[360,547]],[32,[547,240]]],"decisions":[{"tick":0,"actor":0,"id":"lower","source":"planner","ms":0.01},{"tick":0,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":129,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":129,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":234,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":234,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":333,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":333,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":425,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":425,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":513,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":513,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":595,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":595,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":673,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":673,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":747,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":747,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":818,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":818,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":886,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":886,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":951,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":951,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1013,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1013,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":1072,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1072,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1130,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1130,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1185,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":1185,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1238,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1238,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1290,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":1290,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1340,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1340,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":1388,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":1388,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1434,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1434,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1480,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1480,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1524,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1524,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":1567,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1567,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1608,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1608,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":1649,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":1649,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1690,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1690,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1732,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1732,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1773,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1773,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":1814,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1814,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1855,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1855,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1896,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":1896,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1938,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1938,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1979,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":1979,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2020,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2020,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2061,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":2061,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2102,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2102,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2143,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":2143,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2185,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2185,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2226,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":2226,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2267,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2267,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":2308,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":2308,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2349,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2349,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2391,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2391,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2432,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2432,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2473,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":2473,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2514,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2514,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2555,"actor":0,"id":"lower","source":"planner","ms":0.01},{"tick":2555,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2596,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2596,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":2638,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2638,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2679,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2679,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2720,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":2720,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2761,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2761,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":2802,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2802,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2844,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2844,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2885,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":2885,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2926,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2926,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":2967,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2967,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3008,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3008,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":3049,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3049,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3091,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3091,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3132,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":3132,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3173,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3173,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3214,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3214,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3255,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3255,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3297,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":3297,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3338,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3338,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3379,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3379,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3420,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3420,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":3461,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":3461,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3502,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3502,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3544,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":3544,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3585,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3585,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":3626,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3626,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3667,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3667,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":3708,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3708,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3750,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3750,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":3791,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":3791,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3832,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3832,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":3873,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3873,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3914,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3914,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":3955,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3955,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3997,"actor":0,"id":"lower","source":"planner","ms":0.01},{"tick":3997,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4038,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":4038,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4079,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4079,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":4120,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4120,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4161,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4161,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4203,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":4203,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4244,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4244,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":4285,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4285,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4326,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4326,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":4367,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4367,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4408,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4408,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4450,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":4450,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4491,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4491,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4532,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4532,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4573,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4573,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":4614,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4614,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4656,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4656,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4697,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":4697,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4738,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4738,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":4779,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4779,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4820,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4820,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":4861,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4861,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4903,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4903,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4944,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":4944,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4985,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4985,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5026,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5026,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5067,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5067,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5109,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":5109,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5150,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5150,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5191,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":5191,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5232,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5232,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5273,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5273,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5314,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5314,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":5356,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5356,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5397,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5397,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":5438,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":5438,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5479,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5479,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5520,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":5520,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5562,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5562,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":5603,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5603,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5644,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5644,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5685,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":5685,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5726,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5726,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5767,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":5767,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5809,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5809,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":5850,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5850,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5891,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5891,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5932,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":5932,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5973,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5973,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6015,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6015,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6056,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6056,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":6097,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6097,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6138,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6138,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6179,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":6179,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6220,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6220,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6262,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":6262,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6303,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6303,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6344,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":6344,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6385,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6385,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6426,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":6426,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6468,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6468,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6509,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":6509,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6550,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6550,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6591,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":6591,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6632,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6632,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6673,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":6673,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6715,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6715,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6756,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":6756,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6797,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6797,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6838,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":6838,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6879,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6879,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6921,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":6921,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6962,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6962,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":7003,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":7003,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":7044,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":7044,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":7085,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":7085,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":7126,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":7126,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":7168,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":7168,"actor":1,"id":"upper","source":"rule","ms":0}],"end":{"tick":7200,"score":[0,0],"winner":-1,"hash":"2796a66d"}}}</script>
 <script>globalThis.ARENA_STATIC=true;(() => {
   var __defProp = Object.defineProperty;
   var __export = (target, all) => {
@@ -462,9 +474,10 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
   var RIGHT = WIDTH - LEFT;
   var PONG_LIMIT = 7200;
   var TACTICS = ["upper", "lower", "steady", "change"];
-  function initPong(seed) {
+  function initPong(seed, { legacy: legacy2 = false } = {}) {
     return {
       game: "pong",
+      ...!legacy2 ? { version: 2 } : {},
       seed,
       tick: 0,
       paddles: [300, 300],
@@ -504,8 +517,9 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
   }
   function stepPong(s2, moves) {
     if (s2.winner !== null || !Array.isArray(moves) || moves.length !== 2 || !moves.every((n) => Number.isInteger(n) && n >= 0 && n <= HEIGHT)) throw new Error("\u7403\u62CD\u76EE\u6807\u65E0\u6548");
-    const aim = s2.tick % 6 === 0 ? moves.map((n) => clamp(n, HALF, HEIGHT - HALF)) : s2.aim;
-    const paddles = s2.paddles.map((y, i) => y + clamp(aim[i] - y, -8, 8));
+    const aim = s2.version >= 2 || s2.tick % 6 === 0 ? moves.map((n) => clamp(n, HALF, HEIGHT - HALF)) : s2.aim;
+    const speed3 = s2.version >= 2 ? 14 : 8;
+    const paddles = s2.paddles.map((y, i) => y + clamp(aim[i] - y, -speed3, speed3));
     const t = { ...s2, tick: s2.tick + 1, paddles, aim, ball: [...s2.ball], score: [...s2.score] };
     if (s2.serve > 0) {
       t.serve--;
@@ -552,7 +566,7 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
   }
 
   // src/arena.mjs
-  var RULES = "round2.2";
+  var RULES = "round2.3";
   var GAMES = {
     snake: { name: "\u53CC\u86C7\u4E89\u98DF", init: initSnake, step: stepSnake, max: 180, interval: 500 },
     pong: { name: "\u7403\u53F0\u5BF9\u653B", init: initPong, step: stepPong, max: 7200, interval: 1e3 / 60 }
@@ -564,7 +578,7 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
   function startingState(game2, seed, opening = [], rules = RULES) {
     if (!Object.hasOwn(GAMES, game2) || !Number.isSafeInteger(seed) || seed < 0 || seed > 4294967295) throw new Error("\u65E0\u6548\u6E38\u620F\u6216\u79CD\u5B50");
     if (!Array.isArray(opening) || opening.length) throw new Error("\u65E0\u6548\u8D77\u59CB\u5C40\u9762");
-    return game2 === "snake" ? initSnake(seed, { legacy: rules === "round2.1" }) : GAMES[game2].init(seed);
+    return game2 === "snake" ? initSnake(seed, { legacy: rules === "round2.1" }) : initPong(seed, { legacy: rules !== "round2.3" });
   }
   function begin(game2, seed, opening = [], rules = RULES) {
     return { state: startingState(game2, seed, opening, rules), record: {
@@ -595,7 +609,7 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     return match5.record;
   }
   function* playback(record) {
-    if (record?.format !== 1 || !["round2.1", RULES].includes(record.rules) || !Object.hasOwn(GAMES, record.game) || !Array.isArray(record.frames) || !Array.isArray(record.decisions) || record.decisions.length > 2e3) throw new Error("\u56DE\u653E\u683C\u5F0F\u6216\u7248\u672C\u4E0D\u5339\u914D");
+    if (record?.format !== 1 || !["round2.1", "round2.2", RULES].includes(record.rules) || !Object.hasOwn(GAMES, record.game) || !Array.isArray(record.frames) || !Array.isArray(record.decisions) || record.decisions.length > 2e3) throw new Error("\u56DE\u653E\u683C\u5F0F\u6216\u7248\u672C\u4E0D\u5339\u914D");
     let s2 = startingState(record.game, record.seed, record.opening, record.rules), total = s2.tick;
     for (const frame7 of record.frames) {
       if (!Array.isArray(frame7) || frame7.length !== 2) throw new Error("\u56DE\u653E\u5E27\u65E0\u6548");
@@ -6282,51 +6296,94 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     render2();
   }
   function cancelDrag() {
-    drag2?.ghost?.remove();
+    const d = drag2;
     drag2 = null;
+    d?.ghost?.remove();
+    d?.dock?.remove();
+    if (d?.source.hasPointerCapture(d.pointer)) d.source.releasePointerCapture(d.pointer);
+    root2()?.classList.remove("ac-dragging");
+    root2()?.querySelectorAll(".is-drop-hover,.is-drag-source").forEach((n) => n.classList.remove("is-drop-hover", "is-drag-source"));
+  }
+  function chessDrop(x, y) {
+    const target = document.elementFromPoint(x, y);
+    if (!target || !root2().contains(target)) return null;
+    const zone = target.closest("[data-chess-drop],.ac-bench");
+    if (zone) {
+      const type = zone.dataset.chessDrop || "bench", u = own().units.find((u2) => u2.uid === drag2.uid);
+      return { type, node: zone, valid: type === "sell" || u.cell === null || bench2(own()).length < 8 };
+    }
+    const board4 = target.closest(".ac-board");
+    if (!board4) return null;
+    const r = board4.getBoundingClientRect(), cell2 = Math.floor((y - r.top) / r.height * 8) * 8 + Math.floor((x - r.left) / r.width * 8);
+    return { type: "move", cell: cell2, node: root2().querySelector(`[data-cell="${cell2}"]`), valid: cell2 >= 32 && cell2 < 64 };
   }
   document.addEventListener("pointerdown", (e) => {
-    if (!active2 || watch || review || s().phase !== "prep" || inspect !== 0) return;
+    if (!active2 || drag2 || e.button !== 0 || e.isPrimary === false || watch || review || s().phase !== "prep" || inspect !== 0) return;
     const b = e.target.closest("[data-uid]");
     if (!b || !root2().contains(b) || !own().units.some((u) => u.uid === b.dataset.uid)) return;
-    drag2 = { uid: b.dataset.uid, x: e.clientX, y: e.clientY };
+    drag2 = { uid: b.dataset.uid, x: e.clientX, y: e.clientY, pointer: e.pointerId, source: b };
+    b.setPointerCapture(e.pointerId);
   });
   document.addEventListener("pointermove", (e) => {
-    if (!drag2) return;
+    if (!drag2 || e.pointerId !== drag2.pointer) return;
     if (!drag2.ghost && Math.hypot(e.clientX - drag2.x, e.clientY - drag2.y) > 7) {
-      const c = chessInfo(own().units.find((u) => u.uid === drag2.uid).type);
+      const u = own().units.find((u2) => u2.uid === drag2.uid), c = chessInfo(u.type);
       drag2.ghost = document.createElement("div");
       drag2.ghost.className = "ac-drag";
       drag2.ghost.innerHTML = portrait(c.art);
       document.body.append(drag2.ghost);
+      drag2.dock = document.createElement("div");
+      drag2.dock.className = "ac-drop-dock";
+      drag2.dock.innerHTML = `<div data-chess-drop="bench" aria-disabled="${u.cell !== null && bench2(own()).length >= 8}"><b>\u2193 \u5907\u6218\u5E2D</b><span>${u.cell !== null && bench2(own()).length >= 8 ? "\u5DF2\u6EE1 \xB7 \u4E0D\u80FD\u9000\u56DE" : "\u677E\u624B\u9000\u56DE\u5907\u6218\u5E2D"}</span></div><div data-chess-drop="sell"><b>\u51FA\u552E +${c.cost * 3 ** (u.star - 1)} \u91D1</b><span>${esc2(c.name)}${u.items.length ? " \xB7 \u88C5\u5907\u9000\u56DE" : ""}</span></div>`;
+      root2().querySelector(".ac-hud").append(drag2.dock);
+      root2().classList.add("ac-dragging");
+      drag2.source.classList.add("is-drag-source");
       root2().querySelectorAll(".ac-cell.home-cell").forEach((n) => n.classList.add("placeable"));
     }
     if (drag2.ghost) {
       e.preventDefault();
       drag2.ghost.style.left = e.clientX + "px";
       drag2.ghost.style.top = e.clientY + "px";
+      root2().querySelectorAll(".is-drop-hover").forEach((n) => n.classList.remove("is-drop-hover"));
+      const drop = chessDrop(e.clientX, e.clientY);
+      if (drop?.valid) drop.node?.classList.add("is-drop-hover");
+      drag2.ghost.classList.toggle("invalid-drop", !drop?.valid);
     }
   }, { passive: false });
   document.addEventListener("pointerup", (e) => {
-    if (!drag2) return;
-    const d = drag2, target = document.elementFromPoint(e.clientX, e.clientY);
+    if (!drag2 || e.pointerId !== drag2.pointer) return;
+    const d = drag2, drop = d.ghost ? chessDrop(e.clientX, e.clientY) : null;
     cancelDrag();
     if (!d.ghost) return;
-    shopOpen = false;
-    sideOpen = false;
     suppressClick = true;
     setTimeout(() => suppressClick = false, 0);
-    const cell2 = target?.closest(".ac-board");
-    if (cell2) {
-      const r = cell2.getBoundingClientRect();
-      apply2({ type: "move", uid: d.uid, cell: Math.min(7, Math.floor((e.clientY - r.top) / r.height * 8)) * 8 + Math.min(7, Math.floor((e.clientX - r.left) / r.width * 8)) });
-    } else if (target?.closest(".ac-bench")) apply2({ type: "bench", uid: d.uid });
-    else render2();
+    if (drop?.valid) {
+      shopOpen = false;
+      sideOpen = false;
+      selected2 = drop.type === "sell" ? null : d.uid;
+      apply2({ type: drop.type, uid: d.uid, ...drop.type === "move" ? { cell: drop.cell } : {} });
+    } else {
+      error = drop?.type === "bench" ? "\u5907\u6218\u5E2D\u5DF2\u6EE1\uFF0C\u68CB\u5B50\u7559\u5728\u539F\u4F4D" : drop?.type === "move" ? "\u53EA\u80FD\u90E8\u7F72\u5230\u4E0B\u534A\u573A" : "";
+      render2();
+    }
   });
-  document.addEventListener("pointercancel", () => {
+  function abortDrag() {
+    if (!drag2) return;
+    const moved = !!drag2.ghost;
     cancelDrag();
+    if (moved) {
+      suppressClick = true;
+      setTimeout(() => suppressClick = false, 0);
+    }
     if (active2) render2();
+  }
+  document.addEventListener("pointercancel", (e) => {
+    if (e.pointerId === drag2?.pointer) abortDrag();
   });
+  document.addEventListener("lostpointercapture", (e) => {
+    if (e.pointerId === drag2?.pointer) abortDrag();
+  });
+  window.addEventListener("blur", abortDrag);
   function battleLabel(b) {
     return b.winner === 0 ? b.pve ? s().version >= 3 ? "\u91CE\u602A\u51FB\u8D25 \xB7 \u9009\u62E9\u6218\u5229\u54C1" : "\u91CE\u602A\u51FB\u8D25 \xB7 \u88C5\u5907\u5DF2\u5165\u888B" : "\u83B7\u80DC \xB7 \u5956\u52B1\u5DF2\u5230\u8D26" : b.winner === -1 ? "\u5E73\u5C40 \xB7 \u22122 \u751F\u547D" : "\u843D\u8D25 \xB7 \u2212" + b.damage[0] + " \u751F\u547D";
   }
@@ -6389,6 +6446,13 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
   }
   document.addEventListener("keydown", (e) => {
     if (!active2 || e.repeat || e.ctrlKey || e.metaKey || e.altKey || e.target.closest("input,textarea,select,[contenteditable=true],#ac-phase-pause") || root2().querySelector("dialog[open]")) return;
+    if (drag2) {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        abortDrag();
+      }
+      return;
+    }
     if (e.code === "Space" && s().phase === "prep" && !review && !watch && !own().loot) {
       e.preventDefault();
       shopOpen = !shopOpen;
@@ -6403,6 +6467,7 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
   });
   document.addEventListener("visibilitychange", () => {
     if (!active2 || !match2) return;
+    if (document.hidden) abortDrag();
     if (s().phase === "battle") {
       if (document.hidden) played = Math.min(s().battle.ticks, played + (performance.now() - clock) / 100 * speed);
       clock = performance.now();
@@ -6495,7 +6560,7 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     )
   ];
   var latestMaps = /* @__PURE__ */ new Map();
-  function rescueMap(id, version = 4) {
+  function rescueMap(id, version = 5) {
     const key = version + ":" + id;
     if (version >= 3 && latestMaps.has(key)) return latestMaps.get(key);
     let map2 = RESCUE_MAPS.find((m) => m.id === id);
@@ -6511,6 +6576,10 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
       const entrances = id === 1 ? [...map2.entrances, { x: 3.5, y: 1.5, name: "\u63A5\u5E94\u533A\u5317\u53E3", evacOnly: true }] : map2.entrances;
       const result = { ...map2, entrances, extraction: { seconds: [16, 18, 20][id - 1], warning: 3, count: [6, 10, 8][id - 1], fast: [1, 2, 2][id - 1], entry: id === 1 ? 1 : 0 } };
       if (version >= 4) result.supplies = [{ id: "supply0", x: id === 2 ? 10.5 : 12.5, y: id === 2 ? 5.5 : 11.5 }];
+      if (version >= 5) {
+        result.waves = map2.waves.map((w) => ({ ...w, count: Math.ceil(w.count * 1.75) }));
+        result.extraction = { ...result.extraction, count: [12, 18, 16][id - 1] };
+      }
       latestMaps.set(key, result);
       return result;
     }
@@ -6519,7 +6588,7 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
   var insideExit = (m, u) => u.x >= m.exit.x && u.x <= m.exit.x + m.exit.w && u.y >= m.exit.y && u.y <= m.exit.y + m.exit.h;
 
   // src/rescue.mjs
-  var RESCUE_FORMAT = "rescue-4";
+  var RESCUE_FORMAT = "rescue-5";
   var round = (v) => Math.round(v * 1e4) / 1e4;
   var dist = (a, b) => Math.round(Math.hypot(a.x - b.x, a.y - b.y) * 1e6) / 1e6;
   var cell = (m, u) => Math.floor(u.y) * m.w + Math.floor(u.x);
@@ -6616,11 +6685,11 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
       }
     }
   }
-  function initRescue({ level = 1, seed = 41003, difficulty: difficulty2 = "normal", upgrades = [], version = 4 } = {}) {
+  function initRescue({ level = 1, seed = 41003, difficulty: difficulty2 = "normal", upgrades = [], version = 5 } = {}) {
     const m = rescueMap(level, version);
     if (!Number.isInteger(seed) || seed < 0 || seed > 4294967295 || !["normal", "challenge"].includes(difficulty2) || !Array.isArray(upgrades) || upgrades.length > 2 || upgrades.some((x) => !UPGRADES[x])) throw Error("\u5F00\u5C40\u8BBE\u7F6E\u65E0\u6548");
     const boost = (id) => upgrades.filter((x) => x === id).length;
-    if (![1, 2, 3, 4].includes(version)) throw Error("\u6551\u63F4\u89C4\u5219\u7248\u672C\u65E0\u6548");
+    if (![1, 2, 3, 4, 5].includes(version)) throw Error("\u6551\u63F4\u89C4\u5219\u7248\u672C\u65E0\u6548");
     const s2 = { game: "rescue", version, level, seed, difficulty: difficulty2, upgrades: [...upgrades], tick: 0, phase: "deploy", winner: null, reason: "", nav: 0, uid: 0, eventId: 0, events: [], log: [], gates: [], gateCharges: 2 + boost("gate"), saved: 0, lost: 0, kills: 0, wave: 0, spawned: 0, schedule: [], zombies: [], bullets: [], soldiers: [], civilians: [], stats: { shots: 0, hits: 0, infected: 0 } };
     if (version >= 3) s2.evac = { phase: "idle", progress: 0, required: m.extraction.seconds * RESCUE_HZ, batches: 0, alerts: 0, alertTick: null, rageUntil: 0 };
     if (version >= 4) {
@@ -6631,7 +6700,7 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
       s2.supportUid = 0;
       s2.supportUsed = { decoy: 0, medic: 0 };
     }
-    s2.soldiers = m.spawn.map((p, i) => ({ id: "s" + i, kind: "soldier", group: p.group, role: p.group === 2 ? "shield" : "rifle", x: p.x, y: p.y, r: p.group === 2 ? 0.28 : 0.23, hp: p.group === 2 ? 240 : 110, maxHp: p.group === 2 ? 240 : 110, angle: -Math.PI / 2, path: [], goal: null, nav: 0, cooldown: 0, ammo: p.group === 2 ? 8 : 6, reload: 0, hitTick: -100 }));
+    s2.soldiers = m.spawn.map((p, i) => ({ id: "s" + i, kind: "soldier", group: p.group, role: p.group === 2 ? "shield" : "rifle", x: p.x, y: p.y, r: p.group === 2 ? 0.28 : 0.23, hp: p.group === 2 ? 240 : 110, maxHp: p.group === 2 ? 240 : 110, angle: -Math.PI / 2, path: [], goal: null, nav: 0, cooldown: 0, ammo: version >= 5 ? 10 : p.group === 2 ? 8 : 6, reload: 0, hitTick: -100 }));
     for (const group of m.groups) for (let i = 0; i < group.n; i++) {
       const x = group.x + i % 3 * 0.7, y = group.y + Math.floor(i / 3) * 0.65;
       s2.civilians.push({ id: "c" + s2.civilians.length, kind: "civilian", x, y, r: 0.18, status: "waiting", leader: null, path: [], goal: null, nav: 0, infection: 0, threat: null, hitTick: -100 });
@@ -6777,10 +6846,11 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     }
   }
   function shots(s2) {
+    const modern = s2.version >= 5;
     for (const u of s2.soldiers.filter(living)) {
       if (u.reload > 0) {
         u.reload--;
-        if (!u.reload) u.ammo = u.role === "rifle" ? 6 : 8;
+        if (!u.reload) u.ammo = modern ? 10 : u.role === "rifle" ? 6 : 8;
         continue;
       }
       if (u.cooldown > 0) {
@@ -6797,12 +6867,13 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
       if (!target) continue;
       const d = dist(u, target), dx = round((target.x - u.x) / (d || 1)), dy = round((target.y - u.y) / (d || 1));
       u.angle = round(Math.atan2(dy, dx));
-      s2.bullets.push({ id: "b" + s2.uid++, x: u.x, y: u.y, dx, dy, origin: u.id, left: range + 0.3, damage: (u.role === "rifle" ? 10 : 9) * (1 + 0.2 * s2.upgrades.filter((x) => x === "fire").length) });
+      const damage5 = modern ? u.role === "rifle" ? 12 : 14 : u.role === "rifle" ? 10 : 9;
+      s2.bullets.push({ id: "b" + s2.uid++, x: u.x, y: u.y, dx, dy, origin: u.id, left: range + 0.3, damage: damage5 * (1 + 0.2 * s2.upgrades.filter((x) => x === "fire").length) });
       s2.stats.shots++;
       u.ammo--;
-      u.cooldown = u.role === "rifle" ? 15 : 26;
+      u.cooldown = modern ? u.role === "rifle" ? 10 : 18 : u.role === "rifle" ? 15 : 26;
       event(s2, "shot", u, { to: target.id, angle: u.angle, source: u.id });
-      if (u.ammo <= 0) u.reload = u.role === "rifle" ? 42 : 36;
+      if (u.ammo <= 0) u.reload = modern ? 30 : u.role === "rifle" ? 42 : 36;
     }
   }
   function projectileHits(s2) {
@@ -7081,7 +7152,7 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     return { ...structuredClone(match5.record), end: { tick: match5.state.tick, hash: fingerprint(match5.state), winner: match5.state.winner } };
   }
   function* playbackRescue(record) {
-    if (!["rescue-1", "rescue-2", "rescue-3", RESCUE_FORMAT].includes(record?.format) || record.game !== "rescue" || !Array.isArray(record.commands) || record.commands.length > 1e4 || !Number.isInteger(record.end?.tick) || record.end.tick < 0 || record.end.tick > 3600) throw Error("\u6551\u63F4\u56DE\u653E\u65E0\u6548");
+    if (!["rescue-1", "rescue-2", "rescue-3", "rescue-4", RESCUE_FORMAT].includes(record?.format) || record.game !== "rescue" || !Array.isArray(record.commands) || record.commands.length > 1e4 || !Number.isInteger(record.end?.tick) || record.end.tick < 0 || record.end.tick > 3600) throw Error("\u6551\u63F4\u56DE\u653E\u65E0\u6548");
     let s2 = initRescue({ ...record.config, version: Number(record.format.slice(-1)) }), index = 0;
     for (let tick3 = 0; tick3 <= record.end.tick; tick3++) {
       while (index < record.commands.length && record.commands[index].tick === tick3) s2 = commandRescue(s2, record.commands[index++].command);
@@ -7104,7 +7175,7 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     const r = canvas2.getBoundingClientRect();
     return { x: (e.clientX - r.left) / r.width * 24, y: (e.clientY - r.top) / r.height * 16 };
   }
-  function drawRescue(canvas2, s2, { selected: selected4 = "all", building: building2 = false, support: support2 = null, hover: hover2 = null, reduced: reduced4 = false } = {}) {
+  function drawRescue(canvas2, s2, { selected: selected4 = "all", selectedIds = null, building: building2 = false, support: support2 = null, hover: hover2 = null, reduced: reduced4 = false, selectionBox: selectionBox2 = null, movePreview: movePreview2 = null, orderMarker: orderMarker2 = null } = {}) {
     const box3 = canvas2.getBoundingClientRect();
     if (!box3.width) return;
     const dpr = Math.min(devicePixelRatio || 1, 2), width = Math.round(box3.width * dpr), height = Math.round(box3.height * dpr);
@@ -7248,7 +7319,7 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
         text("+", d.x, d.y, 0.7, "#237f68");
       }
     }
-    const chosen = s2.soldiers.filter((u) => u.hp > 0 && (selected4 === "all" || u.group === selected4));
+    const chosen = s2.soldiers.filter((u) => u.hp > 0 && (selectedIds ? selectedIds.includes(u.id) : selected4 === "all" || u.group === selected4));
     for (const u of chosen) {
       if (u.path.length) {
         ctx.beginPath();
@@ -7330,7 +7401,10 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
         continue;
       }
       const picked = chosen.includes(u), dx = Math.cos(u.angle), dy = Math.sin(u.angle);
-      if (picked) circle2(u.x, u.y, u.r + 0.15, "#81d6f32b", "#2189b2", 0.045);
+      if (picked) {
+        circle2(u.x, u.y, u.r + 0.16, "#81d6f34d", "#f3ffff", 0.13);
+        circle2(u.x, u.y, u.r + 0.16, null, "#167aaa", 0.06);
+      }
       circle2(u.x, u.y + 0.08, u.r + 0.03, "#183c4d35");
       line2(u, { x: u.x + dx * 0.42, y: u.y + dy * 0.42 }, "#224759", 0.12);
       circle2(u.x, u.y, u.r, !reduced4 && u.hitTick > s2.tick - 3 ? "#fff" : C.soldier, "#246785", 0.05);
@@ -7348,7 +7422,7 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
       ctx.fillRect(u.x - 0.25, u.y + 0.4, 0.5 * u.hp / u.maxHp, 0.055);
       if (u.reload) {
         ctx.beginPath();
-        ctx.arc(u.x, u.y, 0.32, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * (1 - u.reload / 42));
+        ctx.arc(u.x, u.y, 0.32, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * (1 - u.reload / (s2.version >= 5 ? 30 : u.role === "rifle" ? 42 : 36)));
         ctx.strokeStyle = "#fff6c4";
         ctx.lineWidth = 0.05;
         ctx.stroke();
@@ -7388,6 +7462,29 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
       text("\u63A5\u5E94\u90E8\u7F72", 1.1, 0.55, 0.22, "#a7c7cf", "left");
       text("\u90E8\u7F72", 22.9, 0.55, 0.26, "#a7c7cf", "right");
     }
+    if (selectionBox2) {
+      const b = selectionBox2, x = Math.min(b.x, b.x2), y = Math.min(b.y, b.y2), w = Math.abs(b.x2 - b.x), h = Math.abs(b.y2 - b.y);
+      ctx.fillStyle = "#278db52a";
+      ctx.fillRect(x, y, w, h);
+      ctx.strokeStyle = "#eaffff";
+      ctx.lineWidth = 0.12;
+      ctx.strokeRect(x, y, w, h);
+      ctx.strokeStyle = "#157797";
+      ctx.lineWidth = 0.05;
+      ctx.strokeRect(x, y, w, h);
+    }
+    if (movePreview2) {
+      ctx.setLineDash([0.16, 0.16]);
+      for (const u of chosen) line2(u, movePreview2, "#2187ad99", 0.045);
+      ctx.setLineDash([]);
+      circle2(movePreview2.x, movePreview2.y, 0.36, null, "#187c9f", 0.07);
+    }
+    if (orderMarker2) {
+      const p = orderMarker2, color2 = p.ok ? "#167c9e" : "#b63d53";
+      circle2(p.x, p.y, 0.5, "#f5ffffb0", color2, 0.07);
+      text(p.ok ? "\u2193" : "\xD7", p.x, p.y, 0.55, color2);
+      text(p.ok ? p.count + " \u4EBA \u2192" : "\u4E0D\u53EF\u5230\u8FBE", p.x, Math.max(0.6, p.y - 0.8), 0.4, color2);
+    }
     canvas2.dataset.phase = s2.phase;
     canvas2.dataset.tick = String(s2.tick);
     canvas2.dataset.saved = String(s2.saved);
@@ -7399,6 +7496,109 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     canvas2.dataset.boarding = String(s2.civilians.filter((c) => c.status === "boarding").length);
     canvas2.dataset.supplies = String(s2.supplies ?? 0);
     canvas2.dataset.decoys = String(s2.decoys?.length || 0);
+    canvas2.dataset.selected = chosen.map((u) => u.id).join(",");
+    canvas2.dataset.selecting = String(!!selectionBox2);
+    canvas2.dataset.order = orderMarker2 ? orderMarker2.ok ? "accepted" : "rejected" : "";
+  }
+
+  // web/rescue-input.mjs
+  function bindRescueInput(canvas2, { state: state6, selected: selected4, select, move: move2, place, placing, boxMode, boxDone, visual, cancelPlacement }) {
+    const wrap = canvas2.parentElement;
+    let gesture2 = null;
+    const troopAt = (p) => {
+      const radius = Math.max(0.36, Math.min(0.75, 14 * 24 / canvas2.getBoundingClientRect().width));
+      return state6().soldiers.filter((u) => u.hp > 0).map((u) => ({ u, d: Math.hypot(u.x - p.x, u.y - p.y) })).filter((t) => t.d <= radius).sort((a, b) => a.d - b.d)[0]?.u;
+    };
+    function finish() {
+      const g = gesture2;
+      gesture2 = null;
+      visual(null);
+      if (g && canvas2.hasPointerCapture(g.id)) canvas2.releasePointerCapture(g.id);
+    }
+    canvas2.oncontextmenu = (e) => e.preventDefault();
+    canvas2.onpointerdown = (e) => {
+      if (gesture2 || e.isPrimary === false || ![0, 1, 2].includes(e.button)) return;
+      e.preventDefault();
+      canvas2.focus({ preventScroll: true });
+      const p = rescuePoint(canvas2, e), troop = troopAt(p), zoom = wrap.classList.contains("rs-zoomed");
+      const pan = zoom && (e.button === 1 || e.altKey || e.pointerType === "touch" && !troop && !boxMode() && !placing());
+      if (e.button === 1 && !pan) return;
+      if (!pan && !state6().interactive) return;
+      if (e.button === 2 && placing()) {
+        cancelPlacement();
+        return;
+      }
+      const kind2 = pan ? "pan" : placing() ? "place" : e.button === 2 ? "order" : boxMode() ? "box" : troop ? "unit" : "box";
+      gesture2 = { id: e.pointerId, kind: kind2, p, x: e.clientX, y: e.clientY, left: wrap.scrollLeft, top: wrap.scrollTop, troop, add: e.shiftKey, prior: selected4(), moved: false, touch: e.pointerType === "touch" };
+      canvas2.setPointerCapture(e.pointerId);
+    };
+    canvas2.onpointermove = (e) => {
+      const p = rescuePoint(canvas2, e);
+      if (!gesture2) {
+        visual({ hover: p });
+        return;
+      }
+      if (e.pointerId !== gesture2.id) return;
+      const g = gesture2, dx = e.clientX - g.x, dy = e.clientY - g.y;
+      if (Math.hypot(dx, dy) > 7) g.moved = true;
+      if (g.kind === "pan") {
+        if (g.moved) {
+          wrap.scrollLeft = g.left - dx;
+          wrap.scrollTop = g.top - dy;
+        }
+        return;
+      }
+      if (!g.moved) {
+        visual({ hover: p });
+        return;
+      }
+      e.preventDefault();
+      if (g.kind === "unit") {
+        if (!selected4().includes(g.troop.id)) select(g.add ? [.../* @__PURE__ */ new Set([...g.prior, g.troop.id])] : [g.troop.id]);
+        visual({ hover: p, move: p });
+      } else if (g.kind === "box") visual({ hover: p, box: { x: g.p.x, y: g.p.y, x2: p.x, y2: p.y } });
+    };
+    canvas2.onpointerup = (e) => {
+      if (!gesture2 || e.pointerId !== gesture2.id) return;
+      const g = gesture2, p = rescuePoint(canvas2, e);
+      finish();
+      if (p.x < 0 || p.x >= 24 || p.y < 0 || p.y >= 16 || !state6().interactive) return;
+      if (g.kind === "pan") {
+        if (!g.moved && g.touch) move2(p);
+        return;
+      }
+      if (g.kind === "place") {
+        if (!g.moved) place(p);
+        return;
+      }
+      if (g.kind === "order") {
+        move2(p);
+        return;
+      }
+      if (g.kind === "unit") {
+        if (g.moved) move2(p);
+        else select(g.add ? g.prior.includes(g.troop.id) ? g.prior.filter((id) => id !== g.troop.id) : [...g.prior, g.troop.id] : [g.troop.id]);
+      } else if (g.moved) {
+        const ids2 = state6().soldiers.filter((u) => u.hp > 0 && u.x >= Math.min(g.p.x, p.x) && u.x <= Math.max(g.p.x, p.x) && u.y >= Math.min(g.p.y, p.y) && u.y <= Math.max(g.p.y, p.y)).map((u) => u.id);
+        if (ids2.length) select(g.add ? [.../* @__PURE__ */ new Set([...g.prior, ...ids2])] : ids2);
+        boxDone();
+      } else if (!boxMode()) move2(p);
+    };
+    canvas2.onpointercancel = (e) => {
+      if (gesture2?.id === e.pointerId) finish();
+    };
+    canvas2.onlostpointercapture = (e) => {
+      if (gesture2?.id === e.pointerId) finish();
+    };
+    canvas2.onpointerleave = () => {
+      if (!gesture2) visual(null);
+    };
+    canvas2.ondblclick = (e) => {
+      if (e.pointerType === "touch" || !state6().interactive || placing()) return;
+      const troop = troopAt(rescuePoint(canvas2, e));
+      if (troop) select(state6().soldiers.filter((u) => u.hp > 0 && u.group === troop.group).map((u) => u.id));
+    };
+    return finish;
   }
 
   // web/rescue-ui.mjs
@@ -7428,6 +7628,12 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
   var replayDone = false;
   var speed2 = 1;
   var restoreNotice = "";
+  var cancelInput = () => {
+  };
+  var selectionBox = null;
+  var movePreview = null;
+  var orderMarker = null;
+  var selectTool = false;
   var campaign = { unlocked: 1, choices: [], medals: {} };
   var reduced2 = matchMedia("(prefers-reduced-motion: reduce)").matches;
   function saveCampaign() {
@@ -7468,6 +7674,9 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     }
   }
   function newMission(level = match3?.state.level || 1, difficulty2 = match3?.state.difficulty || "normal") {
+    cancelInput();
+    orderMarker = null;
+    selectTool = false;
     watch2 = null;
     reader = null;
     replayPlaying = false;
@@ -7497,6 +7706,7 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     raf = requestAnimationFrame(frame);
   }
   function closeRescue() {
+    cancelInput();
     if (active3 && match3 && !watch2 && match3.state.phase === "running") issueRescue(match3, { type: "pause" });
     save2();
     active3 = false;
@@ -7508,7 +7718,7 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     if (active3 && $("rs-notice")) $("rs-notice").textContent = text;
   }
   function command(a) {
-    if (watch2) return;
+    if (watch2) return false;
     try {
       issueRescue(match3, a);
       rescueNotice("");
@@ -7517,12 +7727,38 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
       save2();
       hud(true);
       paint();
+      return true;
     } catch (e) {
       rescueNotice(e.message);
+      return false;
     }
   }
   function ids() {
-    return match3.state.soldiers.filter((u) => u.hp > 0 && (selected3 === "all" || u.group === selected3)).map((u) => u.id);
+    return match3.state.soldiers.filter((u) => u.hp > 0 && (selected3 === "all" || (Array.isArray(selected3) ? selected3.includes(u.id) : u.group === selected3))).map((u) => u.id);
+  }
+  function selectSquad(group) {
+    cancelInput();
+    selected3 = group;
+    building = false;
+    support = null;
+    selectTool = false;
+    rescueNotice("");
+    hud(true);
+    paint();
+    $("rescue-board")?.focus({ preventScroll: true });
+  }
+  function selectUnits(units) {
+    selected3 = units;
+    building = false;
+    support = null;
+    rescueNotice("");
+    hud(true);
+    paint();
+  }
+  function moveTo(p) {
+    const count = ids().length, ok = command({ type: "move", ids: ids(), x: p.x, y: p.y });
+    orderMarker = { ...p, ok, count, at: performance.now() };
+    paint();
   }
   function pause() {
     if (watch2) {
@@ -7543,26 +7779,22 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     command({ type: "move", ids: ids(), x: ex.x + ex.w / 2, y: ex.y + ex.h / 2 });
   }
   function mount() {
+    cancelInput();
+    selectTool = false;
     if (!active3) return;
     resultKey = "";
     const s2 = match3.state, m = rescueMap(s2.level, s2.version);
     root3().innerHTML = `<div class="rs-heading"><div><span class="rs-eyebrow">GLIMMER RESCUE</span><h1>\u5FAE\u5149\u6551\u63F4</h1></div><div class="rs-missions" aria-label="\u6551\u63F4\u5173\u5361">${[1, 2, 3].map((i) => `<button data-mission="${i}" ${i > campaign.unlocked ? "disabled" : ""} aria-current="${s2.level === i ? "step" : "false"}"><b>${String(i).padStart(2, "0")}</b><span>${rescueMap(i).name}</span>${campaign.medals[i] ? "\u2713" : ""}</button>`).join("")}</div><button id="rs-export" class="quiet">\u5BFC\u51FA\u56DE\u653E</button></div>
  <div class="rs-layout"><div class="rs-center"><div class="rs-map-head"><div><span id="rs-phase"></span><b>${esc3(m.name)}</b></div><strong id="rs-timer">01:00</strong><button id="rs-start" class="primary">\u5F00\u59CB\u884C\u52A8</button></div>
- <div class="rs-live-bar"><div id="rs-field-goals" aria-live="polite"></div><button id="rs-zoom" class="quiet" aria-pressed="false">\u653E\u5927\u5730\u56FE</button></div><section id="rs-evac" class="rs-evac" aria-live="polite" ${s2.version < 3 ? "hidden" : ""}></section>${s2.version >= 4 ? '<div class="rs-callbar"><span id="rs-call-note"></span><button id="rs-call" class="primary">\u547C\u53EB\u63A5\u9A73</button></div>' : ""}${s2.version < 4 && !watch2 ? '<div class="rs-legacy"><span>\u5386\u53F2\u884C\u52A8</span><button id="rs-modern" class="quiet">\u4F53\u9A8C\u6218\u672F\u6551\u63F4\u7248</button></div>' : ""}<div class="rs-map-wrap"><canvas id="rescue-board" width="1200" height="800" tabindex="0" aria-label="\u6551\u63F4\u5730\u56FE\uFF1A\u84DD\u8272\u519B\u961F\u3001\u9EC4\u8272\u5E73\u6C11\u3001\u7EA2\u8272\u4E27\u5C38\uFF0C\u9009\u62E9\u5C0F\u961F\u540E\u70B9\u51FB\u5730\u9762\u4E0B\u4EE4"></canvas><div id="rs-pause" hidden><span>\u2161</span><b>\u6218\u672F\u6682\u505C</b><small>\u53EF\u4EE5\u7EE7\u7EED\u5E03\u7F6E\u6307\u4EE4</small></div></div>
+ <div class="rs-live-bar"><div id="rs-field-goals" aria-live="polite"></div><button id="rs-box-select" class="quiet" aria-pressed="false">\u6846\u9009</button><button id="rs-zoom" class="quiet" aria-pressed="false">\u653E\u5927\u5730\u56FE</button></div><section id="rs-evac" class="rs-evac" aria-live="polite" ${s2.version < 3 ? "hidden" : ""}></section>${s2.version >= 4 ? '<div class="rs-callbar"><span id="rs-call-note"></span><button id="rs-call" class="primary">\u547C\u53EB\u63A5\u9A73</button></div>' : ""}${s2.version < 5 && !watch2 ? '<div class="rs-legacy"><span>\u5386\u53F2\u884C\u52A8</span><button id="rs-modern" class="quiet">\u4F53\u9A8C\u706B\u529B\u6551\u63F4\u7248</button></div>' : ""}<div class="rs-map-wrap"><canvas id="rescue-board" width="1200" height="800" tabindex="0" aria-label="\u6551\u63F4\u5730\u56FE\uFF1A\u84DD\u8272\u519B\u961F\u3001\u9EC4\u8272\u5E73\u6C11\u3001\u7EA2\u8272\u4E27\u5C38\uFF0C\u9009\u62E9\u5C0F\u961F\u540E\u70B9\u51FB\u5730\u9762\u4E0B\u4EE4"></canvas><div id="rs-pause" hidden><span>\u2161</span><b>\u6218\u672F\u6682\u505C</b><small>\u53EF\u4EE5\u7EE7\u7EED\u5E03\u7F6E\u6307\u4EE4</small></div></div>
  <div class="rs-legend"><span><i class="rs-blue"></i>\u519B\u961F</span><span><i class="rs-gold"></i>\u5E73\u6C11</span><span><i class="rs-pink"></i>\u4E27\u5C38</span><span><i class="rs-green"></i>\u64A4\u79BB\u533A</span><span id="rs-hint">\u9009\u62E9\u5C0F\u961F \u2192 \u70B9\u5730\u56FE\u90E8\u7F72</span></div>
- <div class="rs-command-bar"><div class="rs-squads" role="group" aria-label="\u9009\u62E9\u5C0F\u961F"><button data-squad="all" aria-pressed="true"><span class="rs-group-icon">\u25C9\u25C9</span><b>\u5168\u961F</b><small id="rs-alive">5 \u4EBA</small></button>${[0, 1, 2].map((i) => `<button data-squad="${i}" aria-pressed="false"><span class="rs-group-icon">${i === 2 ? "\u25C8" : "\u25CF\u25CF"}</span><b>${i === 2 ? "\u62A4\u536B\u961F" : "\u6B65\u67AA " + (i + 1) + " \u961F"}</b><small>\u5C31\u7EEA</small><i class="rs-health"><i></i></i></button>`).join("")}</div><div class="rs-orders"><button id="rs-retreat"><span>\u2199</span>\u8FD4\u56DE\u64A4\u79BB\u533A</button><button id="rs-hold"><span>\u2299</span>\u539F\u5730\u9632\u5B88</button><button id="rs-gate" aria-pressed="false"><span>\u25A5</span>\u95E8\u969C <b>2</b></button></div></div>
+ <div class="rs-control-status"><b id="rs-selected" role="status"></b><span>\u70B9\u9009 \xB7 \u62D6\u6846\u591A\u9009 \xB7 \u70B9\u5730\u9762 / \u53F3\u952E\u79FB\u52A8</span></div><div class="rs-command-bar"><div class="rs-squads" role="group" aria-label="\u9009\u62E9\u5C0F\u961F"><button data-squad="all" aria-pressed="true"><span class="rs-group-icon">\u25C9\u25C9</span><b>\u5168\u961F <kbd>4</kbd></b><small id="rs-alive">5 \u4EBA</small></button>${[0, 1, 2].map((i) => `<button data-squad="${i}" aria-pressed="false"><span class="rs-group-icon">${i === 2 ? "\u25C8" : "\u25CF\u25CF"}</span><b>${i === 2 ? "\u62A4\u536B 3" : "\u6B65\u67AA " + (i + 1)}</b><small>\u5C31\u7EEA</small><i class="rs-health"><i></i></i></button>`).join("")}</div><div class="rs-orders"><button id="rs-retreat"><span>\u2199</span>\u8FD4\u56DE\u64A4\u79BB\u533A</button><button id="rs-hold"><span>\u2299</span>\u539F\u5730\u9632\u5B88</button><button id="rs-gate" aria-pressed="false"><span>\u25A5</span>\u95E8\u969C <b>2</b></button></div></div>
  ${s2.version >= 4 ? `<div class="rs-supportbar"><span>\u6218\u672F\u8865\u7ED9 <b id="rs-supplies">${s2.supplies}</b></span><button id="rs-decoy" aria-pressed="false"><b>\u25C9 \u8BF1\u9975\u4FE1\u6807</b><small>\u5F15\u5F00\u5C38\u7FA4 6 \u79D2 \xB7 \u7528 1 \u4EFD</small></button><button id="rs-medic" aria-pressed="false"><b>\uFF0B \u8303\u56F4\u6025\u6551</b><small>\u961F\u5458\u6062\u590D 55 \xB7 \u7528 1 \u4EFD</small></button></div>` : ""}<p id="rs-notice" role="status" aria-live="polite"></p><section id="rs-result" hidden aria-live="polite"></section></div>
  <aside class="rs-rail"><section class="rs-objective"><span class="rs-eyebrow">\u672C\u5173\u76EE\u6807</span><h2>${s2.version >= 3 ? m.mode === "hold" ? "\u64A4\u79BB\u5E73\u6C11 \xB7 \u5B88\u4F4F\u63A5\u9A73" : "\u64A4\u79BB\u5E73\u6C11 \xB7 \u6E05\u527F\u5C38\u7FA4" : m.mode === "hold" ? "\u4FDD\u62A4\u5E73\u6C11 \xB7 \u5B88\u4F4F\u9632\u7EBF" : "\u4FDD\u62A4\u5E73\u6C11 \xB7 \u6E05\u9664\u611F\u67D3"}</h2><div class="rs-goal"><strong id="rs-safe">${m.total}</strong><span>/ ${m.total} \u4EBA${s2.version >= 3 ? "\u5DF2\u64A4\u79BB" : "\u5B58\u6D3B"}<br><b>\u81F3\u5C11${s2.version >= 3 ? "\u64A4\u79BB" : "\u4FDD\u4F4F"} ${m.quota} \u4EBA</b></span></div><div id="rs-civilians" class="rs-people" aria-label="\u5E73\u6C11\u72B6\u6001"></div><div class="rs-civil-count"><span>\u5DF2\u64A4\u79BB <b id="rs-saved">0</b></span><span>\u8DDF\u968F <b id="rs-following">0</b></span><span ${s2.version < 3 ? "hidden" : ""}>\u96C6\u7ED3 <b id="rs-boarding">0</b></span><span>\u611F\u67D3 <b id="rs-lost">0</b></span></div><p class="rs-win-rule">${s2.version >= 3 ? "\u63A5\u5E94 \u2192 \u96C6\u7ED3 \u2192 \u5B88\u4F4F " + m.extraction.seconds + " \u79D2" + (m.mode === "clear" ? "\uFF0C\u518D\u6E05\u9664\u5168\u90E8\u5C38\u7FA4" : "") : m.mode === "hold" ? s2.version >= 2 ? "\u5168\u5458\u64A4\u79BB\u5373\u53EF\u5B8C\u6210\uFF1B\u4E5F\u53EF\u575A\u6301 " + m.seconds + " \u79D2\u6216\u6E05\u9664\u5168\u90E8\u4E27\u5C38" : "\u575A\u6301 " + m.seconds + " \u79D2\uFF0C\u6216\u6E05\u9664\u5168\u90E8\u4E27\u5C38" : "\u5728 " + m.seconds + " \u79D2\u5185\u6E05\u9664\u5168\u90E8\u4E27\u5C38"}</p></section>
  <section class="rs-threat"><div><h2>\u611F\u67D3\u6F6E</h2><span id="rs-wave">0 / ${m.waves.length}</span></div><div class="rs-wave-track">${m.waves.map((w, i) => `<i data-wave="${i + 1}" style="--at:${w.at / m.seconds * 100}%" title="\u7B2C ${i + 1} \u6CE2 \xB7 ${w.at} \u79D2"></i>`).join("")}<b id="rs-wave-progress"></b></div><div class="rs-threat-count"><span><b id="rs-enemies">0</b>\u573A\u4E0A\u4E27\u5C38</span><span><b id="rs-kills">0</b>\u5DF2\u6E05\u9664</span></div><p id="rs-next-wave"></p></section>
  <section class="rs-intel"><h2>\u6218\u573A\u52A8\u6001</h2><ol id="rs-log"></ol></section><section class="rs-settings"><div id="rs-upgrades">${s2.upgrades.map((id) => `<span title="${UPGRADES[id].text}">${icons[id]} ${UPGRADES[id].name}</span>`).join("")}</div><label>\u611F\u67D3\u5F3A\u5EA6<select id="rs-difficulty" ${s2.phase === "deploy" && !watch2 ? "" : "disabled"}><option value="normal">\u6807\u51C6 \xB7 \u63A5\u89E6\u540E\u53EF\u62A2\u6551</option><option value="challenge">\u9669\u5883 \xB7 \u63A5\u89E6\u5373\u611F\u67D3</option></select></label><button id="rs-restart" class="quiet">\u91CD\u65B0\u90E8\u7F72\u672C\u5173</button><button id="rs-new-campaign" class="quiet">\u4ECE\u7B2C\u4E00\u5173\u5F00\u59CB</button><div id="rs-replay-controls" ${watch2 ? "" : "hidden"}><label>\u56DE\u653E\u901F\u5EA6<select id="rs-speed"><option value="1">1\xD7</option><option value="2">2\xD7</option><option value="4">4\xD7</option></select></label><span id="rs-replay-status"></span></div></section></aside></div>`;
     root3().querySelectorAll("[data-mission]").forEach((b) => b.onclick = () => newMission(Number(b.dataset.mission)));
-    root3().querySelectorAll("[data-squad]").forEach((b) => b.onclick = () => {
-      selected3 = b.dataset.squad === "all" ? "all" : Number(b.dataset.squad);
-      building = false;
-      support = null;
-      hud(true);
-      paint();
-    });
+    root3().querySelectorAll("[data-squad]").forEach((b) => b.onclick = () => selectSquad(b.dataset.squad === "all" ? "all" : Number(b.dataset.squad)));
     if ($("rs-call")) $("rs-call").onclick = () => command({ type: "evacuate" });
     for (const type of ["decoy", "medic"]) if ($("rs-" + type)) $("rs-" + type).onclick = () => {
       support = support === type ? null : type;
@@ -7607,22 +7839,29 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
       speed2 = Number(e.target.value);
     };
     const canvas2 = $("rescue-board"), wrap = canvas2.parentElement;
-    let pan = null;
+    $("rs-box-select").onclick = () => {
+      cancelInput();
+      selectTool = !selectTool;
+      building = false;
+      support = null;
+      hud(true);
+      paint();
+    };
     $("rs-zoom").onclick = () => {
+      cancelInput();
       const zoomed = wrap.classList.toggle("rs-zoomed");
       $("rs-zoom").setAttribute("aria-pressed", String(zoomed));
       $("rs-zoom").textContent = zoomed ? "\u7F29\u5C0F\u5730\u56FE" : "\u653E\u5927\u5730\u56FE";
       if (zoomed) {
-        const units = match3.state.soldiers.filter((u) => u.hp > 0 && (selected3 === "all" || u.group === selected3));
+        const units = match3.state.soldiers.filter((u) => ids().includes(u.id));
         const x = units.reduce((n, u) => n + u.x, 0) / Math.max(1, units.length), y = units.reduce((n, u) => n + u.y, 0) / Math.max(1, units.length);
         wrap.scrollLeft = canvas2.clientWidth * x / 24 - wrap.clientWidth / 2;
         wrap.scrollTop = canvas2.clientHeight * y / 16 - wrap.clientHeight / 2;
       }
       paint();
     };
-    function orderAt(e) {
+    function placeAt(p) {
       if (watch2 || match3.state.phase === "ended") return;
-      const p = rescuePoint(canvas2, e);
       if (building) {
         const radius = Math.max(0.85, 22 * 24 / canvas2.getBoundingClientRect().width), door = [...m.doors].sort((a, b) => Math.hypot(a.x - p.x, a.y - p.y) - Math.hypot(b.x - p.x, b.y - p.y))[0];
         if (door && Math.hypot(door.x - p.x, door.y - p.y) < radius) command({ type: "gate", door: door.id });
@@ -7633,42 +7872,21 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
         command({ type: support, x: p.x, y: p.y });
         return;
       }
-      const troop = match3.state.soldiers.filter((u) => u.hp > 0).find((u) => Math.hypot(u.x - p.x, u.y - p.y) < 0.48);
-      if (troop && !e.shiftKey) {
-        selected3 = troop.group;
-        hud(true);
-      } else command({ type: "move", ids: ids(), x: p.x, y: p.y });
-      paint();
     }
-    canvas2.onpointermove = (e) => {
-      hover = rescuePoint(canvas2, e);
-      if (pan) {
-        const dx = e.clientX - pan.x, dy = e.clientY - pan.y;
-        if (Math.hypot(dx, dy) > 6) pan.moved = true;
-        if (pan.moved) {
-          wrap.scrollLeft = pan.left - dx;
-          wrap.scrollTop = pan.top - dy;
-        }
-      }
-    };
-    canvas2.onpointerleave = () => {
-      hover = null;
-    };
-    canvas2.onpointerdown = (e) => {
-      e.preventDefault();
-      canvas2.focus({ preventScroll: true });
-      if (wrap.classList.contains("rs-zoomed")) {
-        canvas2.setPointerCapture(e.pointerId);
-        pan = { x: e.clientX, y: e.clientY, left: wrap.scrollLeft, top: wrap.scrollTop, moved: false };
-      } else orderAt(e);
-    };
-    canvas2.onpointerup = (e) => {
-      if (pan && !pan.moved) orderAt(e);
-      pan = null;
-    };
-    canvas2.onpointercancel = () => {
-      pan = null;
-    };
+    cancelInput = bindRescueInput(canvas2, { state: () => ({ ...match3.state, interactive: !watch2 && match3.state.phase !== "ended" }), selected: ids, select: selectUnits, move: moveTo, place: placeAt, placing: () => building || support, boxMode: () => selectTool, boxDone: () => {
+      selectTool = false;
+      hud(true);
+    }, cancelPlacement: () => {
+      building = false;
+      support = null;
+      hud(true);
+      paint();
+    }, visual: (v) => {
+      hover = v?.hover || null;
+      selectionBox = v?.box || null;
+      movePreview = v?.move || null;
+      paint();
+    } });
     hud(true);
     paint();
     if (restoreNotice) {
@@ -7684,6 +7902,10 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     hudPhase = s2.phase;
     const m = rescueMap(s2.level, s2.version), st = rescueStats(s2);
     $("rs-phase").textContent = watch2 ? "\u56DE\u653E" : { deploy: "\u90E8\u7F72\u4E2D", running: "\u884C\u52A8\u4E2D", paused: "\u5DF2\u6682\u505C", ended: s2.winner ? "\u6551\u63F4\u6210\u529F" : "\u884C\u52A8\u7ED3\u675F" }[s2.phase];
+    const selectedCount = ids().length;
+    $("rs-selected").textContent = watch2 ? "\u884C\u52A8\u56DE\u653E" : selectedCount ? "\u5DF2\u9009 " + selectedCount + " \u4EBA" + (selected3 === "all" ? " \xB7 \u5168\u961F" : typeof selected3 === "number" ? " \xB7 " + (selected3 === 2 ? "\u62A4\u536B\u961F" : "\u6B65\u67AA " + (selected3 + 1) + " \u961F") : "") : "\u672A\u9009\u4E2D\u961F\u5458";
+    $("rs-box-select").setAttribute("aria-pressed", String(selectTool));
+    $("rs-box-select").disabled = !!watch2 || s2.phase === "ended";
     $("rs-timer").textContent = String(Math.floor(st.remaining / 60)).padStart(2, "0") + ":" + String(st.remaining % 60).padStart(2, "0");
     $("rs-timer").classList.toggle("urgent", st.remaining <= 15);
     $("rs-start").textContent = watch2 ? replayDone ? "\u56DE\u653E\u7ED3\u675F" : replayPlaying ? "\u6682\u505C\u56DE\u653E" : "\u7EE7\u7EED\u56DE\u653E" : { deploy: "\u25B6 \u5F00\u59CB\u884C\u52A8", running: "\u2161 \u6682\u505C", paused: "\u25B6 \u7EE7\u7EED\u884C\u52A8", ended: s2.winner ? "\u2713 \u884C\u52A8\u5B8C\u6210" : "\u884C\u52A8\u7ED3\u675F" }[s2.phase];
@@ -7708,7 +7930,9 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     $("rs-log").innerHTML = s2.log.slice(-4).reverse().map((e) => `<li class="${e.kind}"><time>${String(Math.floor(e.tick / 30 / 60)).padStart(2, "0")}:${String(Math.floor(e.tick / 30) % 60).padStart(2, "0")}</time>${esc3(e.text)}</li>`).join("");
     root3().querySelectorAll("[data-squad]").forEach((b) => {
       const group = b.dataset.squad === "all" ? "all" : Number(b.dataset.squad), units = s2.soldiers.filter((u) => group === "all" || u.group === group), alive = units.filter((u) => u.hp > 0);
-      b.setAttribute("aria-pressed", String(selected3 === group));
+      const chosen = ids(), complete = alive.length > 0 && alive.every((u) => chosen.includes(u.id));
+      b.setAttribute("aria-pressed", String(complete));
+      b.classList.toggle("part-selected", !complete && alive.some((u) => chosen.includes(u.id)));
       b.disabled = !alive.length || !!watch2 || s2.phase === "ended";
       if (group !== "all") {
         b.querySelector("small").textContent = !alive.length ? "\u5DF2\u5012\u4E0B" : alive.some((u) => u.reload) ? "\u6362\u5F39\u4E2D" : alive.some((u) => u.path.length) ? "\u884C\u8FDB\u4E2D" : s2.phase === "deploy" ? "\u5F85\u547D" : "\u9632\u5B88\u4E2D";
@@ -7771,7 +7995,7 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     if (!watch2) save2();
   }
   function paint() {
-    if (active3 && match3 && $("rescue-board")) drawRescue($("rescue-board"), match3.state, { selected: selected3, building, support, hover, reduced: reduced2 });
+    if (active3 && match3 && $("rescue-board")) drawRescue($("rescue-board"), match3.state, { selectedIds: ids(), building, support, hover, reduced: reduced2, selectionBox, movePreview, orderMarker: orderMarker && performance.now() - orderMarker.at < 1600 ? orderMarker : null });
   }
   function sounds() {
     const s2 = match3.state;
@@ -7846,22 +8070,28 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     raf = requestAnimationFrame(frame);
   }
   window.addEventListener("keydown", (e) => {
-    if (!active3 || ["INPUT", "SELECT", "TEXTAREA", "BUTTON"].includes(document.activeElement?.tagName)) return;
-    if (e.code === "Space") {
+    if (!active3 || e.repeat || e.ctrlKey || e.metaKey || e.altKey || ["INPUT", "SELECT", "TEXTAREA"].includes(document.activeElement?.tagName)) return;
+    if (e.code === "Space" && document.activeElement?.tagName !== "BUTTON") {
       e.preventDefault();
       pause();
-    } else if (["1", "2", "3", "4"].includes(e.key)) {
-      selected3 = e.key === "4" ? "all" : Number(e.key) - 1;
-      building = false;
-      hud(true);
+    } else if (["1", "2", "3", "4"].includes(e.key) && !watch2) {
+      e.preventDefault();
+      selectSquad(e.key === "4" ? "all" : Number(e.key) - 1);
     } else if (e.key === "Escape") {
+      cancelInput();
       building = false;
       support = null;
+      selectTool = false;
       hud(true);
+      paint();
     } else if (e.key.toLowerCase() === "r" && !watch2) retreat();
+  });
+  window.addEventListener("blur", () => {
+    if (active3) cancelInput();
   });
   document.addEventListener("visibilitychange", () => {
     if (document.hidden && active3) {
+      cancelInput();
       if (watch2) replayPlaying = false;
       else if (match3.state.phase === "running") command({ type: "pause" });
       save2();
@@ -11340,6 +11570,7 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     $2("start").textContent = { ready: "\u5F00\u59CB\u5BF9\u5C40", playing: "\u6682\u505C", paused: "\u7EE7\u7EED\u5BF9\u5C40", finished: "\u518D\u6765\u4E00\u5C40", replay: "\u6682\u505C\u56DE\u653E", "replay-paused": "\u7EE7\u7EED\u56DE\u653E", "replay-ended": "\u5F00\u59CB\u5BF9\u5C40" }[mode];
     $2("restart").hidden = mode === "ready";
     $2("seed").disabled = $2("new-seed").disabled = $2("opponent").disabled = mode !== "ready" && !finished;
+    $2("restart").textContent = game === "pong" && !s2.version ? "\u7075\u654F\u7403\u62CD \xB7 \u65B0\u5F00\u5C40" : "\u91CD\u5F00";
     $2("last").disabled = !history[game] && !lastRecord();
     $2("export").disabled = !(isReplay ? replayData : match4.record.frames.length);
     $2("source").textContent = isReplay ? "\u56DE\u653E" : items.length ? labels[items.at(-1).source] || "" : "";
@@ -11549,7 +11780,7 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     $2("kart").hidden = true;
     $2("dance").hidden = true;
     $2("runner").hidden = true;
-    if (["rescue-1", "rescue-2", "rescue-3", "rescue-4"].includes(record?.format)) {
+    if (["rescue-1", "rescue-2", "rescue-3", "rescue-4", "rescue-5"].includes(record?.format)) {
       watchRescue(record);
       saveCurrent();
       cancelDecision();
@@ -11769,7 +12000,10 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     }
   });
   window.addEventListener("keyup", (e) => {
-    if (keys3[e.key]) keyY = 0;
+    if (keys3[e.key]) {
+      if (game === "pong" && keyY) humanY = snapshot().paddles[0];
+      keyY = 0;
+    }
   });
   document.querySelectorAll("[data-key]").forEach((b) => {
     b.onpointerdown = (e) => {
@@ -11779,6 +12013,7 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
       if (game === "pong") keyY = pongAxis(pongView, b.dataset.key);
     };
     b.onpointerup = b.onpointercancel = () => {
+      if (game === "pong" && keyY) humanY = snapshot().paddles[0];
       keyY = 0;
     };
     b.onclick = (e) => {

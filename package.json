@@ -31,6 +31,8 @@
     "check:gameplay": "node scripts/check-gameplay-browser.mjs",
     "bench:gameplay": "node scripts/compare-gameplay.mjs",
     "check:controls": "node scripts/check-controls-browser.mjs",
+    "check:pong-skills": "node scripts/check-pong-skills-browser.mjs",
+    "bench:pong": "node scripts/check-pong-balance.mjs",
     "check:chess-screen": "node scripts/check-chess-screen.mjs",
     "check:chess-phase": "node scripts/check-chess-phase-browser.mjs",
     "check:motion": "node scripts/check-motion-browser.mjs",

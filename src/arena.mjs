@@ -2,20 +2,21 @@ import { fingerprint, noise } from './common.mjs';
 import { initSnake, stepSnake, snakeOptions, snakeRule } from './snake.mjs';
 import { planSnake } from './snake-planner.mjs';
 import { initPong, stepPong, motor, pongRule, TACTICS } from './pong.mjs';
+import {createPongOpponent,pongOpponentInput} from './pong-opponent.mjs';
 
-export const RULES='round2.3';
+export const RULES='round2.4';
 export const GAMES={
   snake:{name:'双蛇争食',init:initSnake,step:stepSnake,max:180,interval:500},
   pong:{name:'球台对攻',init:initPong,step:stepPong,max:7200,interval:1000/60}
 };
-export const LABELS={up:'向上',right:'向右',down:'向下',left:'向左',upper:'压上侧',lower:'压下侧',steady:'守中',change:'变落点'};
+export const LABELS={up:'向上',right:'向右',down:'向下',left:'向左',upper:'压上侧',lower:'压下侧',steady:'守中',change:'变落点',watch:'观察球路',track:'跟随来球',center:'守住中线'};
 export function describeAction(game, value) {
   return LABELS[value] ?? String(value);
 }
 export function startingState(game, seed, opening=[],rules=RULES) {
   if(!Object.hasOwn(GAMES,game)||!Number.isSafeInteger(seed)||seed<0||seed>0xffffffff) throw new Error('无效游戏或种子');
   if(!Array.isArray(opening)||opening.length) throw new Error('无效起始局面');
-  return game==='snake'?initSnake(seed,{legacy:rules==='round2.1'}):initPong(seed,{legacy:rules!=='round2.3'});
+  return game==='snake'?initSnake(seed,{legacy:rules==='round2.1'}):initPong(seed,{version:rules==='round2.4'?3:rules==='round2.3'?2:1});
 }
 export function begin(game,seed,opening=[],rules=RULES) {
   return {state:startingState(game,seed,opening,rules),record:{format:1,rules,game,seed,opening:[...opening],
@@ -24,9 +25,9 @@ export function begin(game,seed,opening=[],rules=RULES) {
 export function advance(match,input) {
   const before=match.state;
   const next=GAMES[before.game].step(before,input);
-  const val=Array.isArray(input)?[...input]:input;
+  const val=Array.isArray(input)?structuredClone(input):input;
   const frames=match.record.frames, last=frames.at(-1);
-  if(before.game==='pong'&&last&&last[1][0]===val[0]&&last[1][1]===val[1]) last[0]++;
+  if(before.game==='pong'&&last&&JSON.stringify(last[1])===JSON.stringify(val)) last[0]++;
   else frames.push([1,val]);
   match.state=next;
   if(next.winner!==null) seal(match);
@@ -38,7 +39,7 @@ export function seal(match) {
   return match.record;
 }
 export function* playback(record) {
-  if(record?.format!==1||!['round2.1','round2.2',RULES].includes(record.rules)||!Object.hasOwn(GAMES,record.game)||!Array.isArray(record.frames)||
+  if(record?.format!==1||!['round2.1','round2.2','round2.3',RULES].includes(record.rules)||!Object.hasOwn(GAMES,record.game)||!Array.isArray(record.frames)||
     !Array.isArray(record.decisions)||record.decisions.length>2000) throw new Error('回放格式或版本不匹配');
   let s=startingState(record.game,record.seed,record.opening,record.rules), total=s.tick;
   for(const frame of record.frames) {
@@ -69,6 +70,7 @@ export function pick(s,actor,policy='rule',salt=0) {
 export function simulate(game,seed,policies,opts={}) {
   const match=begin(game,seed,opts.opening||[]);
   let s=match.state, epoch=-1, tactics=['steady','steady'], decisions=0;
+  const brains=[createPongOpponent(),createPongOpponent()],readKeys=['',''];
   const choose=(actor)=>{
     const t=performance.now(), id=pick(s,actor,policies[actor],opts.salt||0);
     if(opts.record) match.record.decisions.push({tick:s.tick,actor,id,source:policies[actor],ms:Math.round((performance.now()-t)*100)/100});
@@ -77,7 +79,13 @@ export function simulate(game,seed,policies,opts={}) {
   while(s.winner===null) {
     let action;
     if(game==='snake') action=[choose(0),choose(1)];
-    else {
+    else if(s.version>=3){
+      action=brains.map((brain,i)=>{
+        const target=pongOpponentInput(s,brain,{side:i,policy:policies[i],difficulty:opts.difficulty||'normal'}),key=brain.observedEpoch+'/'+brain.phase;
+        if(key!==readKeys[i]){readKeys[i]=key;decisions++;if(opts.record)match.record.decisions.push({tick:s.tick,actor:i,id:brain.phase,source:policies[i],ms:0});}
+        return target;
+      });
+    }else {
       if(s.epoch!==epoch){epoch=s.epoch;tactics=[choose(0),choose(1)];}
       action=tactics.map((t,i)=>motor(s,i,t));
     }

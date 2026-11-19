@@ -2,7 +2,8 @@ import {localGameStorage as localStorage,sessionGameStorage as sessionStorage} f
 import { begin, advance, seal, checkReplay, playback, GAMES, describeAction, pick } from '../src/arena.mjs';
 import { snakeMoves, safeOptions } from '../src/snake.mjs';
 import { planSnake, snakePlans } from '../src/snake-planner.mjs';
-import { motor, HEIGHT, DIFFICULTIES } from '../src/pong.mjs';
+import { motor, HEIGHT, DIFFICULTIES, PONG_SKILLS } from '../src/pong.mjs';
+import {createPongOpponent,pongOpponentInput} from '../src/pong-opponent.mjs';
 import { openWindow } from '../src/decisions.mjs';
 import { draw, geometry } from './board.mjs';
 import {PONG_VIEWS,pongAxis,pongTarget,foodEvents} from './arcade-view.mjs';
@@ -29,7 +30,7 @@ let game='snake',mode='ready',match,opponent='planner',cap={laya:false,jev:false
 let humanDir='right',humanY=300,keyY=0,tactic='steady',tacticEpoch=-1,edge=-1;
 let prepared=null, gate=null, request=null, matchId='', nextAt=0, lastTime=0, remainder=0;
 let lastPaint=null,movedAt=0,reader=null,replayData=null,replayCursor=0,items=[],lastHud='',audio=null;
-let difficulty='normal',botY=300,trail=[],foodBursts=[],snakeQueue=[];
+let difficulty='easy',botY=300,trail=[],foodBursts=[],snakeQueue=[],pongQueue=[],pongBrain=createPongOpponent();
 let pongView='bottom';try{const stored=localStorage.getItem('arena-pong-view');if(PONG_VIEWS.includes(stored))pongView=stored;}catch{}
 let sound=false,runnerAudio=null;const history={};const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const playing=()=>mode==='playing';
@@ -69,11 +70,12 @@ function opponentMenu(preferModel=false){
 }
 function reset({stash=true}={}){
   if(stash)saveCurrent();cancelDecision();
+  if(stash&&game==='pong'&&match?.state.game==='pong'&&!(match.state.version>=3)){difficulty='easy';$('difficulty').value=difficulty;}
   let seed=Number($('seed').value);
   if(!Number.isSafeInteger(seed)||seed<0||seed>0xffffffff)seed=41003;
   $('seed').value=seed;match=begin(game,seed);matchId=Array.from(crypto.getRandomValues(new Uint32Array(4)),n=>n.toString(16).padStart(8,'0')).join('');
   mode='ready';reader=null;replayData=null;items=[];lastPaint=null;humanDir='right';humanY=300;keyY=0;
-  edge=-1;botY=300;trail=[];foodBursts=[];snakeQueue=[];tactic='steady';tacticEpoch=-1;remainder=0;say('');
+  edge=-1;botY=300;trail=[];foodBursts=[];snakeQueue=[];pongQueue=[];pongBrain=createPongOpponent();tactic='steady';tacticEpoch=-1;remainder=0;say('');
   $('game-title').textContent=GAMES[game].name;$('objective').textContent=instructions[game][0];
   $('how').textContent=instructions[game][1];canvas.setAttribute('aria-label',GAMES[game].name+'棋盘');
   document.querySelectorAll('.game-tab').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.game===game)));
@@ -97,6 +99,20 @@ function paint(now=performance.now()){
   if(!canvas.clientWidth)return;
   foodBursts=foodBursts.filter(e=>now-e.at<800);canvas.dataset.foodBursts=foodBursts.length;
   draw(canvas,snapshot(),{selected:edge,previous:lastPaint,progress:reduced?1:Math.min(1,(now-movedAt)/135),view:pongView,effects:foodBursts,now,reduced});
+  paintPongSkills();
+}
+function queuePongSkill(skill){
+ const s=snapshot();if(game!=='pong'||!playing()||s.version<3||s.serve||s.cooldowns[0][skill]>0)return;
+ if(pongQueue.length<3&&!pongQueue.includes(skill))pongQueue.push(skill);
+}
+function paintPongSkills(){
+ const s=snapshot(),modern=game==='pong'&&s.version>=3;$('pong-skills').hidden=!modern;if(!modern)return;
+ for(const [id,spec]of Object.entries(PONG_SKILLS)){
+  const b=$('pong-'+id),left=s.cooldowns[0][id],armed=s.armed[0]===id,active=id==='dash'&&s.dash[0]>0;
+  b.disabled=!playing()||!!s.serve||left>0;b.setAttribute('aria-pressed',String(armed||active));b.style.setProperty('--ready',(1-left/spec.cooldown)*100+'%');
+  b.querySelector('small').textContent=active?'冲刺中':armed?'下一拍触发':left>0?(left/60).toFixed(1)+' 秒':id==='dash'?'快速追球':id==='power'?'加速回击':'滑拍变弧线';
+ }
+ canvas.dataset.pongArmed=s.armed[0]||'';canvas.dataset.pongDash=String(s.dash[0]);canvas.dataset.pongShot=s.lastHit?.kind||'';canvas.dataset.pongCurve=String(s.curve);
 }
 function showEvents(){
   const list=$('events');list.replaceChildren(...items.slice(-3).reverse().map(ev=>{
@@ -109,19 +125,19 @@ function showEvents(){
 function refresh(force=false){
   const s=snapshot(), isReplay=replaying(), finished=mode==='finished'||mode==='replay-ended';
   const remaining=Math.max(0,Math.ceil((GAMES[game].max-s.tick)*GAMES[game].interval/1000-1e-8));
-  const tag=[mode,game,...s.score,s.turn,remaining,items.length,opponent].join('/');
+  const tag=[mode,game,...s.score,s.turn,remaining,items.length,opponent,difficulty].join('/');
   if(!force&&tag===lastHud)return;lastHud=tag;
   if(isReplay){
     const agent=replayData?.decisions.find(e=>e.source==='laya'||e.source==='jev');
     for(const i of [0,1])$('name'+i).textContent=agent?(agent.actor===i?labels[agent.source]:'规则'):(i===0?'青方':'橙方');
-  }else{$('name0').textContent='你';$('name1').textContent=opponent==='laya-plan'?'混合对手':opponent.startsWith('laya')?'Laya':labels[opponent]||'对手';}
+  }else{$('name0').textContent='你';$('name1').textContent=game==='pong'&&opponent==='rule'?({easy:'练习对手',normal:'标准对手',hard:'进阶对手'})[difficulty]:opponent==='laya-plan'?'混合对手':opponent.startsWith('laya')?'Laya':labels[opponent]||'对手';}
   $('score0').textContent=s.score[0];$('score1').textContent=s.score[1];
   $('timer').textContent=String(Math.floor(remaining/60)).padStart(2,'0')+':'+String(remaining%60).padStart(2,'0');
   $('status').textContent=({ready:'待开局',paused:'已暂停',finished:'已结束',replay:'回放中','replay-paused':'回放暂停','replay-ended':'回放结束'})[mode]||
      '对局中';
   $('start').textContent=({ready:'开始对局',playing:'暂停',paused:'继续对局',finished:'再来一局',replay:'暂停回放','replay-paused':'继续回放','replay-ended':'开始对局'})[mode];
   $('restart').hidden=mode==='ready';$('seed').disabled=$('new-seed').disabled=$('opponent').disabled=mode!=='ready'&&!finished;
-  $('restart').textContent=game==='pong'&&!s.version?'灵敏球拍 · 新开局':'重开';
+  $('restart').textContent=game==='pong'&&!(s.version>=3)?'技巧版 · 新开局':'重开';
   $('last').disabled=!history[game]&&!lastRecord();$('export').disabled=!(isReplay?replayData:match.record.frames.length);
   $('source').textContent=isReplay?'回放':items.length?(labels[items.at(-1).source]||''):'';
   $('result').hidden=!(finished||mode==='paused'||mode==='replay-paused');
@@ -169,7 +185,7 @@ function setTiming(){
 function start(){
   if(mode==='replay'){mode='replay-paused';refresh(true);return;}
   if(mode==='replay-paused'){mode='replay';setTiming();refresh(true);return;}
-  if(playing()){mode='paused';keyY=0;cancelDecision();refresh(true);return;}
+  if(playing()){mode='paused';keyY=0;pongQueue=[];cancelDecision();refresh(true);paintPongSkills();return;}
   if(mode!=='paused')reset();
   mode='playing';setTiming();refresh(true);canvas.focus({preventScroll:true});
   if(innerWidth<=650)$('arcade').querySelector('.cabinet').scrollIntoView({block:'center',behavior:'instant'});
@@ -195,13 +211,18 @@ function frame(now){
       remainder+=Math.min(now-lastTime,120);
       while(remainder>=1000/60&&playing()){
         const s=snapshot();
-        if(s.epoch!==tacticEpoch){
+        if(!(s.version>=3)&&s.epoch!==tacticEpoch){
           tacticEpoch=s.epoch;tactic=pick(s,1,opponent);
           note({tick:s.tick,actor:1,id:tactic,source:opponent,ms:0});
         }
         if(keyY)humanY=Math.max(0,Math.min(600,s.paddles[0]+keyY*60));
-        if(s.tick%DIFFICULTIES[difficulty].reaction===0)botY=motor(s,1,tactic,difficulty);
-        after([Math.round(humanY),botY],now);remainder-=1000/60;
+        if(s.version>=3){
+          botY=pongOpponentInput(s,pongBrain,{difficulty,policy:opponent});const observed=pongBrain.observedEpoch+'/'+pongBrain.phase;
+          if(observed!==tacticEpoch){tacticEpoch=observed;note({tick:s.tick,actor:1,id:pongBrain.phase,source:opponent,ms:0});}
+        }
+        else if(s.tick%DIFFICULTIES[difficulty].reaction===0)botY=motor(s,1,tactic,difficulty);
+        const skill=pongQueue.shift(),human=skill&&s.version>=3?{target:Math.round(humanY),skill}:Math.round(humanY);
+        after([human,botY],now);remainder-=1000/60;
       }
     }
     paint(now);refresh();
@@ -243,21 +264,21 @@ function control(dir){
 }
 function stashArcade(){
  if($('arcade').hidden||!match)return;
- if(playing()){mode='paused';keyY=0;cancelDecision();}
+ pongQueue=[];if(playing()){mode='paused';keyY=0;cancelDecision();}
  if(mode==='replay')mode='replay-paused';
  saveCurrent();
- sessions.set(game,{match,mode,opponent,difficulty,humanDir,humanY,botY,tactic,tacticEpoch,trail:[...trail],snakeQueue:[...snakeQueue],items:[...items],reader,replayData,replayCursor,matchId});
+ sessions.set(game,{match,mode,opponent,difficulty,humanDir,humanY,botY,pongBrain,tactic,tacticEpoch,trail:[...trail],snakeQueue:[...snakeQueue],items:[...items],reader,replayData,replayCursor,matchId});
  if(!replaying())try{localStorage.setItem('arena-session-'+game,JSON.stringify({record:seal(match),opponent,difficulty}));}catch{}
 }
 function restoreArcade(target){
  let saved=sessions.get(target);
  if(!saved)try{
   const value=JSON.parse(localStorage.getItem('arena-session-'+target));
-  if(value?.record?.game===target){const state=checkReplay(value.record);saved={match:{state,record:value.record},mode:state.winner!==null?'finished':state.tick?'paused':'ready',opponent:value.opponent,difficulty:value.difficulty,humanDir:state.dirs?.[0]||'right',humanY:state.paddles?.[0]||300,botY:state.paddles?.[1]||300,tactic:'steady',tacticEpoch:-1,trail:[],snakeQueue:[],items:value.record.decisions.slice(-3),reader:null,replayData:null,replayCursor:0,matchId:crypto.randomUUID()};}
+  if(value?.record?.game===target){const state=checkReplay(value.record);saved={match:{state,record:value.record},mode:state.winner!==null?'finished':state.tick?'paused':'ready',opponent:value.opponent,difficulty:value.difficulty||'easy',humanDir:state.dirs?.[0]||'right',humanY:state.paddles?.[0]||300,botY:state.paddles?.[1]||300,pongBrain:createPongOpponent(),tactic:'steady',tacticEpoch:-1,trail:[],snakeQueue:[],items:value.record.decisions.slice(-3),reader:null,replayData:null,replayCursor:0,matchId:crypto.randomUUID()};}
  }catch{}
  game=target;opponent=saved?.opponent||(game==='snake'?'planner':'rule');
  reset({stash:false});
- if(saved){({match,mode,opponent,difficulty,humanDir,humanY,botY,tactic,tacticEpoch,trail,snakeQueue,items,reader,replayData,replayCursor,matchId}=saved);$('seed').value=match.state.seed;$('difficulty').value=difficulty;lastPaint=null;foodBursts=[];}
+ if(saved){({match,mode,opponent,difficulty,humanDir,humanY,botY,pongBrain,tactic,tacticEpoch,trail,snakeQueue,items,reader,replayData,replayCursor,matchId}=saved);$('seed').value=match.state.seed;$('difficulty').value=difficulty;lastPaint=null;foodBursts=[];}
  opponentMenu();refresh(true);paint();
 }
 function navigate(target,updateURL=true,force=false){
@@ -280,7 +301,7 @@ new ResizeObserver(()=>document.querySelector('[data-game][aria-pressed=true]')?
 window.addEventListener('pagehide',stashArcade);
 $('pong-view').onchange=e=>{setPongView(e.target.value);refresh(true);paint();};
 $('pong-rotate').onclick=()=>{setPongView(PONG_VIEWS[(PONG_VIEWS.indexOf(pongView)+1)%4]);refresh(true);paint();};
-$('difficulty').onchange=e=>{difficulty=e.target.value;};
+$('difficulty').onchange=e=>{difficulty=e.target.value;pongBrain=createPongOpponent();refresh(true);};
 $('opponent').onchange=e=>{opponent=e.target.value;if(mode!=='ready')reset();refresh(true);};
 $('new-seed').onclick=()=>{$('seed').value=crypto.getRandomValues(new Uint32Array(1))[0];reset();};
 $('seed').onchange=()=>reset();$('start').onclick=start;$('restart').onclick=()=>reset();
@@ -307,6 +328,8 @@ $('upload').onchange=async e=>{
 const keys={ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right',w:'up',s:'down',a:'left',d:'right'};
 window.addEventListener('keydown',e=>{
   if(!playing()||['INPUT','SELECT','TEXTAREA'].includes(document.activeElement?.tagName))return;
+  const skill=game==='pong'?({ShiftLeft:'dash',ShiftRight:'dash',KeyJ:'power',KeyK:'spin'})[e.code]:null;
+  if(skill){e.preventDefault();if(!e.repeat)queuePongSkill(skill);return;}
   if(keys[e.key]){e.preventDefault();control(keys[e.key]);if(game==='pong')keyY=pongAxis(pongView,keys[e.key]);}
 });
 window.addEventListener('keyup',e=>{if(keys[e.key]){if(game==='pong'&&keyY)humanY=snapshot().paddles[0];keyY=0;}});
@@ -315,6 +338,9 @@ document.querySelectorAll('[data-key]').forEach(b=>{
   b.onpointerup=b.onpointercancel=()=>{if(game==='pong'&&keyY)humanY=snapshot().paddles[0];keyY=0;};
   b.onclick=e=>{if(e.detail===0)control(b.dataset.key);};
 });
+for(const id of Object.keys(PONG_SKILLS)){
+ const b=$('pong-'+id);b.onpointerdown=e=>{if(e.button!==0)return;e.preventDefault();queuePongSkill(id);};b.onclick=e=>{if(e.detail===0)queuePongSkill(id);};
+}
 let touch=null;
 function point(e){const rect=canvas.getBoundingClientRect();return [e.clientX-rect.left,e.clientY-rect.top];}
 function targetPong(x,y){const g=geometry(canvas,'pong',pongView);humanY=Math.round(pongTarget(pongView,(x-g.x)/g.scale,(y-g.y)/g.scale));keyY=0;}

@@ -30,7 +30,7 @@ async function point(p,x,y){await p.locator('#rescue-board').scrollIntoViewIfNee
 async function clickMap(p,x,y,options={}){const q=await point(p,x,y);await p.mouse.click(q.x,q.y,options);}
 async function selected(p){return (await p.locator('#rescue-board').getAttribute('data-selected')).split(',').filter(Boolean);}
 try{
- const pong=await page('pong');await pong.locator('#start').click();await pong.keyboard.down('ArrowRight');await pong.waitForTimeout(220);await pong.keyboard.up('ArrowRight');await pong.locator('#start').click();let result=await exported(pong,'pong','pong-fast');assert.equal(result.state.version,2);assert.ok(result.state.paddles[0]>420);checks.push('球拍键盘提速，底部朝向左右移动正确，新规则可回放');
+ const pong=await page('pong');await pong.locator('#start').click();await pong.keyboard.down('ArrowRight');await pong.waitForTimeout(220);await pong.keyboard.up('ArrowRight');await pong.locator('#start').click();let result=await exported(pong,'pong','pong-fast');assert.equal(result.state.version,3);assert.ok(result.state.paddles[0]>420);checks.push('球拍键盘提速，底部朝向左右移动正确，新规则可回放');
  const p=await page('chess',mid);let before=await exported(p,'chess','chess-before');const unit=before.state.players[0].units.find(u=>u.cell!==null),uid=unit.uid;
  await startDrag(p,p.locator('.ac-piece-layer [data-uid="'+uid+'"]'));await shot(p,'chess-drop-desktop');await drop(p,p.locator('.ac-bench'));result=await exported(p,'chess','chess-bench');assert.equal(result.state.players[0].units.find(u=>u.uid===uid).cell,null);
  await startDrag(p,p.locator('.ac-bench [data-uid="'+uid+'"]'));await drop(p,p.locator('[data-cell="63"]'));result=await exported(p,'chess','chess-deploy');assert.equal(result.state.players[0].units.find(u=>u.uid===uid).cell,63);

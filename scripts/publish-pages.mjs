@@ -8,7 +8,7 @@ if(git(['status','--porcelain']))throw Error('先提交源码改动，再发布�
 if(git(['branch','--show-current'])!=='main')throw Error('正式入口只从 main 发布。');
 const source=git(['rev-parse','HEAD']),parent=pagesHead();
 const build=spawnSync(process.execPath,['scripts/build.mjs','--static'],{cwd:project,stdio:'inherit'});if(build.status!==0)process.exit(build.status||1);
-const release={source,channel:'main',previousPages:parent,createdAt:new Date().toISOString(),games:['snake','pong','cards','chess','rescue']};
+const release={source,channel:'main',previousPages:parent,createdAt:new Date().toISOString(),games:['snake','pong','cards','chess','rescue','kart','dance']};
 const files=new Map([
  ['.nojekyll',''],['index.html',fs.readFileSync(path.join(project,'site/index.html'))],
  ['release.json',JSON.stringify(release,null,2)+'\n'],['compare/index.html',fs.readFileSync(path.join(project,'web/compare.html'))]

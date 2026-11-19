@@ -35,7 +35,8 @@
     "check:chess-screen": "node scripts/check-chess-screen.mjs",
     "check:chess-phase": "node scripts/check-chess-phase-browser.mjs",
     "check:motion": "node scripts/check-motion-browser.mjs",
-    "check:kart-motion": "node scripts/check-kart-motion-browser.mjs"
+    "check:kart-motion": "node scripts/check-kart-motion-browser.mjs",
+    "check:runner-routes": "node scripts/check-runner-routes-browser.mjs"
   },
   "devDependencies": {
     "esbuild": "0.28.2"

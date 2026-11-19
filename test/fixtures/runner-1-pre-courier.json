@@ -1,0 +1,1 @@
+{"format":"runner-1","game":"runner","options":{"difficulty":"practice","seed":1605135506},"inputs":[{"tick":197,"actions":["left"]},{"tick":203,"actions":["jump"]},{"tick":209,"actions":["right"]},{"tick":215,"actions":["roll"]},{"tick":221,"actions":["board"]}],"end":{"tick":888,"hash":"aedc7a51"}}

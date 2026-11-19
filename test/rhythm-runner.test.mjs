@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {fingerprint} from '../src/common.mjs';
 import {rhythmArrangement,rhythmChart} from '../src/rhythm-music.mjs';
 import {createRhythm,advanceRhythm,pressRhythm,releaseRhythm,rhythmAccuracy,sealRhythm,replayRhythm} from '../src/rhythm.mjs';
-import {createRunner,stepRunner,runnerRow,runnerScene,jumpHeight,sealRunner,replayRunner} from '../src/runner.mjs';
+import {createRunner,stepRunner,runnerRow,runnerScene,jumpHeight,sealRunner,replayRunner} from '../src/runner-v1.mjs';
 
 test('rhythm charts use audible notes, have no same-lane overlap, and include holds and chords',()=>{
  for(const song of ['bay','metro'])for(const difficulty of ['practice','standard']){

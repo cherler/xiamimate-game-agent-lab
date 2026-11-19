@@ -42,7 +42,7 @@ function beep(freq=480){
   osc.type='sine';osc.frequency.value=freq;vol.gain.setValueAtTime(.048,start);
   vol.gain.exponentialRampToValueAtTime(.001,start+.075);osc.connect(vol);vol.connect(audio.destination);osc.start(start);osc.stop(start+.08);
 }
-window.addEventListener('glimmer-effect',e=>{const frequencies={cast:520,power:430,damage:170,heal:660,shield:780,block:260,freeze:880,buff:590,draw:360,silence:240,shot:125,rescue:720,infection:145,gate:320,victory:850};beep(frequencies[e.detail]||440);if(['heal','buff','cast','victory','rescue'].includes(e.detail))setTimeout(()=>beep((frequencies[e.detail]||440)*1.25),65);});
+window.addEventListener('glimmer-effect',e=>{const frequencies={coin:820,cast:520,power:430,damage:170,heal:660,shield:780,block:260,freeze:880,buff:590,draw:360,silence:240,shot:125,rescue:720,infection:145,gate:320,victory:850};beep(frequencies[e.detail]||440);if(['heal','buff','cast','victory','rescue'].includes(e.detail))setTimeout(()=>beep((frequencies[e.detail]||440)*1.25),65);});
 function cancelDecision(){gate?.cancel();gate=null;prepared=null;request?.abort();request=null;}
 function saveCurrent(){
   if(!match||replaying()||!match.record.frames.length)return;
@@ -218,9 +218,9 @@ function frame(now){
   lastTime=now;requestAnimationFrame(frame);
 }
 function watch(record){
-  if(['kart-1','dance-1','rhythm-1','runner-1'].includes(record?.format)){
-    const play={'kart-1':watchKart,'dance-1':watchClassicDance,'rhythm-1':watchDance,'runner-1':watchRunner}[record.format];play(record);
-    if(record.format!=='kart-1')closeKart();if(record.format!=='dance-1')closeClassicDance();if(record.format!=='rhythm-1')closeDance();if(record.format!=='runner-1')closeRunner();document.body.classList.add('motion-mode');
+  if(['kart-1','dance-1','rhythm-1','runner-1','runner-2'].includes(record?.format)){
+    const play={'kart-1':watchKart,'dance-1':watchClassicDance,'rhythm-1':watchDance,'runner-1':watchRunner,'runner-2':watchRunner}[record.format];play(record);
+    if(record.format!=='kart-1')closeKart();if(record.format!=='dance-1')closeClassicDance();if(record.format!=='rhythm-1')closeDance();if(!['runner-1','runner-2'].includes(record.format))closeRunner();document.body.classList.add('motion-mode');
     stashArcade();cancelDecision();mode='paused';closeChess();closeStrategy();closeRescue();
     $('arcade').hidden=true;$('strategy').hidden=true;$('rescue').hidden=true;$('kart').hidden=record.game!=='kart';$('dance').hidden=record.game!=='dance';$('runner').hidden=record.game!=='runner';
     document.querySelectorAll('[data-game]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.game===record.game)));window.history.replaceState(null,'','#'+record.game);return;

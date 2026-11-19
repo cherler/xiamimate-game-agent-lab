@@ -121,6 +121,7 @@ function refresh(force=false){
      '对局中';
   $('start').textContent=({ready:'开始对局',playing:'暂停',paused:'继续对局',finished:'再来一局',replay:'暂停回放','replay-paused':'继续回放','replay-ended':'开始对局'})[mode];
   $('restart').hidden=mode==='ready';$('seed').disabled=$('new-seed').disabled=$('opponent').disabled=mode!=='ready'&&!finished;
+  $('restart').textContent=game==='pong'&&!s.version?'灵敏球拍 · 新开局':'重开';
   $('last').disabled=!history[game]&&!lastRecord();$('export').disabled=!(isReplay?replayData:match.record.frames.length);
   $('source').textContent=isReplay?'回放':items.length?(labels[items.at(-1).source]||''):'';
   $('result').hidden=!(finished||mode==='paused'||mode==='replay-paused');
@@ -227,7 +228,7 @@ function watch(record){
     document.querySelectorAll('[data-game]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.game===record.game)));window.history.replaceState(null,'','#'+record.game);return;
   }
   closeKart();closeDance();closeClassicDance();closeRunner();$('kart').hidden=true;$('dance').hidden=true;$('runner').hidden=true;
-  if(['rescue-1','rescue-2','rescue-3','rescue-4'].includes(record?.format)){watchRescue(record);saveCurrent();cancelDecision();mode='ready';closeChess();closeStrategy();$('arcade').hidden=true;$('strategy').hidden=true;$('rescue').hidden=false;document.querySelectorAll('[data-game]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.game==='rescue')));window.history.replaceState(null,'','#rescue');return;}
+  if(['rescue-1','rescue-2','rescue-3','rescue-4','rescue-5'].includes(record?.format)){watchRescue(record);saveCurrent();cancelDecision();mode='ready';closeChess();closeStrategy();$('arcade').hidden=true;$('strategy').hidden=true;$('rescue').hidden=false;document.querySelectorAll('[data-game]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.game==='rescue')));window.history.replaceState(null,'','#rescue');return;}
   closeRescue();$('rescue').hidden=true;
   if(['glimmer-1','glimmer-2','glimmer-3','glimmer-4'].includes(record?.format)){saveCurrent();cancelDecision();mode='ready';$('arcade').hidden=true;$('strategy').hidden=false;if(record.game==='chess'&&['glimmer-3','glimmer-4'].includes(record.format)){closeStrategy();watchChess(record);}else{closeChess();watchStrategy(record,cap);}document.querySelectorAll('[data-game]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.game===record.game)));window.history.replaceState(null,'','#'+record.game);return;}
   closeChess();closeStrategy();$('arcade').hidden=false;$('strategy').hidden=true;checkReplay(record);saveCurrent();cancelDecision();game=record.game;opponentMenu();reset({stash:false});
@@ -308,10 +309,10 @@ window.addEventListener('keydown',e=>{
   if(!playing()||['INPUT','SELECT','TEXTAREA'].includes(document.activeElement?.tagName))return;
   if(keys[e.key]){e.preventDefault();control(keys[e.key]);if(game==='pong')keyY=pongAxis(pongView,keys[e.key]);}
 });
-window.addEventListener('keyup',e=>{if(keys[e.key])keyY=0;});
+window.addEventListener('keyup',e=>{if(keys[e.key]){if(game==='pong'&&keyY)humanY=snapshot().paddles[0];keyY=0;}});
 document.querySelectorAll('[data-key]').forEach(b=>{
   b.onpointerdown=e=>{e.preventDefault();b.setPointerCapture(e.pointerId);control(b.dataset.key);if(game==='pong')keyY=pongAxis(pongView,b.dataset.key);};
-  b.onpointerup=b.onpointercancel=()=>{keyY=0;};
+  b.onpointerup=b.onpointercancel=()=>{if(game==='pong'&&keyY)humanY=snapshot().paddles[0];keyY=0;};
   b.onclick=e=>{if(e.detail===0)control(b.dataset.key);};
 });
 let touch=null;

@@ -2,8 +2,8 @@ import { clamp, leading, noise } from './common.mjs';
 export const WIDTH=1000, HEIGHT=600, HALF=53, RADIUS=9, LEFT=47, RIGHT=WIDTH-LEFT;
 export const PONG_LIMIT=7200, TACTICS=['upper','lower','steady','change'];
 
-export function initPong(seed) {
-  return {game:'pong',seed,tick:0,paddles:[300,300],aim:[300,300],score:[0,0],
+export function initPong(seed,{legacy=false}={}) {
+  return {game:'pong',...(!legacy?{version:2}:{}),seed,tick:0,paddles:[300,300],aim:[300,300],score:[0,0],
     ball:[500,300,0,0],serve:72,serveTo:seed%2,round:0,hits:0,rally:0,bestRally:0,epoch:0,winner:null,reason:''};
 }
 function reflect(y) {
@@ -29,8 +29,9 @@ export function pongRule(s,side) {
 export function stepPong(s,moves) {
   if (s.winner!==null || !Array.isArray(moves) || moves.length!==2 ||
       !moves.every(n=>Number.isInteger(n)&&n>=0&&n<=HEIGHT)) throw new Error('球拍目标无效');
-  const aim=s.tick%6===0?moves.map(n=>clamp(n,HALF,HEIGHT-HALF)):s.aim;
-  const paddles=s.paddles.map((y,i)=>y+clamp(aim[i]-y,-8,8));
+  const aim=s.version>=2||s.tick%6===0?moves.map(n=>clamp(n,HALF,HEIGHT-HALF)):s.aim;
+  const speed=s.version>=2?14:8;
+  const paddles=s.paddles.map((y,i)=>y+clamp(aim[i]-y,-speed,speed));
   const t={...s,tick:s.tick+1,paddles,aim,ball:[...s.ball],score:[...s.score]};
   if(s.serve>0) {
     t.serve--;

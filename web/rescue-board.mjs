@@ -1,7 +1,7 @@
 import {rescueMap,lineOfSight,walkable,RESCUE_HZ,rescueRaging} from '../src/rescue.mjs';
 const C={floor:'#dce5e8',wall:'#294957',wallTop:'#395d6a',ink:'#254755',soldier:'#61c2f2',civilian:'#ffd16e',zombie:'#dc7089',exit:'#7bdec0'};
 export function rescuePoint(canvas,e){const r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left)/r.width*24,y:(e.clientY-r.top)/r.height*16};}
-export function drawRescue(canvas,s,{selected='all',building=false,support=null,hover=null,reduced=false}={}){
+export function drawRescue(canvas,s,{selected='all',selectedIds=null,building=false,support=null,hover=null,reduced=false,selectionBox=null,movePreview=null,orderMarker=null}={}){
  const box=canvas.getBoundingClientRect();if(!box.width)return;
  const dpr=Math.min(devicePixelRatio||1,2),width=Math.round(box.width*dpr),height=Math.round(box.height*dpr);
  if(canvas.width!==width||canvas.height!==height){canvas.width=width;canvas.height=height;}
@@ -37,7 +37,7 @@ export function drawRescue(canvas,s,{selected='all',building=false,support=null,
   if(g){line({x:d.x-(v?0:.4),y:d.y-(v?.4:0)},{x:d.x+(v?0:.4),y:d.y+(v?.4:0)},'#32715f',.12);ctx.fillStyle='#244b40';ctx.fillRect(d.x-.4,d.y+.6,.8,.08);ctx.fillStyle=C.exit;ctx.fillRect(d.x-.4,d.y+.6,.8*g.hp/g.maxHp,.08);}
   if(building&&!g){circle(d.x,d.y,.67,'#4ecba52b','#237f68',.055);text('+',d.x,d.y,.7,'#237f68');}
  }
- const chosen=s.soldiers.filter(u=>u.hp>0&&(selected==='all'||u.group===selected));
+ const chosen=s.soldiers.filter(u=>u.hp>0&&(selectedIds?selectedIds.includes(u.id):selected==='all'||u.group===selected));
  for(const u of chosen){
   if(u.path.length){ctx.beginPath();ctx.moveTo(u.x,u.y);for(const p of u.path)ctx.lineTo(p.x,p.y);ctx.strokeStyle='#2787ab88';ctx.lineWidth=.06;ctx.setLineDash([.16,.13]);ctx.stroke();ctx.setLineDash([]);const end=u.path.at(-1);circle(end.x,end.y,.22,null,'#2688b0',.06);}
  }
@@ -66,12 +66,12 @@ export function drawRescue(canvas,s,{selected='all',building=false,support=null,
  for(const u of s.soldiers){
   if(u.hp<=0){line({x:u.x-.14,y:u.y-.14},{x:u.x+.14,y:u.y+.14},'#668692',.06);line({x:u.x-.14,y:u.y+.14},{x:u.x+.14,y:u.y-.14},'#668692',.06);continue;}
   const picked=chosen.includes(u),dx=Math.cos(u.angle),dy=Math.sin(u.angle);
-  if(picked)circle(u.x,u.y,u.r+.15,'#81d6f32b','#2189b2',.045);
+  if(picked){circle(u.x,u.y,u.r+.16,'#81d6f34d','#f3ffff',.13);circle(u.x,u.y,u.r+.16,null,'#167aaa',.06);}
   circle(u.x,u.y+.08,u.r+.03,'#183c4d35');line(u,{x:u.x+dx*.42,y:u.y+dy*.42},'#224759',.12);
   circle(u.x,u.y,u.r,!reduced&&u.hitTick>s.tick-3?'#fff':C.soldier,'#246785',.05);circle(u.x-dx*.05,u.y-dy*.05,.09,'#a0e0f7');
   if(u.role==='shield'){ctx.beginPath();ctx.arc(u.x,u.y,.36,u.angle-.9,u.angle+.9);ctx.lineWidth=.1;ctx.strokeStyle='#e6f5fa';ctx.stroke();}
   ctx.fillStyle='#536f7b';ctx.fillRect(u.x-.25,u.y+.4,.5,.055);ctx.fillStyle='#4fab9c';ctx.fillRect(u.x-.25,u.y+.4,.5*u.hp/u.maxHp,.055);
-  if(u.reload){ctx.beginPath();ctx.arc(u.x,u.y,.32,-Math.PI/2,-Math.PI/2+Math.PI*2*(1-u.reload/42));ctx.strokeStyle='#fff6c4';ctx.lineWidth=.05;ctx.stroke();}
+  if(u.reload){ctx.beginPath();ctx.arc(u.x,u.y,.32,-Math.PI/2,-Math.PI/2+Math.PI*2*(1-u.reload/(s.version>=5?30:u.role==='rifle'?42:36)));ctx.strokeStyle='#fff6c4';ctx.lineWidth=.05;ctx.stroke();}
   text(String(u.group+1),u.x,u.y-.47,.23,'#256584');
  }
  for(const b of s.bullets)line({x:b.x-b.dx*.28,y:b.y-b.dy*.28},b,'#fff7c0',.065);
@@ -89,7 +89,11 @@ export function drawRescue(canvas,s,{selected='all',building=false,support=null,
   ctx.globalAlpha=1;
  }
  if(s.phase==='deploy'){text('接应部署',1.1,.55,.22,'#a7c7cf','left');text('部署',22.9,.55,.26,'#a7c7cf','right');}
+ if(selectionBox){const b=selectionBox,x=Math.min(b.x,b.x2),y=Math.min(b.y,b.y2),w=Math.abs(b.x2-b.x),h=Math.abs(b.y2-b.y);ctx.fillStyle='#278db52a';ctx.fillRect(x,y,w,h);ctx.strokeStyle='#eaffff';ctx.lineWidth=.12;ctx.strokeRect(x,y,w,h);ctx.strokeStyle='#157797';ctx.lineWidth=.05;ctx.strokeRect(x,y,w,h);}
+ if(movePreview){ctx.setLineDash([.16,.16]);for(const u of chosen)line(u,movePreview,'#2187ad99',.045);ctx.setLineDash([]);circle(movePreview.x,movePreview.y,.36,null,'#187c9f',.07);}
+ if(orderMarker){const p=orderMarker,color=p.ok?'#167c9e':'#b63d53';circle(p.x,p.y,.5,'#f5ffffb0',color,.07);text(p.ok?'↓':'×',p.x,p.y,.55,color);text(p.ok?p.count+' 人 →': '不可到达',p.x,Math.max(.6,p.y-.8),.4,color);}
  canvas.dataset.phase=s.phase;canvas.dataset.tick=String(s.tick);canvas.dataset.saved=String(s.saved);canvas.dataset.lost=String(s.lost);canvas.dataset.kills=String(s.kills);
  canvas.dataset.evac=evac?.phase||'legacy';canvas.dataset.evacProgress=String(evac?.progress||0);canvas.dataset.raging=String(raging);canvas.dataset.boarding=String(s.civilians.filter(c=>c.status==='boarding').length);
  canvas.dataset.supplies=String(s.supplies??0);canvas.dataset.decoys=String(s.decoys?.length||0);
+ canvas.dataset.selected=chosen.map(u=>u.id).join(',');canvas.dataset.selecting=String(!!selectionBox);canvas.dataset.order=orderMarker?(orderMarker.ok?'accepted':'rejected'):'';
 }

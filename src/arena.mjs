@@ -3,7 +3,7 @@ import { initSnake, stepSnake, snakeOptions, snakeRule } from './snake.mjs';
 import { planSnake } from './snake-planner.mjs';
 import { initPong, stepPong, motor, pongRule, TACTICS } from './pong.mjs';
 
-export const RULES='round2.2';
+export const RULES='round2.3';
 export const GAMES={
   snake:{name:'双蛇争食',init:initSnake,step:stepSnake,max:180,interval:500},
   pong:{name:'球台对攻',init:initPong,step:stepPong,max:7200,interval:1000/60}
@@ -15,7 +15,7 @@ export function describeAction(game, value) {
 export function startingState(game, seed, opening=[],rules=RULES) {
   if(!Object.hasOwn(GAMES,game)||!Number.isSafeInteger(seed)||seed<0||seed>0xffffffff) throw new Error('无效游戏或种子');
   if(!Array.isArray(opening)||opening.length) throw new Error('无效起始局面');
-  return game==='snake'?initSnake(seed,{legacy:rules==='round2.1'}):GAMES[game].init(seed);
+  return game==='snake'?initSnake(seed,{legacy:rules==='round2.1'}):initPong(seed,{legacy:rules!=='round2.3'});
 }
 export function begin(game,seed,opening=[],rules=RULES) {
   return {state:startingState(game,seed,opening,rules),record:{format:1,rules,game,seed,opening:[...opening],
@@ -38,7 +38,7 @@ export function seal(match) {
   return match.record;
 }
 export function* playback(record) {
-  if(record?.format!==1||!['round2.1',RULES].includes(record.rules)||!Object.hasOwn(GAMES,record.game)||!Array.isArray(record.frames)||
+  if(record?.format!==1||!['round2.1','round2.2',RULES].includes(record.rules)||!Object.hasOwn(GAMES,record.game)||!Array.isArray(record.frames)||
     !Array.isArray(record.decisions)||record.decisions.length>2000) throw new Error('回放格式或版本不匹配');
   let s=startingState(record.game,record.seed,record.opening,record.rules), total=s.tick;
   for(const frame of record.frames) {

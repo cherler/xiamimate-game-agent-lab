@@ -122,11 +122,44 @@ function paintBattleFocus(frame,previous){
 function exportReplay(){const record=watch||sealStrategy(match),url=URL.createObjectURL(new Blob([JSON.stringify(record)],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download='glimmer-chess-'+record.seed+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 export function watchChess(record){shopOpen=false;sideOpen=false;review=null;lastFxTick=-1;replayStrategy(record);closeChess();active=true;document.body.classList.add('chess-mode');watch=record;watchIndex=0;match=beginStrategy('chess',record.seed,null,record.format);lastBattleKey='';inspect=0;selected=null;render();advanceWatch();}
 function advanceWatch(){if(!active||!watch)return;while(watchIndex<watch.actions.length){const row=watch.actions[watchIndex++];advanceStrategy(match,row.actor,row.action);if(s().phase==='battle'&&row.action.type==='ready'){render();animateBattle();return;}}render();}
-function cancelDrag(){drag?.ghost?.remove();drag=null;}
-document.addEventListener('pointerdown',e=>{if(!active||watch||review||s().phase!=='prep'||inspect!==0)return;const b=e.target.closest('[data-uid]');if(!b||!root().contains(b)||!own().units.some(u=>u.uid===b.dataset.uid))return;drag={uid:b.dataset.uid,x:e.clientX,y:e.clientY};});
-document.addEventListener('pointermove',e=>{if(!drag)return;if(!drag.ghost&&Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>7){const c=chessInfo(own().units.find(u=>u.uid===drag.uid).type);drag.ghost=document.createElement('div');drag.ghost.className='ac-drag';drag.ghost.innerHTML=portrait(c.art);document.body.append(drag.ghost);root().querySelectorAll('.ac-cell.home-cell').forEach(n=>n.classList.add('placeable'));}if(drag.ghost){e.preventDefault();drag.ghost.style.left=e.clientX+'px';drag.ghost.style.top=e.clientY+'px';}}, {passive:false});
-document.addEventListener('pointerup',e=>{if(!drag)return;const d=drag,target=document.elementFromPoint(e.clientX,e.clientY);cancelDrag();if(!d.ghost)return;shopOpen=false;sideOpen=false;suppressClick=true;setTimeout(()=>suppressClick=false,0);const cell=target?.closest('.ac-board');if(cell){const r=cell.getBoundingClientRect();apply({type:'move',uid:d.uid,cell:Math.min(7,Math.floor((e.clientY-r.top)/r.height*8))*8+Math.min(7,Math.floor((e.clientX-r.left)/r.width*8))});}else if(target?.closest('.ac-bench'))apply({type:'bench',uid:d.uid});else render();});
-document.addEventListener('pointercancel',()=>{cancelDrag();if(active)render();});
+function cancelDrag(){
+ const d=drag;drag=null;d?.ghost?.remove();d?.dock?.remove();
+ if(d?.source.hasPointerCapture(d.pointer))d.source.releasePointerCapture(d.pointer);
+ root()?.classList.remove('ac-dragging');root()?.querySelectorAll('.is-drop-hover,.is-drag-source').forEach(n=>n.classList.remove('is-drop-hover','is-drag-source'));
+}
+function chessDrop(x,y){
+ const target=document.elementFromPoint(x,y);if(!target||!root().contains(target))return null;
+ const zone=target.closest('[data-chess-drop],.ac-bench');
+ if(zone){const type=zone.dataset.chessDrop||'bench',u=own().units.find(u=>u.uid===drag.uid);return {type,node:zone,valid:type==='sell'||u.cell===null||bench(own()).length<8};}
+ const board=target.closest('.ac-board');if(!board)return null;
+ const r=board.getBoundingClientRect(),cell=Math.floor((y-r.top)/r.height*8)*8+Math.floor((x-r.left)/r.width*8);
+ return {type:'move',cell,node:root().querySelector(`[data-cell="${cell}"]`),valid:cell>=32&&cell<64};
+}
+document.addEventListener('pointerdown',e=>{
+ if(!active||drag||e.button!==0||e.isPrimary===false||watch||review||s().phase!=='prep'||inspect!==0)return;
+ const b=e.target.closest('[data-uid]');if(!b||!root().contains(b)||!own().units.some(u=>u.uid===b.dataset.uid))return;
+ drag={uid:b.dataset.uid,x:e.clientX,y:e.clientY,pointer:e.pointerId,source:b};b.setPointerCapture(e.pointerId);
+});
+document.addEventListener('pointermove',e=>{
+ if(!drag||e.pointerId!==drag.pointer)return;
+ if(!drag.ghost&&Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>7){
+  const u=own().units.find(u=>u.uid===drag.uid),c=chessInfo(u.type);drag.ghost=document.createElement('div');drag.ghost.className='ac-drag';drag.ghost.innerHTML=portrait(c.art);document.body.append(drag.ghost);
+  drag.dock=document.createElement('div');drag.dock.className='ac-drop-dock';drag.dock.innerHTML=`<div data-chess-drop="bench" aria-disabled="${u.cell!==null&&bench(own()).length>=8}"><b>↓ 备战席</b><span>${u.cell!==null&&bench(own()).length>=8?'已满 · 不能退回':'松手退回备战席'}</span></div><div data-chess-drop="sell"><b>出售 +${c.cost*3**(u.star-1)} 金</b><span>${esc(c.name)}${u.items.length?' · 装备退回':''}</span></div>`;
+  root().querySelector('.ac-hud').append(drag.dock);root().classList.add('ac-dragging');drag.source.classList.add('is-drag-source');
+  root().querySelectorAll('.ac-cell.home-cell').forEach(n=>n.classList.add('placeable'));
+ }
+ if(drag.ghost){e.preventDefault();drag.ghost.style.left=e.clientX+'px';drag.ghost.style.top=e.clientY+'px';root().querySelectorAll('.is-drop-hover').forEach(n=>n.classList.remove('is-drop-hover'));const drop=chessDrop(e.clientX,e.clientY);if(drop?.valid)drop.node?.classList.add('is-drop-hover');drag.ghost.classList.toggle('invalid-drop',!drop?.valid);}
+},{passive:false});
+document.addEventListener('pointerup',e=>{
+ if(!drag||e.pointerId!==drag.pointer)return;const d=drag,drop=d.ghost?chessDrop(e.clientX,e.clientY):null;cancelDrag();if(!d.ghost)return;
+ suppressClick=true;setTimeout(()=>suppressClick=false,0);
+ if(drop?.valid){shopOpen=false;sideOpen=false;selected=drop.type==='sell'?null:d.uid;apply({type:drop.type,uid:d.uid,...(drop.type==='move'?{cell:drop.cell}:{})});}
+ else{error=drop?.type==='bench'?'备战席已满，棋子留在原位':drop?.type==='move'?'只能部署到下半场':'';render();}
+});
+function abortDrag(){if(!drag)return;const moved=!!drag.ghost;cancelDrag();if(moved){suppressClick=true;setTimeout(()=>suppressClick=false,0);}if(active)render();}
+document.addEventListener('pointercancel',e=>{if(e.pointerId===drag?.pointer)abortDrag();});
+document.addEventListener('lostpointercapture',e=>{if(e.pointerId===drag?.pointer)abortDrag();});
+window.addEventListener('blur',abortDrag);
 
 function battleLabel(b){return b.winner===0?(b.pve?(s().version>=3?'野怪击败 · 选择战利品':'野怪击败 · 装备已入袋'):'获胜 · 奖励已到账'):b.winner===-1?'平局 · −2 生命':'落败 · −'+b.damage[0]+' 生命';}
 function battleRecap(b){
@@ -156,11 +189,13 @@ function paintCombatEffects(battle,tick){
 
 document.addEventListener('keydown',e=>{
  if(!active||e.repeat||e.ctrlKey||e.metaKey||e.altKey||e.target.closest('input,textarea,select,[contenteditable=true],#ac-phase-pause')||root().querySelector('dialog[open]'))return;
+ if(drag){if(e.key==='Escape'){e.preventDefault();abortDrag();}return;}
  if(e.code==='Space'&&s().phase==='prep'&&!review&&!watch&&!own().loot){e.preventDefault();shopOpen=!shopOpen;render();}
  else if(e.key==='Escape'){e.preventDefault();shopOpen=false;sideOpen=false;equipment=null;render();}
 });
 document.addEventListener('visibilitychange',()=>{
  if(!active||!match)return;
+ if(document.hidden)abortDrag();
  if(s().phase==='battle'){if(document.hidden)played=Math.min(s().battle.ticks,played+(performance.now()-clock)/100*speed);clock=performance.now();}
  syncPhase();saveClock();if(!document.hidden){paintPhase();animateBattle();}
 });

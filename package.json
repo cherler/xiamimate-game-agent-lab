@@ -37,7 +37,8 @@
     "check:motion": "node scripts/check-motion-browser.mjs",
     "check:kart-motion": "node scripts/check-kart-motion-browser.mjs",
     "check:runner-routes": "node scripts/check-runner-routes-browser.mjs",
-    "check:runner-rush": "node scripts/check-runner-rush-browser.mjs"
+    "check:runner-rush": "node scripts/check-runner-rush-browser.mjs",
+    "check:runner-stride": "node scripts/check-runner-stride-browser.mjs"
   },
   "devDependencies": {
     "esbuild": "0.28.2"

@@ -13,6 +13,8 @@ import {openChess,closeChess,watchChess} from './chess-ui.mjs';
 import {openRescue,closeRescue,watchRescue,rescueNotice} from './rescue-ui.mjs';
 import {openKart,closeKart,watchKart} from './kart-ui.mjs';
 import {openDance,closeDance,watchDance} from './dance-ui.mjs';
+import {closeDance as closeClassicDance,watchDance as watchClassicDance} from './dance-classic-ui.mjs';
+import {openRunner,closeRunner,watchRunner} from './runner-ui.mjs';
 
 const $=id=>document.getElementById(id), canvas=$('board');
 const samples=JSON.parse($('samples').textContent);
@@ -216,16 +218,17 @@ function frame(now){
   lastTime=now;requestAnimationFrame(frame);
 }
 function watch(record){
-  if(['kart-1','dance-1'].includes(record?.format)){
-    if(record.format==='kart-1'){watchKart(record);closeDance();document.body.classList.add('motion-mode');}else{watchDance(record);closeKart();document.body.classList.add('motion-mode');}
+  if(['kart-1','dance-1','rhythm-1','runner-1'].includes(record?.format)){
+    const play={'kart-1':watchKart,'dance-1':watchClassicDance,'rhythm-1':watchDance,'runner-1':watchRunner}[record.format];play(record);
+    if(record.format!=='kart-1')closeKart();if(record.format!=='dance-1')closeClassicDance();if(record.format!=='rhythm-1')closeDance();if(record.format!=='runner-1')closeRunner();document.body.classList.add('motion-mode');
     stashArcade();cancelDecision();mode='paused';closeChess();closeStrategy();closeRescue();
-    $('arcade').hidden=true;$('strategy').hidden=true;$('rescue').hidden=true;$('kart').hidden=record.game!=='kart';$('dance').hidden=record.game!=='dance';
+    $('arcade').hidden=true;$('strategy').hidden=true;$('rescue').hidden=true;$('kart').hidden=record.game!=='kart';$('dance').hidden=record.game!=='dance';$('runner').hidden=record.game!=='runner';
     document.querySelectorAll('[data-game]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.game===record.game)));window.history.replaceState(null,'','#'+record.game);return;
   }
-  closeKart();closeDance();$('kart').hidden=true;$('dance').hidden=true;
+  closeKart();closeDance();closeClassicDance();closeRunner();$('kart').hidden=true;$('dance').hidden=true;$('runner').hidden=true;
   if(['rescue-1','rescue-2','rescue-3','rescue-4'].includes(record?.format)){watchRescue(record);saveCurrent();cancelDecision();mode='ready';closeChess();closeStrategy();$('arcade').hidden=true;$('strategy').hidden=true;$('rescue').hidden=false;document.querySelectorAll('[data-game]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.game==='rescue')));window.history.replaceState(null,'','#rescue');return;}
   closeRescue();$('rescue').hidden=true;
-  if(['glimmer-1','glimmer-2','glimmer-3','glimmer-4'].includes(record?.format)){saveCurrent();cancelDecision();mode='ready';$('arcade').hidden=true;$('strategy').hidden=false;if(record.game==='chess'&&['glimmer-3','glimmer-4'].includes(record.format)){closeStrategy();watchChess(record);}else{closeChess();watchStrategy(record,cap);}document.querySelectorAll('[data-game]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.game===record.game)));return;}
+  if(['glimmer-1','glimmer-2','glimmer-3','glimmer-4'].includes(record?.format)){saveCurrent();cancelDecision();mode='ready';$('arcade').hidden=true;$('strategy').hidden=false;if(record.game==='chess'&&['glimmer-3','glimmer-4'].includes(record.format)){closeStrategy();watchChess(record);}else{closeChess();watchStrategy(record,cap);}document.querySelectorAll('[data-game]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.game===record.game)));window.history.replaceState(null,'','#'+record.game);return;}
   closeChess();closeStrategy();$('arcade').hidden=false;$('strategy').hidden=true;checkReplay(record);saveCurrent();cancelDecision();game=record.game;opponentMenu();reset({stash:false});
   replayData=record;reader=playback(record);match=begin(game,record.seed,record.opening,record.rules);replayCursor=0;
   $('seed').value=record.seed;mode='replay';setTiming();refresh(true);paint();
@@ -255,21 +258,22 @@ function restoreArcade(target){
  if(saved){({match,mode,opponent,difficulty,humanDir,humanY,botY,tactic,tacticEpoch,trail,snakeQueue,items,reader,replayData,replayCursor,matchId}=saved);$('seed').value=match.state.seed;$('difficulty').value=difficulty;lastPaint=null;foodBursts=[];}
  opponentMenu();refresh(true);paint();
 }
-function navigate(target,updateURL=true){
- if(!['snake','pong','cards','chess','rescue','kart','dance'].includes(target))target='snake';
+function navigate(target,updateURL=true,force=false){
+ if(!['snake','pong','cards','chess','rescue','kart','dance','runner'].includes(target))target='snake';
  if(updateURL)window.history.replaceState(null,'','#'+target);
  const current=document.querySelector('[data-game][aria-pressed=true]')?.dataset.game;
- if(current===target&&((GAMES[target]&&!$('arcade').hidden)||!GAMES[target]))return;
- stashArcade();cancelDecision();mode='paused';closeRescue();closeStrategy();closeChess();closeKart();closeDance();
+ if(!force&&current===target&&((GAMES[target]&&!$('arcade').hidden)||!GAMES[target]))return;
+ stashArcade();cancelDecision();mode='paused';closeRescue();closeStrategy();closeChess();closeKart();closeDance();closeClassicDance();closeRunner();
  $('arcade').hidden=!GAMES[target];$('strategy').hidden=!['cards','chess'].includes(target);$('rescue').hidden=target!=='rescue';
- $('kart').hidden=target!=='kart';$('dance').hidden=target!=='dance';
+ $('kart').hidden=target!=='kart';$('dance').hidden=target!=='dance';$('runner').hidden=target!=='runner';
  if(GAMES[target])restoreArcade(target);
- else if(target==='kart')openKart();else if(target==='dance')openDance();else if(target==='rescue')openRescue();else if(target==='chess')openChess();else openStrategy('cards',cap);
+ else if(target==='runner')openRunner();else if(target==='kart')openKart();else if(target==='dance')openDance();else if(target==='rescue')openRescue();else if(target==='chess')openChess();else openStrategy('cards',cap);
  document.querySelectorAll('[data-game]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.game===target)));
  document.querySelector('[data-game="'+target+'"]').scrollIntoView({block:'nearest',inline:'nearest'});
 }
 document.querySelectorAll('[data-game]').forEach(b=>b.onclick=()=>navigate(b.dataset.game));
 window.addEventListener('hashchange',()=>navigate(location.hash.slice(1),false));
+window.addEventListener('glimmer-dance-modern',()=>navigate('dance',true,true));
 new ResizeObserver(()=>document.querySelector('[data-game][aria-pressed=true]')?.scrollIntoView({block:'nearest',inline:'nearest'})).observe(document.querySelector('.switcher'));
 window.addEventListener('pagehide',stashArcade);
 $('pong-view').onchange=e=>{setPongView(e.target.value);refresh(true);paint();};
@@ -295,7 +299,7 @@ $('export').onclick=()=>{
 $('import').onclick=()=>$('upload').click();
 $('upload').onchange=async e=>{
   const f=e.target.files[0];try{if(!f||f.size>4_000_000)throw Error();watch(JSON.parse(await f.text()));}
-  catch{say('无法读取此回放，请选择本轮导出的对局文件。');rescueNotice('无法读取此回放，请选择导出的对局文件。');}e.target.value='';
+  catch{say('无法读取此回放，请选择本轮导出的对局文件。');rescueNotice('无法读取此回放，请选择导出的对局文件。');const message=document.querySelector('#dance:not([hidden]) #rhythm-notice, #kart:not([hidden]) #kart-best, #runner:not([hidden]) #runner-best');if(message)message.textContent='无法读取此回放，请选择导出的对局文件。';}e.target.value='';
 };
 const keys={ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right',w:'up',s:'down',a:'left',d:'right'};
 window.addEventListener('keydown',e=>{
@@ -330,7 +334,7 @@ canvas.onpointercancel=()=>{touch=null;keyY=0;};
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&(playing()||mode==='replay'))start();});
 new ResizeObserver(()=>{if(match)paint();}).observe(canvas);
 opponentMenu();restoreArcade('snake');requestAnimationFrame(frame);
-if(['pong','cards','chess','rescue','kart','dance'].includes(location.hash.slice(1)))document.querySelector('[data-game="'+location.hash.slice(1)+'"]').click();
+if(['pong','cards','chess','rescue','kart','dance','runner'].includes(location.hash.slice(1)))document.querySelector('[data-game="'+location.hash.slice(1)+'"]').click();
 if(location.protocol.startsWith('http')&&!staticDemo){
   fetch('/api/providers',{signal:AbortSignal.timeout(3500)}).then(r=>r.json()).then(v=>{
     if(!v.arena)return;cap={...v,rooms:true};loaded=true;updateStrategyProviders(cap);if(mode==='ready'){opponentMenu(true);refresh(true);}

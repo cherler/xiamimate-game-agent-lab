@@ -1,0 +1,358 @@
+{
+  "baselineSource": "344c1aed05ac1596bf501e83b5b9aaa31f2311f8",
+  "branch": "gameplay/strategy-depth-2026-11-18",
+  "cards": {
+    "seeds": [
+      71101,
+      71102,
+      71103,
+      71104,
+      71105,
+      71106
+    ],
+    "difficulty": "standard",
+    "summary": [
+      {
+        "version": "before",
+        "games": 180,
+        "draws": 1,
+        "meanTurns": 11.072222222222223,
+        "cycles": 0,
+        "alternatePowers": 0,
+        "decks": [
+          {
+            "id": "W-swarm",
+            "name": "工坊零件潮",
+            "games": 60,
+            "wins": 34,
+            "draws": 0
+          },
+          {
+            "id": "W-shield",
+            "name": "工坊重装",
+            "games": 60,
+            "wins": 40,
+            "draws": 0
+          },
+          {
+            "id": "F-growth",
+            "name": "林地共生",
+            "games": 60,
+            "wins": 33,
+            "draws": 1
+          },
+          {
+            "id": "F-bloom",
+            "name": "林地萌芽",
+            "games": 60,
+            "wins": 33,
+            "draws": 0
+          },
+          {
+            "id": "S-combo",
+            "name": "星塔连奏",
+            "games": 60,
+            "wins": 16,
+            "draws": 0
+          },
+          {
+            "id": "S-frost",
+            "name": "星塔霜息",
+            "games": 60,
+            "wins": 23,
+            "draws": 1
+          }
+        ]
+      },
+      {
+        "version": "after",
+        "games": 180,
+        "draws": 0,
+        "meanTurns": 11.583333333333334,
+        "cycles": 132,
+        "alternatePowers": 825,
+        "decks": [
+          {
+            "id": "W-swarm",
+            "name": "工坊零件潮",
+            "games": 60,
+            "wins": 35,
+            "draws": 0
+          },
+          {
+            "id": "W-shield",
+            "name": "工坊重装",
+            "games": 60,
+            "wins": 35,
+            "draws": 0
+          },
+          {
+            "id": "F-growth",
+            "name": "林地共生",
+            "games": 60,
+            "wins": 24,
+            "draws": 0
+          },
+          {
+            "id": "F-bloom",
+            "name": "林地萌芽",
+            "games": 60,
+            "wins": 34,
+            "draws": 0
+          },
+          {
+            "id": "S-combo",
+            "name": "星塔连奏",
+            "games": 60,
+            "wins": 22,
+            "draws": 0
+          },
+          {
+            "id": "S-frost",
+            "name": "星塔霜息",
+            "games": 60,
+            "wins": 30,
+            "draws": 0
+          }
+        ]
+      }
+    ]
+  },
+  "chess": {
+    "rows": [
+      {
+        "version": "before",
+        "seed": 72101,
+        "round": 32,
+        "winner": 0,
+        "placement": 1,
+        "lootChoices": 0,
+        "forecastChecks": 0
+      },
+      {
+        "version": "before",
+        "seed": 72102,
+        "round": 32,
+        "winner": -2,
+        "placement": 5,
+        "lootChoices": 0,
+        "forecastChecks": 0
+      },
+      {
+        "version": "before",
+        "seed": 72103,
+        "round": 19,
+        "winner": -2,
+        "placement": 8,
+        "lootChoices": 0,
+        "forecastChecks": 0
+      },
+      {
+        "version": "before",
+        "seed": 72104,
+        "round": 23,
+        "winner": -2,
+        "placement": 7,
+        "lootChoices": 0,
+        "forecastChecks": 0
+      },
+      {
+        "version": "before",
+        "seed": 72105,
+        "round": 28,
+        "winner": -2,
+        "placement": 5,
+        "lootChoices": 0,
+        "forecastChecks": 0
+      },
+      {
+        "version": "before",
+        "seed": 72106,
+        "round": 29,
+        "winner": -2,
+        "placement": 7,
+        "lootChoices": 0,
+        "forecastChecks": 0
+      },
+      {
+        "version": "before",
+        "seed": 72107,
+        "round": 27,
+        "winner": -2,
+        "placement": 7,
+        "lootChoices": 0,
+        "forecastChecks": 0
+      },
+      {
+        "version": "before",
+        "seed": 72108,
+        "round": 32,
+        "winner": -2,
+        "placement": 4,
+        "lootChoices": 0,
+        "forecastChecks": 0
+      },
+      {
+        "version": "after",
+        "seed": 72101,
+        "round": 32,
+        "winner": -2,
+        "placement": 4,
+        "lootChoices": 8,
+        "forecastChecks": 32
+      },
+      {
+        "version": "after",
+        "seed": 72102,
+        "round": 32,
+        "winner": -2,
+        "placement": 5,
+        "lootChoices": 8,
+        "forecastChecks": 32
+      },
+      {
+        "version": "after",
+        "seed": 72103,
+        "round": 29,
+        "winner": -2,
+        "placement": 4,
+        "lootChoices": 7,
+        "forecastChecks": 29
+      },
+      {
+        "version": "after",
+        "seed": 72104,
+        "round": 31,
+        "winner": -2,
+        "placement": 4,
+        "lootChoices": 8,
+        "forecastChecks": 31
+      },
+      {
+        "version": "after",
+        "seed": 72105,
+        "round": 36,
+        "winner": -2,
+        "placement": 3,
+        "lootChoices": 9,
+        "forecastChecks": 36
+      },
+      {
+        "version": "after",
+        "seed": 72106,
+        "round": 32,
+        "winner": -2,
+        "placement": 5,
+        "lootChoices": 8,
+        "forecastChecks": 32
+      },
+      {
+        "version": "after",
+        "seed": 72107,
+        "round": 27,
+        "winner": -2,
+        "placement": 6,
+        "lootChoices": 7,
+        "forecastChecks": 27
+      },
+      {
+        "version": "after",
+        "seed": 72108,
+        "round": 40,
+        "winner": 3,
+        "placement": 2,
+        "lootChoices": 9,
+        "forecastChecks": 40
+      }
+    ],
+    "forecastChecks": 259
+  },
+  "rescue": {
+    "seeds": [
+      41003,
+      41004,
+      41005,
+      41006,
+      41007,
+      41008,
+      41009,
+      41010,
+      41011,
+      41012
+    ],
+    "summary": [
+      {
+        "version": "before",
+        "level": 1,
+        "wins": 10,
+        "total": 10,
+        "meanSeconds": 34.3,
+        "meanHP": 570.4
+      },
+      {
+        "version": "before",
+        "level": 2,
+        "wins": 10,
+        "total": 10,
+        "meanSeconds": 30.666666666666668,
+        "meanHP": 680
+      },
+      {
+        "version": "before",
+        "level": 3,
+        "wins": 10,
+        "total": 10,
+        "meanSeconds": 112.40333333333334,
+        "meanHP": 563.4
+      },
+      {
+        "version": "after",
+        "level": 1,
+        "wins": 10,
+        "total": 10,
+        "meanSeconds": 35.983333333333334,
+        "meanHP": 592.8
+      },
+      {
+        "version": "after",
+        "level": 2,
+        "wins": 10,
+        "total": 10,
+        "meanSeconds": 33.533333333333324,
+        "meanHP": 680
+      },
+      {
+        "version": "after",
+        "level": 3,
+        "wins": 10,
+        "total": 10,
+        "meanSeconds": 116,
+        "meanHP": 319.4
+      },
+      {
+        "version": "after-tactics",
+        "level": 1,
+        "wins": 10,
+        "total": 10,
+        "meanSeconds": 34.013333333333335,
+        "meanHP": 646.4
+      },
+      {
+        "version": "after-tactics",
+        "level": 2,
+        "wins": 10,
+        "total": 10,
+        "meanSeconds": 33.533333333333324,
+        "meanHP": 680
+      },
+      {
+        "version": "after-tactics",
+        "level": 3,
+        "wins": 10,
+        "total": 10,
+        "meanSeconds": 114.48333333333332,
+        "meanHP": 476.4
+      }
+    ]
+  }
+}

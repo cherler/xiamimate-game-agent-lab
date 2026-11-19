@@ -37,6 +37,7 @@ export const TOKENS={
  T02:card('T02','维修偶',0,2,2,'召唤物。',{faction:'工坊',token:true}),
  T03:card('T03','芽灵',0,1,1,'召唤物。',{faction:'林地',token:true}),
  T04:card('T04','星灵',0,2,2,'召唤物。',{faction:'星塔',token:true}),
+ T07:card('T07','守望幼苗',0,0,2,'守护。召唤物。',{faction:'林地',token:true,guard:true}),
  T06:card('T06','余光水晶',0,0,0,'本回合获得 1 点能量，最多 8 点。',{faction:'中立',token:true}),
  T05:card('T05','萤光火花',0,0,0,'对一个敌方单位造成 1 点伤害。',{faction:'星塔',token:true})
 };
@@ -47,13 +48,18 @@ export const PRESETS=[
  {id:'F-growth',faction:'F',name:'林地共生',style:'治疗与成长',guide:'共生古藤需要真正的治疗才会成长。月露祭司和英雄技能可连续触发它。',deck:twice('N03 N06 N10 F01 F02 F03 F05 F06 F10 F11')},
  {id:'F-bloom',faction:'F',name:'林地萌芽',style:'铺场与群体强化',guide:'用芽灵占住战场，再打林地复苏。繁茂新生能在进攻与补给之间做选择。',deck:twice('N01 N06 N12 F01 F02 F04 F06 F08 F09 F12')},
  {id:'S-combo',faction:'S',name:'星塔连奏',style:'出牌顺序与爆发',guide:'先打一张低费牌，再触发连奏。英雄技能提供火花；留下星尘学徒，让法术带来更多攻击。',deck:twice('N09 N12 S01 S02 S03 S04 S05 S06 S10 S12')},
- {id:'S-frost',faction:'S',name:'星塔霜息',style:'冰封与反击',guide:'用冰封争取时间，以彗星处理大单位；双生星使和星火连弹把控场转化为反击。',deck:twice('N02 N06 S06 N11 S02 S04 S12 S08 S09 S11')}
+ {id:'S-frost',faction:'S',name:'星塔霜息',style:'冰封与反击',guide:'用流光箭补牌并启动连奏，霜环挡住铺场；双生星使和星火连弹把控场转化为反击。',deck:twice('N02 N12 S06 S07 S02 S04 S12 S08 S09 S11')}
 ];
 export const STARTERS=Object.fromEntries(['W','F','S'].map(f=>[f,PRESETS.find(p=>p.faction===f).deck]));
 export const HEROES={
  W:{name:'铜铃工匠',faction:'工坊',power:'火花点射',text:'2 能量，对一个敌方单位造成 1 点伤害。'},
  F:{name:'苔光园丁',faction:'林地',power:'苔光治愈',text:'2 能量，为一个友方角色恢复 2 点生命。'},
  S:{name:'星灯旅者',faction:'星塔',power:'星灯火种',text:'2 能量，获得一张 0 费萤光火花：对一个敌方单位造成 1 点伤害。手牌已满时不能使用。'}
+};
+export const POWER_ALTERNATIVES={
+ W:{id:'assemble',name:'拼装零件',text:'2 能量，召唤一个 1／1 零件偶。与点射共用每回合一次的英雄技能。',icon:'cards',art:'T01',outcome:'召唤 1／1'},
+ F:{id:'seedling',name:'守望幼苗',text:'2 能量，召唤一个 0／2 守护幼苗。与治愈共用每回合一次的英雄技能。',icon:'shield',art:'T07',outcome:'0／2 守护'},
+ S:{id:'stargaze',name:'燃灯观星',text:'2 能量，自身受到 2 点伤害，抽 1 张牌。与火种共用每回合一次；生命不足或牌库为空时不可用。',icon:'eye',art:'S05',outcome:'−2 生命 · 抽 1'}
 };
 export const KEYWORDS={
  守护:'普通攻击必须先攻击守护单位；法术不受影响。',护盾:'抵挡下一包伤害，然后消失。',速攻:'入场当回合即可攻击单位，但不能攻击英雄。',

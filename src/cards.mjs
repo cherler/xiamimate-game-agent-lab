@@ -1,10 +1,15 @@
-import {CARDS,STARTERS,HEROES,TOKENS} from './catalog.mjs';
+import {CARDS,STARTERS,HEROES,TOKENS,POWER_ALTERNATIVES} from './catalog.mjs';
+import * as Legacy1 from './cards-v1.mjs';
+import * as Legacy2 from './cards-v2.mjs';
+import * as Legacy3 from './cards-v3.mjs';
+import * as V3 from './catalog-v3.mjs';
 import * as V2 from './catalog-v2.mjs';
 import * as V1 from './catalog-v1.mjs';
 import {noise} from './common.mjs';
 import {beginCardEvents,cardEvent,cardBatch,cardCause,withCardSource} from './card-events.mjs';
 export {CARDS,STARTERS,HEROES};
-export const cardInfo=(id,version=3)=>version===1?V1.CARDS[id]||TOKENS[id]:version===2?V2.CARDS[id]||V2.TOKENS[id]:CARDS[id]||TOKENS[id];
+export const cardInfo=(id,version=4)=>version===1?V1.CARDS[id]||TOKENS[id]:version===2?V2.CARDS[id]||V2.TOKENS[id]:version===3?V3.CARDS[id]||V3.TOKENS[id]:CARDS[id]||TOKENS[id];
+const legacy=s=>s.version===1?Legacy1:s.version===2?Legacy2:Legacy3;
 const copy=s=>structuredClone(s);
 const log=(s,text)=>{s.log.push(text);s.log=s.log.slice(-32);};
 function shuffle(items,seed,channel){const a=[...items];for(let i=a.length-1;i>0;i--){const j=Math.floor(noise(seed,i,channel)*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
@@ -14,11 +19,11 @@ export function validateDeck(faction,deck){
 export function initCards(seed=1,configs){
  configs??=[{faction:'W'},{faction:'F'}];
  if(!Number.isInteger(seed)||seed<0||seed>0xffffffff||!Array.isArray(configs)||configs.length!==2)throw Error('开局设置无效');
- const first=Math.floor(noise(seed,0,19)*2),s={game:'cards',version:3,seed,seq:0,uid:50,turn:first,first,phase:'mulligan',kept:[false,false],winner:null,reason:'',log:[],players:[]};
+ const first=Math.floor(noise(seed,0,19)*2),s={game:'cards',version:4,seed,seq:0,uid:50,turn:first,first,phase:'mulligan',kept:[false,false],winner:null,reason:'',log:[],players:[]};
  for(let i=0;i<2;i++){
   const faction=configs[i]?.faction,deck=configs[i]?.deck||STARTERS[faction];
   if(!validateDeck(faction,deck))throw Error('卡组需要 20 张，同名最多两张，只能使用本阵营与中立牌');
-  const p={faction,reserve:i!==first,hp:20,mana:0,maxMana:0,turns:0,powerUsed:false,cardsPlayed:0,spellsPlayed:0,fatigue:0,board:[],hand:[],discard:[],deck:shuffle(deck.map((cardId,n)=>({uid:'p'+i+'c'+n,cardId})),seed,41+i)};
+  const p={faction,reserve:i!==first,hp:20,mana:0,maxMana:0,turns:0,powerUsed:false,cycled:false,cardsPlayed:0,spellsPlayed:0,fatigue:0,board:[],hand:[],discard:[],deck:shuffle(deck.map((cardId,n)=>({uid:'p'+i+'c'+n,cardId})),seed,41+i)};
   s.players.push(p);for(let n=0;n<(i===first?3:4);n++)p.hand.push(p.deck.shift());
  }
  return s;
@@ -69,7 +74,7 @@ function drawCard(s,actor){
  const p=s.players[actor];if(!p.deck.length){p.fatigue++;withCardSource(s,{actor,kind:'fatigue',uid:'h'+actor,faction:p.faction},()=>damage(s,[['h'+actor,p.fatigue]]));log(s,'疲劳伤害 '+p.fatigue);return;}toHand(s,actor,p.deck.shift());
 }
 function startTurn(s,actor){
- s.turn=actor;const p=s.players[actor];p.turns++;p.maxMana=Math.min(8,p.maxMana+1);p.mana=p.maxMana;p.powerUsed=false;p.cardsPlayed=0;p.spellsPlayed=0;
+ s.turn=actor;const p=s.players[actor];p.turns++;p.maxMana=Math.min(8,p.maxMana+1);p.mana=p.maxMana;p.powerUsed=false;p.cycled=false;p.cardsPlayed=0;p.spellsPlayed=0;
  if(p.reserve){p.reserve=false;withCardSource(s,{actor,kind:'reserve',uid:'h'+actor,cardId:'T06',faction:p.faction},()=>toHand(s,actor,{uid:'c'+s.uid++,cardId:'T06'},true),false);}
  for(const u of p.board){u.fresh=false;u.exhausted=false;u.spellTriggers=0;}cardEvent(s,{kind:'turn',actor,mana:p.mana,maxMana:p.maxMana,turns:p.turns});withCardSource(s,{actor,kind:'start',uid:'h'+actor,faction:p.faction},()=>drawCard(s,actor),false);
 }
@@ -93,6 +98,7 @@ function targetIds(s,actor,id){
  return [null];
 }
 export function cardActions(s,actor=s.turn){
+ if(s.version<4)return legacy(s).cardActions(s,actor);
  if(s.winner!==null||s.phase!=='play'||s.turn!==actor)return [];
  const p=s.players[actor],enemy=s.players[1-actor],actions=[];
  for(const c of p.hand){
@@ -107,10 +113,14 @@ export function cardActions(s,actor=s.turn){
  }
  if(!p.powerUsed&&p.mana>=2){const targets=p.faction==='W'?enemy.board.map(u=>u.uid):p.faction==='S'?(p.hand.length<8?[null]:[]):['h'+actor,...p.board.map(u=>u.uid)];
   for(const target of targets)actions.push({id:'power:'+(target||'-'),type:'power',target});
+  const alt=POWER_ALTERNATIVES[p.faction];
+  if(p.faction==='S'?p.hp>2&&p.hand.length<8&&(p.deckCount??p.deck.length)>0:p.board.length<5)actions.push({id:'power:'+alt.id,type:'power',mode:alt.id,target:null});
  }
+ if(!p.cycled&&p.mana>=1&&(p.deckCount??p.deck.length))for(const c of p.hand)if(CARDS[c.cardId])actions.push({id:'cycle:'+c.uid,type:'cycle',uid:c.uid});
  actions.push({id:'end',type:'end'});return actions;
 }
 export function stepCards(s,actor,input,{trace=false}={}){
+ if(s.version<4)return legacy(s).stepCards(s,actor,input,{trace});
  if(![0,1].includes(actor)||s.winner!==null)throw Error('对局已结束或玩家无效');
  if(s.phase==='mulligan'){
   if(input.type!=='mulligan'||s.kept[actor]||!Array.isArray(input.replace)||new Set(input.replace).size!==input.replace.length||!input.replace.every(id=>s.players[actor].hand.some(c=>c.uid===id)))throw Error('起手换牌无效');
@@ -121,7 +131,10 @@ export function stepCards(s,actor,input,{trace=false}={}){
  const a=cardActions(s,actor).find(x=>x.id===input.id);if(!a)throw Error('这个动作现在不能执行');
  const t=copy(s),p=t.players[actor];t.seq++;
  const origin=a.type==='play'?p.hand.find(c=>c.uid===a.uid):a.type==='attack'?p.board.find(c=>c.uid===a.uid):null;
- if(trace)beginCardEvents(t,actor,a,{actor,kind:a.type==='play'?cardInfo(origin.cardId).kind:a.type,uid:origin?.uid||'h'+actor,...(origin?{cardId:origin.cardId}:{}),faction:p.faction,...(a.choice?{choice:a.choice}:{})});
+ if(trace)beginCardEvents(t,actor,a,{actor,kind:a.type==='play'?cardInfo(origin.cardId).kind:a.type,uid:origin?.uid||'h'+actor,...(origin?{cardId:origin.cardId}:{}),faction:p.faction,...(a.mode?{mode:a.mode}:{}),...(a.choice?{choice:a.choice}:{})});
+ if(a.type==='cycle'){
+  const i=p.hand.findIndex(c=>c.uid===a.uid),returned=p.hand.splice(i,1)[0];p.mana--;p.cycled=true;p.deck.push(returned);cardEvent(t,{kind:'cycle',actor});drawCard(t,actor);log(t,'调度手牌：一张牌放回牌库底，再抽一张');return t;
+ }
  if(a.type==='end'){
   finishTurn(t,actor);if(t.winner!==null)return t;log(t,HEROES[p.faction].name+'结束回合');
   if(p.turns>=20&&t.players[1-actor].turns>=20){t.winner=-1;t.phase='ended';t.reason='双方各完成 20 回合';}else startTurn(t,1-actor);return t;
@@ -131,8 +144,9 @@ export function stepCards(s,actor,input,{trace=false}={}){
   damage(t,[[a.target,u.attack,u.drain?actor:null],...(a.target.startsWith('h')?[]:[[u.uid,target.attack,target.drain?1-actor:null,{actor:1-actor,kind:'attack',uid:target.uid,cardId:target.cardId}]])]);return t;
  }
  if(a.type==='power'){
-  p.mana-=2;p.powerUsed=true;log(t,HEROES[p.faction].power);
-  if(p.faction==='W')damage(t,[[a.target,1]]);else if(p.faction==='F')heal(t,a.target,2);else toHand(t,actor,{uid:'c'+t.uid++,cardId:'T05'},true);return t;
+  p.mana-=2;p.powerUsed=true;log(t,a.mode?POWER_ALTERNATIVES[p.faction].name:HEROES[p.faction].power);
+  if(a.mode==='assemble')spawn(t,actor,'T01');else if(a.mode==='seedling')spawn(t,actor,'T07');else if(a.mode==='stargaze'){damage(t,[['h'+actor,2]]);if(t.winner===null)drawCard(t,actor);}
+  else if(p.faction==='W')damage(t,[[a.target,1]]);else if(p.faction==='F')heal(t,a.target,2);else toHand(t,actor,{uid:'c'+t.uid++,cardId:'T05'},true);return t;
  }
  const hand=p.hand.find(c=>c.uid===a.uid),c=cardInfo(hand.cardId),id=c.id,combo=(p.cardsPlayed||0)>0;
  p.hand=p.hand.filter(c=>c.uid!==a.uid);p.mana-=c.cost;p.cardsPlayed=(p.cardsPlayed||0)+1;log(t,'打出'+c.name+(a.choice?' · '+c.choices.find(x=>x.id===a.choice).name:''));
@@ -181,15 +195,18 @@ function evaluate(s,actor){
  return value(s.players[actor])-value(s.players[1-actor]);
 }
 export function rankCardActions(s,actor=s.turn,deep=true){
- const rows=cardActions(s,actor).map(action=>{const next=stepCards(s,actor,action);return {action,value:evaluate(next,actor),next};}).sort((a,b)=>b.value-a.value||a.action.id.localeCompare(b.action.id));
+ if(s.version<4)return legacy(s).rankCardActions(s,actor,deep);
+ const p=s.players[actor],cycleNeed=a=>{const c=p.hand.find(c=>c.uid===a.uid);return Math.max(0,cardInfo(c.cardId).cost-p.maxMana-1)*.8+(p.hand.filter(x=>x.cardId===c.cardId).length>1?.35:0)-1;};
+ const rows=cardActions(s,actor).filter(a=>a.type!=='cycle'||cycleNeed(a)>0).map(action=>{const next=stepCards(s,actor,action);return {action,value:evaluate(next,actor)+(action.type==='cycle'?cycleNeed(action):0),next};}).sort((a,b)=>b.value-a.value||a.action.id.localeCompare(b.action.id));
  if(deep)for(const row of rows.slice(0,8)){
-  // Stop at hidden draws: the newly drawn identity cannot influence this choice.
-  if(row.next.turn!==actor||row.next.winner!==null||row.next.players.some((p,i)=>p.deck.length!==s.players[i].deck.length))continue;
+  // Stop at hidden draws, including cycles that keep the same deck size.
+  if(row.action.type==='cycle'||row.next.turn!==actor||row.next.winner!==null||row.next.players.some((p,i)=>p.deck.length!==s.players[i].deck.length))continue;
   const next=rankCardActions(row.next,actor,false)[0];if(next)row.value=Math.max(row.value,next.value-.015);
  }
  return rows.sort((a,b)=>b.value-a.value||a.action.id.localeCompare(b.action.id)).map(({action,value})=>({action,value}));
 }
 export function chooseCard(s,actor=s.turn,difficulty='challenge'){
+ if(s.version<4)return legacy(s).chooseCard(s,actor,difficulty);
  if(s.phase==='mulligan')return {type:'mulligan',replace:s.players[actor].hand.filter(c=>cardInfo(c.cardId).cost>=4).map(c=>c.uid)};
  const ranked=rankCardActions(s,actor,difficulty==='challenge');if(difficulty!=='practice'||ranked[0]?.value>90000)return ranked[0]?.action;
  const options=ranked.filter(r=>r.action.type!=='end'&&r.value>=ranked[0].value-3).slice(0,3);
@@ -197,7 +214,7 @@ export function chooseCard(s,actor=s.turn,difficulty='challenge'){
  const roll=noise(s.seed,s.seq,309+actor);return options[Math.min(options.length-1,Math.floor(roll*options.length))].action;
 }
 export function cardActionText(s,actor,a){
- if(a.type==='mulligan')return '确认起手';if(a.type==='end')return '结束回合';if(a.type==='power')return HEROES[s.players[actor].faction].power;
+ if(a.type==='mulligan')return '确认起手';if(a.type==='end')return '结束回合';if(a.type==='cycle')return '调度手牌';if(a.type==='power')return a.mode?POWER_ALTERNATIVES[s.players[actor].faction].name:HEROES[s.players[actor].faction].power;
  const u=a.type==='play'?s.players[actor].hand.find(c=>c.uid===a.uid):s.players[actor].board.find(c=>c.uid===a.uid),info=cardInfo(u?.cardId);
  return (a.type==='play'?'打出':'使用')+(info?.name||'单位')+(a.choice?' · '+info.choices.find(c=>c.id===a.choice).name:'')+(a.target?' · '+(a.target.startsWith('h')?'英雄':cardInfo(find(s,a.target)?.cardId)?.name||'单位'):'');
 }

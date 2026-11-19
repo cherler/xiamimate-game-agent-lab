@@ -1,5 +1,5 @@
 import {cardInfo} from '../src/cards.mjs';
-import {HEROES} from '../src/catalog.mjs';
+import {HEROES,POWER_ALTERNATIVES} from '../src/catalog.mjs';
 import {glyph,captureTable,animateTable} from './card-table.mjs';
 import {portrait} from './art.mjs';
 const esc=s=>String(s??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('"','&quot;');
@@ -9,6 +9,8 @@ const iconFor=kind=>({damage:'sword',block:'shield',heal:'heart',buff:'up',death
 const primaryEvents=e=>e.events.filter(x=>!['trigger','turn'].includes(x.kind));
 export function sourceInfo(source={}){
  const c=cardInfo(source.cardId,source.version),hero=HEROES[source.faction];
+ if(source.kind==='cycle')return {name:'手牌调度',art:artFor(source.faction),effect:'花费 1 能量，将一张手牌放到牌库底，再抽 1 张。',cost:1,kind:'cycle',theme:'neutral'};
+ if(source.kind==='power'&&source.mode){const a=POWER_ALTERNATIVES[source.faction];return {name:a.name,art:a.art,effect:a.text,cost:2,kind:'power',theme:themeFor(source.faction)};}
  return {name:c?.name||(source.kind==='fatigue'?'疲劳':source.kind==='power'?hero?.power:source.kind==='start'?'回合开始':'回合结束')||'英雄技能',art:c?.id||artFor(source.faction),effect:c?.effect||(source.kind==='fatigue'?'牌库已空。':source.kind==='power'?hero?.text:'')||'',cost:c?.cost??(source.kind==='power'?2:null),kind:c?.kind||source.kind,theme:themeFor(c?.id)};
 }
 export function decoratePresentation(cue,before,after){
@@ -102,10 +104,11 @@ export async function presentCardAction({root,before,after,entry,actor,paint,pac
  const p=shown.players[entry.actor],src=entry.source,info=sourceInfo(src);
  if(entry.action.type==='play'){const index=p.hand.findIndex(c=>c.uid===entry.action.uid);if(index>=0)p.hand.splice(index,1);else if(p.hand.every(c=>c.cardId===null))p.hand.pop();p.mana=Math.max(0,p.mana-(info.cost||0));}
  if(entry.action.type==='power'){p.mana=Math.max(0,p.mana-2);p.powerUsed=true;}
+ if(entry.action.type==='cycle'){p.mana=Math.max(0,p.mana-1);p.cycled=true;const i=p.hand.findIndex(c=>c.uid===entry.action.uid);if(i>=0)p.hand.splice(i,1);else if(p.hand.every(c=>c.cardId===null))p.hand.pop();}
  if(entry.action.type==='attack'){const u=p.board.find(u=>u.uid===entry.source.uid);if(u)u.exhausted=true;}
  paint(shown);refreshPositions(root,positions);
  let launch=null;
- if(['spell','unit','power'].includes(src.kind))launch=await reveal(root,src,actor,{pace,token});
+ if(['spell','unit','power','cycle'].includes(src.kind))launch=await reveal(root,src,actor,{pace,token});
  if(token!==epoch)return;
  if(src.kind==='attack')await attackMotion(root,entry,positions,pace);
  for(let i=0;i<entry.events.length;i++){

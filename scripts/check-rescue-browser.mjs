@@ -10,7 +10,7 @@ import {chromium} from './playwright.mjs';
 const url=process.env.ARENA_URL||'http://127.0.0.1:4841',out=process.env.ARENA_RESULTS||path.resolve(project,'../output/game-agent-lab/rescue-2026-11-17');await fs.mkdir(out,{recursive:true});
 const browser=await chromium.launch({headless:true}),errors=[],checks=[];
 const context=await browser.newContext({viewport:{width:1440,height:1000}}),p=await context.newPage();p.on('pageerror',e=>errors.push(e.message));
-await context.addInitScript(()=>{try{const fixture=sessionStorage.getItem('rescue-test-restore');if(fixture){localStorage.setItem('glimmer-rescue-save',fixture);sessionStorage.removeItem('rescue-test-restore');}}catch{}});
+await context.addInitScript(()=>{try{const fixture=sessionStorage.getItem('rescue-test-restore');if(fixture){localStorage.setItem('gameplay-v1:glimmer-rescue-save',fixture);sessionStorage.removeItem('rescue-test-restore');}}catch{}});
 async function restoreRecord(page,r){await page.evaluate(record=>sessionStorage.setItem('rescue-test-restore',JSON.stringify(record)),r);await page.reload();await page.locator('#rescue-board').waitFor();}
 async function shot(page,name){await page.screenshot({path:path.join(out,name+'.png'),fullPage:true});}
 async function point(page,x,y){await page.locator('#rescue-board').scrollIntoViewIfNeeded();const r=await page.locator('#rescue-board').boundingBox();await page.mouse.click(r.x+r.width*x/24,r.y+r.height*y/16);}

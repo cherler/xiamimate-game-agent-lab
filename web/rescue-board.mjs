@@ -1,7 +1,7 @@
 import {rescueMap,lineOfSight,walkable,RESCUE_HZ,rescueRaging} from '../src/rescue.mjs';
 const C={floor:'#dce5e8',wall:'#294957',wallTop:'#395d6a',ink:'#254755',soldier:'#61c2f2',civilian:'#ffd16e',zombie:'#dc7089',exit:'#7bdec0'};
 export function rescuePoint(canvas,e){const r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left)/r.width*24,y:(e.clientY-r.top)/r.height*16};}
-export function drawRescue(canvas,s,{selected='all',building=false,hover=null,reduced=false}={}){
+export function drawRescue(canvas,s,{selected='all',building=false,support=null,hover=null,reduced=false}={}){
  const box=canvas.getBoundingClientRect();if(!box.width)return;
  const dpr=Math.min(devicePixelRatio||1,2),width=Math.round(box.width*dpr),height=Math.round(box.height*dpr);
  if(canvas.width!==width||canvas.height!==height){canvas.width=width;canvas.height=height;}
@@ -24,10 +24,13 @@ export function drawRescue(canvas,s,{selected='all',building=false,hover=null,re
  if(s.phase==='deploy'&&s.version>=2){ctx.fillStyle='#173e4924';ctx.fillRect(0,0,24,ex.y);ctx.fillRect(0,ex.y,ex.x,ex.h);ctx.fillRect(ex.x+ex.w,ex.y,24-ex.x-ex.w,ex.h);ctx.fillRect(0,ex.y+ex.h,24,16-ex.y-ex.h);}
  if(evac&&evac.phase!=='idle'){
   const blocked=['contested','unguarded'].includes(evac.phase),color=blocked?'#ad3a52':'#267d66';
-  text(evac.phase==='complete'?'✓ 已撤离':blocked?'Ⅱ 读秒暂停':'守住 '+Math.ceil((evac.required-evac.progress)/30)+' 秒',ex.x+ex.w/2,ex.y+.65,.38,color);
+  text(evac.phase==='complete'?'✓ 已撤离':evac.phase==='gathering'?'等待呼叫接驳':evac.phase==='called'?'准备接驳':blocked?'Ⅱ 读秒暂停':'守住 '+Math.ceil((evac.required-evac.progress)/30)+' 秒',ex.x+ex.w/2,ex.y+.65,.38,color);
   ctx.fillStyle='#518b7833';ctx.fillRect(ex.x+.35,ex.y+1.14,ex.w-.7,.15);ctx.fillStyle=color;ctx.fillRect(ex.x+.35,ex.y+1.14,(ex.w-.7)*evac.progress/evac.required,.15);
  }else{text('＋',ex.x+ex.w/2,ex.y+1,.8,'#348773');text(s.phase==='deploy'&&s.version>=2?'接 应 区':'撤 离 区',ex.x+ex.w/2,ex.y+1.75,.36,'#296e5f');}
  for(let i=0;i<3;i++)chevron(ex.x+ex.w+.25+i*.3,ex.y+ex.h/2,'#38977d',Math.PI);
+ for(const crate of s.crates||[])if(!crate.claimed){ctx.fillStyle='#f6dc96';ctx.fillRect(crate.x-.33,crate.y-.28,.66,.56);ctx.strokeStyle='#a77935';ctx.lineWidth=.06;ctx.strokeRect(crate.x-.33,crate.y-.28,.66,.56);text('+',crate.x,crate.y,.5,'#95692e');text('补给 +1',crate.x,crate.y+.65,.28,'#916832');}
+ for(const d of s.decoys||[]){const time=Math.ceil((d.expires-s.tick)/30);circle(d.x,d.y,.3,'#c5a3da','#7b5494');circle(d.x,d.y,.6+(reduced?0:s.tick%30/35),null,'#9c74b588',.05);text('◉',d.x,d.y,.38,'#684179');text('诱饵 '+time+'s',d.x,d.y-.7,.29,'#74458b');for(const z of s.zombies)if(z.target===d.id)line(z,d,'#9863ad66',.035);}
+ if(support&&hover){const valid=s.soldiers.some(u=>u.hp>0&&Math.hypot(u.x-hover.x,u.y-hover.y)<=4&&lineOfSight(s,u,hover)),color=valid?(support==='medic'?'#318a63':'#9460ad'):'#af5360';circle(hover.x,hover.y,support==='medic'?2.4:6,color+'18',color+'88',.04);text(support==='medic'?'+55':'诱敌 6 秒',hover.x,hover.y-.6,.4,color);}
  for(const d of m.doors){
   const g=s.gates.find(g=>g.id===d.id&&g.hp>0),v=d.vertical;
   ctx.fillStyle=g?'#7bbfac':building?'#b6efda':'#b8cbc9';ctx.fillRect(d.x-(v?.21:.49),d.y-(v?.49:.21),v?.42:.98,v?.98:.42);
@@ -82,9 +85,11 @@ export function drawRescue(canvas,s,{selected='all',building=false,hover=null,re
    if(e.kind==='infection')text('感染',e.x,e.y-.5-p*.5,.32,'#aa2d4c');
    if(e.kind==='death'&&!reduced)for(let i=0;i<4;i++){const a=i*Math.PI/2+.3;circle(e.x+Math.cos(a)*p*.8,e.y+Math.sin(a)*p*.8,.055,'#b5526c');}
   }
+  if(e.kind==='medic'||e.kind==='supply'){circle(e.x,e.y,.4+p*.6,null,'#29946b',.06);text(e.kind==='supply'?'补给 +1':e.amount?'+'+e.amount:'抢救',e.x,e.y-.4-p*.4,.38,'#217b56');}
   ctx.globalAlpha=1;
  }
  if(s.phase==='deploy'){text('接应部署',1.1,.55,.22,'#a7c7cf','left');text('部署',22.9,.55,.26,'#a7c7cf','right');}
  canvas.dataset.phase=s.phase;canvas.dataset.tick=String(s.tick);canvas.dataset.saved=String(s.saved);canvas.dataset.lost=String(s.lost);canvas.dataset.kills=String(s.kills);
  canvas.dataset.evac=evac?.phase||'legacy';canvas.dataset.evacProgress=String(evac?.progress||0);canvas.dataset.raging=String(raging);canvas.dataset.boarding=String(s.civilians.filter(c=>c.status==='boarding').length);
+ canvas.dataset.supplies=String(s.supplies??0);canvas.dataset.decoys=String(s.decoys?.length||0);
 }

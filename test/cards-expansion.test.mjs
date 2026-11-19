@@ -72,6 +72,6 @@ test('扩展版完整对局重演与上一版回放兼容',()=>{
   const decks=[PRESETS[i],PRESETS[(i+1)%6]],m=beginStrategy('cards',100+i,decks.map(d=>({faction:d.faction,deck:d.deck})));
   for(const actor of [0,1])advanceStrategy(m,actor,chooseCard(m.state,actor));
   while(m.state.winner===null&&m.state.seq<1000)advanceStrategy(m,m.state.turn,chooseCard(m.state));
-  assert.notEqual(m.state.winner,null);assert.equal(m.record.format,'glimmer-3');assert.deepEqual(replayStrategy(sealStrategy(m)),m.state);
+  assert.notEqual(m.state.winner,null);assert.equal(m.record.format,'glimmer-4');assert.deepEqual(replayStrategy(sealStrategy(m)),m.state);
  }
 });

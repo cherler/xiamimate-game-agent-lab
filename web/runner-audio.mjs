@@ -24,6 +24,8 @@ export function createRunnerAudio(ctx){
    else if(kind==='runner-saved'){hiss(.26,.11,3600);tone(760,160,.24,.08,'triangle');}
    else if(kind==='runner-jump'){hiss(.13,.045,2300);tone(220,410,.13,.035);}
    else if(kind==='runner-roll'){hiss(.2,.065,650);}
+   else if(kind==='runner-step'){hiss(.04,.035,700);tone(110,65,.055,.026);}
+   else if(kind==='runner-land'){hiss(.09,.07,850);tone(145,60,.12,.05,'triangle');}
    else if(kind==='runner-go'){tone(420,740,.19,.05);}
   }
  };

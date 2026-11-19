@@ -15,7 +15,7 @@ const oldCards=JSON.parse(await fs.readFile(path.join(project,'test/fixtures/car
 const oldSave={record:oldCards,history:[],faction:'W',deckKey:'W-swarm',rivalDeck:'auto',cardDifficulty:'practice'};
 const cardRecord=faction=>{const m=beginStrategy('cards',41003,[{faction},{faction:'F'}]);for(const actor of [0,1])advanceStrategy(m,actor,{type:'mulligan',replace:[]});while(m.state.players[0].turns<3||m.state.turn!==0)advanceStrategy(m,m.state.turn,{id:'end'});return sealStrategy(m);};
 const cardSave=faction=>({record:cardRecord(faction),history:[],faction,deckKey:{W:'W-swarm',F:'F-growth',S:'S-combo'}[faction],rivalDeck:'F-growth',cardDifficulty:'practice'});
-const runs=[1,2,3].map(level=>rescueScenario({level})),snapshots={};
+const runs=[1,2,3].map(level=>rescueScenario({level,version:4})),snapshots={};
 for(const s of playbackRescue(runs[0].record)){
  const key=s.evac.phase==='gathering'?'gathering':s.soldiers.some(u=>u.hp>0&&u.maxHp-u.hp>=60)?'hurt':null;
  if(key&&!snapshots[key])snapshots[key]={...runs[0].record,commands:runs[0].record.commands.filter(c=>c.tick<=s.tick),end:{tick:s.tick,hash:fingerprint(s),winner:s.winner}};

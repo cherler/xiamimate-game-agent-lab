@@ -1,0 +1,1 @@
+{"format":"rescue-4","game":"rescue","config":{"level":1,"seed":41003,"difficulty":"normal","upgrades":[]},"commands":[{"tick":0,"command":{"type":"start"}},{"tick":0,"command":{"type":"move","ids":["s0","s1","s2","s3","s4"],"x":12.5,"y":8.5}},{"tick":600,"command":{"type":"pause"}}],"end":{"tick":600,"hash":"8f52dd7a","winner":null}}

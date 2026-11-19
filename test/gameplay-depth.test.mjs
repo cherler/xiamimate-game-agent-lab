@@ -63,7 +63,7 @@ test('拆卸付出一金币，装备回到背包，棋子与棋池不变',()=>{
 });
 test('平民先集结，主动呼叫才开始读秒和额外尸潮，不能重复呼叫',()=>{
  let s=gathering();for(let i=0;i<10;i++)s=stepRescue(s);assert.equal(s.evac.phase,'gathering');assert.equal(s.evac.progress,0);assert.equal(s.evac.alerts,0);assert.equal(s.saved,0);
- s=commandRescue(s,{type:'pause'});s=commandRescue(s,{type:'evacuate'});assert.equal(stepRescue(s).tick,s.tick);assert.throws(()=>commandRescue(s,{type:'evacuate'}));s=stepRescue(commandRescue(s,{type:'resume'}));assert.equal(s.evac.phase,'loading');assert.equal(s.evac.progress,1);assert.equal(s.schedule.filter(w=>w.assault).length,6);
+ s=commandRescue(s,{type:'pause'});s=commandRescue(s,{type:'evacuate'});assert.equal(stepRescue(s).tick,s.tick);assert.throws(()=>commandRescue(s,{type:'evacuate'}));s=stepRescue(commandRescue(s,{type:'resume'}));assert.equal(s.evac.phase,'loading');assert.equal(s.evac.progress,1);assert.equal(s.schedule.filter(w=>w.assault).length,rescueMap(s.level,s.version).extraction.count);
 });
 test('战术补给拒绝隔墙、超距或空治疗；无效动作不消耗资源',()=>{
  const s=commandRescue(initRescue(),{type:'start'}),before=structuredClone(s);for(const a of [{type:'decoy',x:20,y:12},{type:'decoy',x:4,y:9},{type:'medic',x:4.5,y:12}])assert.throws(()=>commandRescue(s,a));assert.deepEqual(s,before);

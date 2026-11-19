@@ -52,8 +52,8 @@ test('模型包仅包含可观察局面，固定候选中包含可犯错的方�
   assert.deepEqual(packet,different);assert.deepEqual(Object.keys(packet.questions.move.criteria),snakeMoves(s,0));
   assert.deepEqual(Object.keys(packet.state).sort(),['board','rival','you']);
 });
-test('双方球拍速度和 6 帧采样一致',()=>{
-  let s=stepPong(initPong(1),[0,600]);assert.deepEqual(s.paddles,[292,308]);
+test('历史对局保留双方球拍速度和 6 帧采样',()=>{
+  let s=stepPong(initPong(1,{legacy:true}),[0,600]);assert.deepEqual(s.paddles,[292,308]);
   for(let i=0;i<5;i++)s=stepPong(s,[600,0]);
   assert.deepEqual(s.paddles,[252,348]);s=stepPong(s,[600,0]);assert.deepEqual(s.paddles,[260,340]);
 });

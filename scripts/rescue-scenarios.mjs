@@ -1,5 +1,5 @@
 import {beginRescue,issueRescue,advanceRescue,sealRescue} from '../src/rescue.mjs';
-export function rescueScenario({level=1,seed=41003,plan='escort',upgrades=level===1?[]:level===2?['fire']:['fire','gate'],difficulty='normal',version=4,tactics=false}={}){
+export function rescueScenario({level=1,seed=41003,plan='escort',upgrades=level===1?[]:level===2?['fire']:['fire','gate'],difficulty='normal',version=5,tactics=false}={}){
  const match=beginRescue({level,seed,upgrades,difficulty,version}),ids=g=>match.state.soldiers.filter(u=>u.hp>0&&(g==='all'||u.group===g)).map(u=>u.id);
  const order=(g,x,y)=>issueRescue(match,{type:'move',ids:ids(g),x,y});
  if(plan==='escort'&&(level===2||version>=3))issueRescue(match,{type:'gate',door:level===1?'door2':level===2?'door2':'door4'});

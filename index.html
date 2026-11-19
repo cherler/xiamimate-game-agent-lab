@@ -180,6 +180,10 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
 @media(max-width:650px){.rhythm-options{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:6px}.rhythm-options>label{display:grid;min-width:0;gap:3px}.rhythm-options>label select{max-width:none;width:100%}.rhythm-options>.dance-offset{grid-column:1 / 3}.rhythm-options>button{grid-column:3;justify-self:end}}
 
 .rhythm-options select{min-width:64px}
+
+.runner-route{position:absolute;top:66px;left:22px;right:22px;display:flex;gap:12px;align-items:center;color:#315765;pointer-events:none;padding-bottom:7px}.runner-route>span{font-size:15px;font-weight:750}.runner-route small{font-size:12px;margin-left:auto}.runner-route progress{position:absolute;bottom:0;left:0;width:100%;height:3px;accent-color:#5ca999;border:0}.runner-welcome{display:flex;align-items:center;gap:15px;text-align:left}.runner-portrait{width:116px;height:104px;flex:none}.runner-welcome>div{display:grid;gap:5px}.runner-welcome b{font-size:29px;color:#fff1ce}.runner-welcome span{font-size:17px;color:#d6ece6}.runner-mode .runner-pop{top:25%}
+@media(max-width:650px){.runner-route{top:55px;left:12px;right:12px;gap:6px}.runner-route>span{font-size:12px}.runner-route small{font-size:10px}.runner-portrait{width:84px;height:76px}.runner-welcome{gap:10px}.runner-welcome b{font-size:23px}.runner-welcome span{font-size:14px}.runner-mode .runner-gesture-demo>span{font-size:28px}.runner-mode .runner-gesture-demo small{font-size:12px}}
+@media(max-height:600px){.runner-route{top:48px}.runner-portrait{width:68px;height:61px}.runner-welcome b{font-size:21px}.runner-welcome span{font-size:12px}.runner-mode .motion-overlay{gap:8px}.runner-mode .runner-gesture-demo>span{font-size:24px}.runner-mode .runner-gesture-demo small{font-size:11px}.runner-mode .runner-pop{top:36%}}
 </style>
 </head>
 <body>
@@ -229,7 +233,7 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
   <section id="dance" hidden></section>
   <section id="runner" hidden></section>
 </main>
-<script id="samples" type="application/json">{"snake":{"format":1,"rules":"round2.2","game":"snake","seed":41003,"opening":[],"frames":[[1,["right","left"]],[1,["right","left"]],[1,["right","left"]],[1,["right","down"]],[1,["down","right"]],[1,["left","down"]],[1,["down","right"]],[1,["right","right"]],[1,["right","right"]],[1,["right","up"]],[1,["up","right"]],[1,["up","up"]],[1,["up","up"]],[1,["up","up"]],[1,["up","up"]],[1,["up","up"]],[1,["right","up"]],[1,["right","left"]],[1,["right","down"]]],"decisions":[{"tick":0,"actor":0,"id":"right","source":"planner","ms":1.71},{"tick":0,"actor":1,"id":"left","source":"rule","ms":0.11},{"tick":1,"actor":0,"id":"right","source":"planner","ms":0.62},{"tick":1,"actor":1,"id":"left","source":"rule","ms":0.06},{"tick":2,"actor":0,"id":"right","source":"planner","ms":0.42},{"tick":2,"actor":1,"id":"left","source":"rule","ms":0.02},{"tick":3,"actor":0,"id":"right","source":"planner","ms":0.6},{"tick":3,"actor":1,"id":"down","source":"rule","ms":0.03},{"tick":4,"actor":0,"id":"down","source":"planner","ms":0.95},{"tick":4,"actor":1,"id":"right","source":"rule","ms":0.03},{"tick":5,"actor":0,"id":"left","source":"planner","ms":0.47},{"tick":5,"actor":1,"id":"down","source":"rule","ms":0.02},{"tick":6,"actor":0,"id":"down","source":"planner","ms":0.38},{"tick":6,"actor":1,"id":"right","source":"rule","ms":0.02},{"tick":7,"actor":0,"id":"right","source":"planner","ms":0.25},{"tick":7,"actor":1,"id":"right","source":"rule","ms":0.02},{"tick":8,"actor":0,"id":"right","source":"planner","ms":0.27},{"tick":8,"actor":1,"id":"right","source":"rule","ms":0.02},{"tick":9,"actor":0,"id":"right","source":"planner","ms":0.26},{"tick":9,"actor":1,"id":"up","source":"rule","ms":0.02},{"tick":10,"actor":0,"id":"up","source":"planner","ms":0.24},{"tick":10,"actor":1,"id":"right","source":"rule","ms":0.01},{"tick":11,"actor":0,"id":"up","source":"planner","ms":0.25},{"tick":11,"actor":1,"id":"up","source":"rule","ms":0.01},{"tick":12,"actor":0,"id":"up","source":"planner","ms":0.23},{"tick":12,"actor":1,"id":"up","source":"rule","ms":0.01},{"tick":13,"actor":0,"id":"up","source":"planner","ms":0.22},{"tick":13,"actor":1,"id":"up","source":"rule","ms":0.01},{"tick":14,"actor":0,"id":"up","source":"planner","ms":0.21},{"tick":14,"actor":1,"id":"up","source":"rule","ms":0.01},{"tick":15,"actor":0,"id":"up","source":"planner","ms":0.26},{"tick":15,"actor":1,"id":"up","source":"rule","ms":0.01},{"tick":16,"actor":0,"id":"right","source":"planner","ms":0.19},{"tick":16,"actor":1,"id":"up","source":"rule","ms":0.01},{"tick":17,"actor":0,"id":"right","source":"planner","ms":0.16},{"tick":17,"actor":1,"id":"left","source":"rule","ms":0.01},{"tick":18,"actor":0,"id":"right","source":"planner","ms":0.03},{"tick":18,"actor":1,"id":"down","source":"rule","ms":0.01}],"end":{"tick":19,"score":[2,1],"winner":1,"hash":"0996aa8a"}},"pong":{"format":1,"rules":"round2.2","game":"pong","seed":41003,"opening":[],"frames":[[72,[360,240]],[11,[360,90]],[46,[360,109]],[105,[257,240]],[7,[360,93]],[92,[360,74]],[14,[546,240]],[78,[527,240]],[20,[360,469]],[68,[360,488]],[9,[247,240]],[73,[266,240]],[26,[360,502]],[52,[360,521]],[34,[55,240]],[40,[74,240]],[21,[360,478]],[50,[360,459]],[13,[492,240]],[55,[511,240]],[9,[360,395]],[56,[360,414]],[22,[111,240]],[40,[130,240]],[59,[360,251]],[58,[350,240]],[55,[360,547]],[53,[437,240]],[5,[360,324]],[47,[360,343]],[19,[145,240]],[31,[164,240]],[48,[360,313]],[46,[432,240]],[46,[360,257]],[31,[56,240]],[13,[53,240]],[3,[360,149]],[40,[360,130]],[13,[221,240]],[28,[202,240]],[8,[360,379]],[33,[360,360]],[41,[547,240]],[42,[360,228]],[25,[105,240]],[16,[86,240]],[41,[360,154]],[41,[370,240]],[23,[360,444]],[18,[360,463]],[13,[528,240]],[29,[547,240]],[41,[360,547]],[14,[542,240]],[27,[547,240]],[41,[360,547]],[11,[493,240]],[30,[512,240]],[17,[360,415]],[24,[360,434]],[42,[308,240]],[41,[360,212]],[9,[227,240]],[32,[208,240]],[41,[360,291]],[41,[414,240]],[42,[360,53]],[41,[289,240]],[25,[360,483]],[16,[360,502]],[41,[334,240]],[41,[360,203]],[21,[135,240]],[20,[116,240]],[42,[360,184]],[41,[356,240]],[19,[360,449]],[22,[360,468]],[8,[227,240]],[33,[246,240]],[41,[360,148]],[42,[282,240]],[6,[360,370]],[35,[360,389]],[15,[165,240]],[26,[184,240]],[15,[360,69]],[26,[360,53]],[20,[151,240]],[21,[132,240]],[41,[360,205]],[42,[357,240]],[23,[360,465]],[18,[360,484]],[2,[258,240]],[39,[277,240]],[14,[360,69]],[27,[360,88]],[41,[279,240]],[15,[360,413]],[27,[360,432]],[41,[322,240]],[17,[360,53]],[24,[360,66]],[29,[84,240]],[12,[65,240]],[41,[360,165]],[4,[247,240]],[37,[228,240]],[24,[360,495]],[18,[360,476]],[41,[395,240]],[41,[360,328]],[26,[93,240]],[15,[112,240]],[41,[360,53]],[42,[291,240]],[16,[360,443]],[25,[360,462]],[11,[188,240]],[30,[207,240]],[13,[360,63]],[28,[360,53]],[9,[248,240]],[32,[229,240]],[41,[360,313]],[42,[434,240]],[15,[360,81]],[26,[360,100]],[6,[246,240]],[35,[227,240]],[41,[360,286]],[41,[547,240]],[42,[360,319]],[9,[212,240]],[32,[231,240]],[6,[360,158]],[35,[360,139]],[12,[240,240]],[29,[221,240]],[41,[360,278]],[41,[547,240]],[42,[360,244]],[41,[53,240]],[11,[360,93]],[30,[360,74]],[41,[266,240]],[34,[360,540]],[7,[360,547]],[3,[260,240]],[39,[279,240]],[14,[360,68]],[27,[360,87]],[5,[234,240]],[36,[215,240]],[34,[360,547]],[7,[360,546]],[41,[295,240]],[10,[360,103]],[31,[360,122]],[42,[53,240]],[19,[360,424]],[22,[360,405]],[41,[449,240]],[10,[360,105]],[31,[360,124]],[41,[275,240]],[42,[360,547]],[11,[510,240]],[30,[529,240]],[41,[360,277]],[28,[97,240]],[13,[116,240]],[4,[360,121]],[37,[360,102]],[41,[366,240]],[19,[360,448]],[23,[360,467]],[41,[400,240]],[6,[360,116]],[35,[360,135]],[41,[53,240]],[41,[360,200]],[42,[375,240]],[18,[360,451]],[23,[360,470]],[41,[421,240]],[41,[360,53]],[41,[336,240]],[24,[360,501]],[17,[360,520]],[26,[130,240]],[16,[149,240]],[41,[360,281]],[1,[472,240]],[40,[491,240]],[41,[360,53]],[24,[121,240]],[17,[102,240]],[42,[360,154]],[12,[493,240]],[29,[474,240]],[41,[360,314]],[23,[130,240]],[18,[149,240]],[41,[360,53]],[41,[381,240]],[16,[360,440]],[26,[360,459]],[19,[157,240]],[22,[176,240]],[41,[360,178]],[5,[455,240]],[36,[436,240]],[41,[360,547]],[25,[93,240]],[17,[112,240]],[10,[360,411]],[31,[360,392]],[12,[532,240]],[29,[547,240]],[8,[360,364]],[33,[360,383]],[13,[186,240]],[28,[205,240]],[9,[360,109]],[32,[360,90]],[42,[396,240]],[41,[360,547]],[41,[53,240]],[41,[360,165]],[41,[434,240]],[28,[360,512]],[14,[360,531]],[41,[449,240]],[9,[360,376]],[32,[360,395]],[41,[53,240]],[20,[360,488]],[21,[360,469]],[41,[547,240]],[42,[360,351]],[28,[84,240]],[4,[103,240]]],"decisions":[{"tick":0,"actor":0,"id":"lower","source":"planner","ms":0.01},{"tick":0,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":129,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":129,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":234,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":234,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":333,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":333,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":425,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":425,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":513,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":513,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":595,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":595,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":673,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":673,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":747,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":747,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":818,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":818,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":886,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":886,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":951,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":951,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1013,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1013,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":1072,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1072,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1130,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1130,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1185,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":1185,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1238,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1238,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1290,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":1290,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1340,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1340,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":1388,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":1388,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1434,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1434,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1480,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1480,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1524,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1524,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":1567,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1567,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1608,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1608,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":1649,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":1649,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1690,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1690,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1732,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1732,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1773,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1773,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":1814,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1814,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1855,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1855,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1896,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":1896,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1938,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1938,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1979,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":1979,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2020,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2020,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2061,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":2061,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2102,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2102,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2143,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":2143,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2185,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2185,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2226,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2226,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2267,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2267,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":2308,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":2308,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2349,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2349,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2391,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2391,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2432,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2432,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2473,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":2473,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2514,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2514,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2555,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2555,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2596,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2596,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":2638,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2638,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2679,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2679,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2720,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":2720,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2761,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2761,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":2802,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2802,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2844,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2844,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2885,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":2885,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2926,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2926,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":2967,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2967,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3008,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3008,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":3049,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3049,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3091,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3091,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3132,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":3132,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3173,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3173,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3214,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3214,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3255,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3255,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3297,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":3297,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3338,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3338,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3379,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3379,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3420,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3420,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":3461,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3461,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3502,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3502,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":3544,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":3544,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3585,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3585,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3626,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":3626,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3667,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3667,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":3708,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3708,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3750,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3750,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3791,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":3791,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3832,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3832,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":3873,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3873,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3914,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3914,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":3955,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":3955,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3997,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3997,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4038,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4038,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4079,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4079,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":4120,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":4120,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4161,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4161,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4203,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":4203,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4244,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4244,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":4285,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4285,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4326,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4326,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":4367,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":4367,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4408,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4408,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4450,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4450,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4491,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4491,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":4532,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4532,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4573,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4573,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4614,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":4614,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4656,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4656,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4697,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4697,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4738,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4738,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":4779,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":4779,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4820,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4820,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4861,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4861,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4903,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4903,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":4944,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":4944,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4985,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4985,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5026,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5026,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5067,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5067,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5109,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":5109,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5150,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5150,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5191,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":5191,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5232,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5232,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":5273,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5273,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5314,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5314,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5356,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":5356,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5397,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5397,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5438,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5438,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5479,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5479,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":5520,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5520,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5562,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5562,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5603,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":5603,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5644,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5644,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5685,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5685,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5726,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5726,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5767,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":5767,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5809,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5809,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":5850,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":5850,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5891,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5891,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5932,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5932,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5973,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5973,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":6015,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6015,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6056,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6056,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6097,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":6097,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6138,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6138,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":6179,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6179,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6220,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6220,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6262,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":6262,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6303,"actor":0,"id":"lower","source":"planner","ms":0.01},{"tick":6303,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":6344,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6344,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6385,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6385,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6426,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":6426,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6468,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6468,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":6509,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":6509,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6550,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6550,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6591,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":6591,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6632,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6632,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":6673,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6673,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6715,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6715,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6756,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":6756,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6797,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6797,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":6838,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6838,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6879,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6879,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6921,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":6921,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6962,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6962,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":7003,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":7003,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":7044,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":7044,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":7085,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":7085,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":7126,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":7126,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":7168,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":7168,"actor":1,"id":"upper","source":"rule","ms":0}],"end":{"tick":7200,"score":[0,0],"winner":-1,"hash":"f06ab229"}}}</script>
+<script id="samples" type="application/json">{"snake":{"format":1,"rules":"round2.2","game":"snake","seed":41003,"opening":[],"frames":[[1,["right","left"]],[1,["right","left"]],[1,["right","left"]],[1,["right","down"]],[1,["down","right"]],[1,["left","down"]],[1,["down","right"]],[1,["right","right"]],[1,["right","right"]],[1,["right","up"]],[1,["up","right"]],[1,["up","up"]],[1,["up","up"]],[1,["up","up"]],[1,["up","up"]],[1,["up","up"]],[1,["right","up"]],[1,["right","left"]],[1,["right","down"]]],"decisions":[{"tick":0,"actor":0,"id":"right","source":"planner","ms":3},{"tick":0,"actor":1,"id":"left","source":"rule","ms":0.12},{"tick":1,"actor":0,"id":"right","source":"planner","ms":0.58},{"tick":1,"actor":1,"id":"left","source":"rule","ms":0.05},{"tick":2,"actor":0,"id":"right","source":"planner","ms":0.79},{"tick":2,"actor":1,"id":"left","source":"rule","ms":0.12},{"tick":3,"actor":0,"id":"right","source":"planner","ms":1.53},{"tick":3,"actor":1,"id":"down","source":"rule","ms":0.09},{"tick":4,"actor":0,"id":"down","source":"planner","ms":0.59},{"tick":4,"actor":1,"id":"right","source":"rule","ms":0.03},{"tick":5,"actor":0,"id":"left","source":"planner","ms":0.38},{"tick":5,"actor":1,"id":"down","source":"rule","ms":0.02},{"tick":6,"actor":0,"id":"down","source":"planner","ms":0.35},{"tick":6,"actor":1,"id":"right","source":"rule","ms":0.02},{"tick":7,"actor":0,"id":"right","source":"planner","ms":0.33},{"tick":7,"actor":1,"id":"right","source":"rule","ms":0.02},{"tick":8,"actor":0,"id":"right","source":"planner","ms":0.46},{"tick":8,"actor":1,"id":"right","source":"rule","ms":0.04},{"tick":9,"actor":0,"id":"right","source":"planner","ms":0.27},{"tick":9,"actor":1,"id":"up","source":"rule","ms":0.02},{"tick":10,"actor":0,"id":"up","source":"planner","ms":0.57},{"tick":10,"actor":1,"id":"right","source":"rule","ms":0.02},{"tick":11,"actor":0,"id":"up","source":"planner","ms":0.26},{"tick":11,"actor":1,"id":"up","source":"rule","ms":0.01},{"tick":12,"actor":0,"id":"up","source":"planner","ms":0.24},{"tick":12,"actor":1,"id":"up","source":"rule","ms":0.01},{"tick":13,"actor":0,"id":"up","source":"planner","ms":0.33},{"tick":13,"actor":1,"id":"up","source":"rule","ms":0.02},{"tick":14,"actor":0,"id":"up","source":"planner","ms":0.48},{"tick":14,"actor":1,"id":"up","source":"rule","ms":0.01},{"tick":15,"actor":0,"id":"up","source":"planner","ms":0.22},{"tick":15,"actor":1,"id":"up","source":"rule","ms":0.01},{"tick":16,"actor":0,"id":"right","source":"planner","ms":0.26},{"tick":16,"actor":1,"id":"up","source":"rule","ms":0.03},{"tick":17,"actor":0,"id":"right","source":"planner","ms":0.26},{"tick":17,"actor":1,"id":"left","source":"rule","ms":0.01},{"tick":18,"actor":0,"id":"right","source":"planner","ms":0.03},{"tick":18,"actor":1,"id":"down","source":"rule","ms":0.01}],"end":{"tick":19,"score":[2,1],"winner":1,"hash":"0996aa8a"}},"pong":{"format":1,"rules":"round2.2","game":"pong","seed":41003,"opening":[],"frames":[[72,[360,240]],[11,[360,90]],[46,[360,109]],[105,[257,240]],[7,[360,93]],[92,[360,74]],[14,[546,240]],[78,[527,240]],[20,[360,469]],[68,[360,488]],[9,[247,240]],[73,[266,240]],[26,[360,502]],[52,[360,521]],[34,[55,240]],[40,[74,240]],[21,[360,478]],[50,[360,459]],[13,[492,240]],[55,[511,240]],[9,[360,395]],[56,[360,414]],[22,[111,240]],[40,[130,240]],[59,[360,251]],[58,[350,240]],[55,[360,547]],[53,[437,240]],[5,[360,324]],[47,[360,343]],[19,[145,240]],[31,[164,240]],[48,[360,313]],[46,[432,240]],[46,[360,257]],[31,[56,240]],[13,[53,240]],[3,[360,149]],[40,[360,130]],[13,[221,240]],[28,[202,240]],[8,[360,379]],[33,[360,360]],[41,[547,240]],[42,[360,228]],[25,[105,240]],[16,[86,240]],[41,[360,154]],[41,[370,240]],[23,[360,444]],[18,[360,463]],[13,[528,240]],[29,[547,240]],[41,[360,547]],[14,[542,240]],[27,[547,240]],[41,[360,547]],[11,[493,240]],[30,[512,240]],[17,[360,415]],[24,[360,434]],[42,[308,240]],[41,[360,212]],[9,[227,240]],[32,[208,240]],[41,[360,291]],[41,[414,240]],[42,[360,53]],[41,[289,240]],[25,[360,483]],[16,[360,502]],[41,[334,240]],[41,[360,203]],[21,[135,240]],[20,[116,240]],[42,[360,184]],[41,[356,240]],[19,[360,449]],[22,[360,468]],[8,[227,240]],[33,[246,240]],[41,[360,148]],[42,[282,240]],[6,[360,370]],[35,[360,389]],[15,[165,240]],[26,[184,240]],[15,[360,69]],[26,[360,53]],[20,[151,240]],[21,[132,240]],[41,[360,205]],[42,[357,240]],[23,[360,465]],[18,[360,484]],[2,[258,240]],[39,[277,240]],[14,[360,69]],[27,[360,88]],[41,[279,240]],[15,[360,413]],[27,[360,432]],[41,[322,240]],[17,[360,53]],[24,[360,66]],[29,[84,240]],[12,[65,240]],[41,[360,165]],[4,[247,240]],[37,[228,240]],[24,[360,495]],[18,[360,476]],[41,[395,240]],[41,[360,328]],[26,[93,240]],[15,[112,240]],[41,[360,53]],[42,[291,240]],[16,[360,443]],[25,[360,462]],[11,[188,240]],[30,[207,240]],[13,[360,63]],[28,[360,53]],[9,[248,240]],[32,[229,240]],[41,[360,313]],[42,[434,240]],[15,[360,81]],[26,[360,100]],[6,[246,240]],[35,[227,240]],[41,[360,286]],[41,[547,240]],[42,[360,319]],[9,[212,240]],[32,[231,240]],[6,[360,158]],[35,[360,139]],[12,[240,240]],[29,[221,240]],[41,[360,278]],[41,[547,240]],[42,[360,244]],[41,[53,240]],[11,[360,93]],[30,[360,74]],[41,[266,240]],[34,[360,540]],[7,[360,547]],[3,[260,240]],[39,[279,240]],[14,[360,68]],[27,[360,87]],[5,[234,240]],[36,[215,240]],[34,[360,547]],[7,[360,546]],[41,[295,240]],[10,[360,103]],[31,[360,122]],[42,[53,240]],[19,[360,424]],[22,[360,405]],[41,[449,240]],[10,[360,105]],[31,[360,124]],[41,[275,240]],[42,[360,547]],[11,[510,240]],[30,[529,240]],[41,[360,277]],[28,[97,240]],[13,[116,240]],[4,[360,121]],[37,[360,102]],[41,[366,240]],[19,[360,448]],[23,[360,467]],[41,[400,240]],[6,[360,116]],[35,[360,135]],[41,[53,240]],[41,[360,200]],[42,[375,240]],[18,[360,451]],[23,[360,470]],[41,[421,240]],[41,[360,53]],[41,[336,240]],[24,[360,501]],[17,[360,520]],[26,[130,240]],[16,[149,240]],[41,[360,281]],[1,[472,240]],[40,[491,240]],[41,[360,53]],[24,[121,240]],[17,[102,240]],[42,[360,154]],[12,[493,240]],[29,[474,240]],[41,[360,314]],[23,[130,240]],[18,[149,240]],[41,[360,53]],[41,[381,240]],[16,[360,440]],[26,[360,459]],[19,[157,240]],[22,[176,240]],[41,[360,178]],[5,[455,240]],[36,[436,240]],[41,[360,547]],[25,[93,240]],[17,[112,240]],[10,[360,411]],[31,[360,392]],[12,[532,240]],[29,[547,240]],[8,[360,364]],[33,[360,383]],[13,[186,240]],[28,[205,240]],[9,[360,109]],[32,[360,90]],[42,[396,240]],[41,[360,547]],[41,[53,240]],[41,[360,165]],[41,[434,240]],[28,[360,512]],[14,[360,531]],[41,[449,240]],[9,[360,376]],[32,[360,395]],[41,[53,240]],[20,[360,488]],[21,[360,469]],[41,[547,240]],[42,[360,351]],[28,[84,240]],[4,[103,240]]],"decisions":[{"tick":0,"actor":0,"id":"lower","source":"planner","ms":0.01},{"tick":0,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":129,"actor":0,"id":"lower","source":"planner","ms":0.01},{"tick":129,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":234,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":234,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":333,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":333,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":425,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":425,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":513,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":513,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":595,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":595,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":673,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":673,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":747,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":747,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":818,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":818,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":886,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":886,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":951,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":951,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1013,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1013,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":1072,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1072,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1130,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1130,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1185,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":1185,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1238,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1238,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1290,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":1290,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1340,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1340,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":1388,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":1388,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1434,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1434,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1480,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1480,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1524,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1524,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":1567,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1567,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1608,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1608,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":1649,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":1649,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1690,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1690,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1732,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1732,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1773,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1773,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":1814,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1814,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1855,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1855,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1896,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":1896,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1938,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":1938,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":1979,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":1979,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2020,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2020,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2061,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":2061,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2102,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2102,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2143,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":2143,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2185,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2185,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2226,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2226,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2267,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2267,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":2308,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":2308,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2349,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2349,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2391,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2391,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2432,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2432,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2473,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":2473,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2514,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2514,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2555,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2555,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2596,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2596,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":2638,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2638,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2679,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2679,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2720,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":2720,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2761,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2761,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":2802,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2802,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2844,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2844,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2885,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":2885,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":2926,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2926,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":2967,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":2967,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3008,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3008,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":3049,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3049,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3091,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3091,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3132,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":3132,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3173,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3173,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3214,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3214,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3255,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3255,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3297,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":3297,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3338,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3338,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3379,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3379,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3420,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3420,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":3461,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3461,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3502,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3502,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":3544,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":3544,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3585,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3585,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3626,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":3626,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3667,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3667,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":3708,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3708,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3750,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3750,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3791,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":3791,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3832,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3832,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":3873,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3873,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3914,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3914,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":3955,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":3955,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":3997,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":3997,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4038,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4038,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4079,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4079,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":4120,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":4120,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4161,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4161,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4203,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":4203,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4244,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4244,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":4285,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4285,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4326,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4326,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":4367,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":4367,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4408,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4408,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4450,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4450,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4491,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4491,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":4532,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4532,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4573,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4573,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4614,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":4614,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4656,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4656,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4697,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4697,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4738,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4738,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":4779,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":4779,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4820,"actor":0,"id":"lower","source":"planner","ms":0.01},{"tick":4820,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4861,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4861,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4903,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4903,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":4944,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":4944,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":4985,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":4985,"actor":1,"id":"upper","source":"rule","ms":0.02},{"tick":5026,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5026,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5067,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5067,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5109,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":5109,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5150,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5150,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5191,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":5191,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5232,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5232,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":5273,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5273,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5314,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5314,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5356,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":5356,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5397,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5397,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5438,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5438,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5479,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5479,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":5520,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5520,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5562,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5562,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5603,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":5603,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5644,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5644,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5685,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5685,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5726,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5726,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5767,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":5767,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5809,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5809,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":5850,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":5850,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5891,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5891,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5932,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5932,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":5973,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":5973,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":6015,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6015,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6056,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6056,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6097,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":6097,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6138,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6138,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":6179,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6179,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6220,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6220,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6262,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":6262,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6303,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6303,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":6344,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6344,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6385,"actor":0,"id":"lower","source":"planner","ms":0.01},{"tick":6385,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6426,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":6426,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6468,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6468,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":6509,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":6509,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6550,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6550,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6591,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":6591,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6632,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6632,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":6673,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6673,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6715,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6715,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6756,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":6756,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6797,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6797,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":6838,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6838,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6879,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6879,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6921,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":6921,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":6962,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":6962,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":7003,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":7003,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":7044,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":7044,"actor":1,"id":"lower","source":"rule","ms":0},{"tick":7085,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":7085,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":7126,"actor":0,"id":"lower","source":"planner","ms":0},{"tick":7126,"actor":1,"id":"upper","source":"rule","ms":0},{"tick":7168,"actor":0,"id":"upper","source":"planner","ms":0},{"tick":7168,"actor":1,"id":"upper","source":"rule","ms":0}],"end":{"tick":7200,"score":[0,0],"winner":-1,"hash":"f06ab229"}}}</script>
 <script>globalThis.ARENA_STATIC=true;(() => {
   var __defProp = Object.defineProperty;
   var __export = (target, all) => {
@@ -709,8 +713,8 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     ctx.arc(x, y, r, 0, Math.PI * 2);
     ctx.fill();
   }
-  function line(ctx, x1, y1, x2, y2, width, stroke) {
-    ctx.strokeStyle = stroke;
+  function line(ctx, x1, y1, x2, y2, width, stroke2) {
+    ctx.strokeStyle = stroke2;
     ctx.lineWidth = width;
     ctx.lineCap = "round";
     ctx.beginPath();
@@ -727,7 +731,7 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     const edge2 = Math.min(w - 23, h - 23), scale = game2 === "snake" ? edge2 / SIDE : edge2 / 3.75;
     return { x: (w - (game2 === "snake" ? SIDE : 3) * scale) / 2, y: (h - (game2 === "snake" ? SIDE : 3) * scale) / 2, scale, w, h };
   }
-  function draw(canvas2, s2, { selected: selected4 = -1, previous: previous2 = null, progress = 1, view: view2 = "left", effects = [], now = 0, reduced: reduced4 = false } = {}) {
+  function draw(canvas2, s2, { selected: selected4 = -1, previous: previous3 = null, progress = 1, view: view2 = "left", effects: effects2 = [], now = 0, reduced: reduced4 = false } = {}) {
     const g = geometry(canvas2, s2.game, view2), dpr = Math.min(2, window.devicePixelRatio || 1);
     const pw = Math.round(g.w * dpr), ph = Math.round(g.h * dpr);
     if (pw !== canvas2.width || ph !== canvas2.height) {
@@ -758,8 +762,8 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
       s2.bodies.forEach((body, side) => {
         for (let i = body.length - 1; i >= 0; i--) {
           let [x, y] = xy(body[i]);
-          if (previous2 && previous2.game === "snake" && previous2.bodies[side][i] != null) {
-            const [px, py] = xy(previous2.bodies[side][i]);
+          if (previous3 && previous3.game === "snake" && previous3.bodies[side][i] != null) {
+            const [px, py] = xy(previous3.bodies[side][i]);
             if (Math.abs(x - px) + Math.abs(y - py) <= 1) {
               x = px + (x - px) * progress;
               y = py + (y - py) * progress;
@@ -784,7 +788,7 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
         c.textAlign = "center";
         c.fillText(crash.kind, cx, Math.max(g.y + 14, cy - a * 0.6));
       }
-      for (const effect of effects) {
+      for (const effect of effects2) {
         const age = (now - effect.at) / 800;
         if (age < 0 || age > 1) continue;
         const [x, y] = xy(effect.cell), cx = g.x + (x + 0.5) * a, cy = g.y + (y + 0.5) * a;
@@ -1319,13 +1323,13 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
   function withCardSource(state6, source, fn, announce = true) {
     const trace = traces.get(state6);
     if (!trace) return fn();
-    const previous2 = trace.cause;
+    const previous3 = trace.cause;
     trace.cause = { ...source };
     if (announce) cardEvent(state6, { kind: "trigger" });
     try {
       return fn();
     } finally {
-      trace.cause = previous2;
+      trace.cause = previous3;
     }
   }
   function cardPresentation(state6) {
@@ -2794,8 +2798,8 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     return s2.players.flatMap((p, actor) => {
       const team = p.units.filter((u) => u.cell !== null), details = synergyDetails(team), tier2 = (id) => details.find((t) => t.id === id)?.level || 0;
       return team.map((u) => {
-        const c = chessInfo(u.type), star = [1, 1.8, 3.2][u.star - 1], items2 = (u.items || []).map((id) => ITEMS[id]).filter(Boolean), bonus = (key) => items2.reduce((n, i) => n + (i[key] || 0), 0), hp = Math.round(c.hp * star * (c.race === "\u5CA9\u7075" ? 1 + 0.15 * tier2(c.race) : 1) + bonus("hp")), role = tier2(c.role), speed3 = (c.role === "\u6E38\u51FB" ? [0, 0.15, 0.3, 0.5][role] : 0) + bonus("speed");
-        return { ...u, actor, maxHp: hp, hp, attack: Math.round(c.attackValue * star * (c.race === "\u6E38\u6C11" ? 1 + 0.12 * tier2(c.race) : 1) + bonus("attack")), range: c.range, interval: Math.ceil(c.interval * 10 / (1 + speed3)), skill: [1, 1.6, 2.6][u.star - 1] * (c.role === "\u672F\u5E08" ? 1 + [0, 0.15, 0.3, 0.5][role] : 1), energy: Math.min(100, (c.race === "\u661F\u5854" ? 25 * tier2(c.race) : 0) + bonus("mana")), regen: (c.race === "\u6797\u5730" ? 0.03 * tier2(c.race) : 0) + bonus("regen"), reduction: Math.min(0.65, (c.role === "\u524D\u536B" ? [0, 0.08, 0.16, 0.25][role] : 0) + (c.race === "\u6F6E\u6C50" ? 0.08 * tier2(c.race) : 0) + bonus("reduction")), crit: c.role === "\u523A\u5BA2" ? 0.4 * role : 0, hits: 0, shields: c.race === "\u5DE5\u574A" && tier2(c.race) ? [{ key: "origin", value: tier2(c.race) === 1 ? 100 : 220, expires: 1e4 }] : [], nextAttack: 0, nextMove: 0, buffHits: c.role === "\u523A\u5BA2" ? 3 : 0, buffAmount: c.role === "\u523A\u5BA2" ? Math.round(30 * star) : 0, dealt: 0, taken: 0, healed: 0, summon: false };
+        const c = chessInfo(u.type), star2 = [1, 1.8, 3.2][u.star - 1], items2 = (u.items || []).map((id) => ITEMS[id]).filter(Boolean), bonus = (key) => items2.reduce((n, i) => n + (i[key] || 0), 0), hp = Math.round(c.hp * star2 * (c.race === "\u5CA9\u7075" ? 1 + 0.15 * tier2(c.race) : 1) + bonus("hp")), role = tier2(c.role), speed3 = (c.role === "\u6E38\u51FB" ? [0, 0.15, 0.3, 0.5][role] : 0) + bonus("speed");
+        return { ...u, actor, maxHp: hp, hp, attack: Math.round(c.attackValue * star2 * (c.race === "\u6E38\u6C11" ? 1 + 0.12 * tier2(c.race) : 1) + bonus("attack")), range: c.range, interval: Math.ceil(c.interval * 10 / (1 + speed3)), skill: [1, 1.6, 2.6][u.star - 1] * (c.role === "\u672F\u5E08" ? 1 + [0, 0.15, 0.3, 0.5][role] : 1), energy: Math.min(100, (c.race === "\u661F\u5854" ? 25 * tier2(c.race) : 0) + bonus("mana")), regen: (c.race === "\u6797\u5730" ? 0.03 * tier2(c.race) : 0) + bonus("regen"), reduction: Math.min(0.65, (c.role === "\u524D\u536B" ? [0, 0.08, 0.16, 0.25][role] : 0) + (c.race === "\u6F6E\u6C50" ? 0.08 * tier2(c.race) : 0) + bonus("reduction")), crit: c.role === "\u523A\u5BA2" ? 0.4 * role : 0, hits: 0, shields: c.race === "\u5DE5\u574A" && tier2(c.race) ? [{ key: "origin", value: tier2(c.race) === 1 ? 100 : 220, expires: 1e4 }] : [], nextAttack: 0, nextMove: 0, buffHits: c.role === "\u523A\u5BA2" ? 3 : 0, buffAmount: c.role === "\u523A\u5BA2" ? Math.round(30 * star2) : 0, dealt: 0, taken: 0, healed: 0, summon: false };
       });
     });
   }
@@ -3005,8 +3009,8 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     return s2.players.flatMap((p, actor) => {
       const team = p.units.filter((u) => u.cell !== null), details = synergyDetails2(team), tier2 = (id) => details.find((t) => t.id === id)?.level || 0;
       return team.map((u) => {
-        const c = chessInfo2(u.type), star = [1, 1.8, 3.2][u.star - 1], items2 = (u.items || []).map((id) => ITEMS2[id]).filter(Boolean), bonus = (key) => items2.reduce((n, i) => n + (i[key] || 0), 0), hp = Math.round(c.hp * star * (c.race === "\u5CA9\u7075" ? 1 + 0.15 * tier2(c.race) : 1) + bonus("hp")), role = tier2(c.role), speed3 = (c.role === "\u6E38\u51FB" ? [0, 0.15, 0.3, 0.5][role] : 0) + bonus("speed");
-        return { ...u, actor, maxHp: hp, hp, attack: Math.round(c.attackValue * star * (c.race === "\u6E38\u6C11" ? 1 + 0.12 * tier2(c.race) : 1) + bonus("attack")), range: c.range, interval: Math.ceil(c.interval * 10 / (1 + speed3)), skill: [1, 1.6, 2.6][u.star - 1] * (c.role === "\u672F\u5E08" ? 1 + [0, 0.15, 0.3, 0.5][role] : 1), energy: Math.min(100, (c.race === "\u661F\u5854" ? 25 * tier2(c.race) : 0) + bonus("mana")), regen: (c.race === "\u6797\u5730" ? 0.03 * tier2(c.race) : 0) + bonus("regen"), reduction: Math.min(0.65, (c.role === "\u524D\u536B" ? [0, 0.08, 0.16, 0.25][role] : 0) + (c.race === "\u6F6E\u6C50" ? 0.08 * tier2(c.race) : 0) + bonus("reduction")), crit: c.role === "\u523A\u5BA2" ? 0.4 * role : 0, hits: 0, shields: c.race === "\u5DE5\u574A" && tier2(c.race) ? [{ key: "origin", value: tier2(c.race) === 1 ? 100 : 220, expires: 1e4 }] : [], nextAttack: 0, nextMove: 0, buffHits: c.role === "\u523A\u5BA2" ? 3 : 0, buffAmount: c.role === "\u523A\u5BA2" ? Math.round(30 * star) : 0, dealt: 0, taken: 0, healed: 0, summon: false };
+        const c = chessInfo2(u.type), star2 = [1, 1.8, 3.2][u.star - 1], items2 = (u.items || []).map((id) => ITEMS2[id]).filter(Boolean), bonus = (key) => items2.reduce((n, i) => n + (i[key] || 0), 0), hp = Math.round(c.hp * star2 * (c.race === "\u5CA9\u7075" ? 1 + 0.15 * tier2(c.race) : 1) + bonus("hp")), role = tier2(c.role), speed3 = (c.role === "\u6E38\u51FB" ? [0, 0.15, 0.3, 0.5][role] : 0) + bonus("speed");
+        return { ...u, actor, maxHp: hp, hp, attack: Math.round(c.attackValue * star2 * (c.race === "\u6E38\u6C11" ? 1 + 0.12 * tier2(c.race) : 1) + bonus("attack")), range: c.range, interval: Math.ceil(c.interval * 10 / (1 + speed3)), skill: [1, 1.6, 2.6][u.star - 1] * (c.role === "\u672F\u5E08" ? 1 + [0, 0.15, 0.3, 0.5][role] : 1), energy: Math.min(100, (c.race === "\u661F\u5854" ? 25 * tier2(c.race) : 0) + bonus("mana")), regen: (c.race === "\u6797\u5730" ? 0.03 * tier2(c.race) : 0) + bonus("regen"), reduction: Math.min(0.65, (c.role === "\u524D\u536B" ? [0, 0.08, 0.16, 0.25][role] : 0) + (c.race === "\u6F6E\u6C50" ? 0.08 * tier2(c.race) : 0) + bonus("reduction")), crit: c.role === "\u523A\u5BA2" ? 0.4 * role : 0, hits: 0, shields: c.race === "\u5DE5\u574A" && tier2(c.race) ? [{ key: "origin", value: tier2(c.race) === 1 ? 100 : 220, expires: 1e4 }] : [], nextAttack: 0, nextMove: 0, buffHits: c.role === "\u523A\u5BA2" ? 3 : 0, buffAmount: c.role === "\u523A\u5BA2" ? Math.round(30 * star2) : 0, dealt: 0, taken: 0, healed: 0, summon: false };
       });
     });
   }
@@ -3225,15 +3229,15 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     return s2;
   }
   function merge(p, type, preferred) {
-    for (let star = 1; star <= 2; star++) {
-      let group = p.units.filter((u) => u.type === type && u.star === star);
+    for (let star2 = 1; star2 <= 2; star2++) {
+      let group = p.units.filter((u) => u.type === type && u.star === star2);
       while (group.length >= 3) {
         const keep = group.find((u) => u.uid === preferred) || group.find((u) => u.cell !== null) || group[0], others = group.filter((u) => u !== keep).slice(0, 2), items2 = [...keep.items || [], ...others.flatMap((u) => u.items || [])];
         keep.star++;
         keep.items = items2.slice(0, 3);
         p.inventory.push(...items2.slice(3));
         p.units = p.units.filter((u) => !others.includes(u));
-        group = p.units.filter((u) => u.type === type && u.star === star);
+        group = p.units.filter((u) => u.type === type && u.star === star2);
       }
     }
   }
@@ -3534,15 +3538,15 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     return s2;
   }
   function merge2(p, type, preferred) {
-    for (let star = 1; star <= 2; star++) {
-      let group = p.units.filter((u) => u.type === type && u.star === star);
+    for (let star2 = 1; star2 <= 2; star2++) {
+      let group = p.units.filter((u) => u.type === type && u.star === star2);
       while (group.length >= 3) {
         const keep = group.find((u) => u.uid === preferred) || group.find((u) => u.cell !== null) || group[0], others = group.filter((u) => u !== keep).slice(0, 2), items2 = [...keep.items || [], ...others.flatMap((u) => u.items || [])];
         keep.star++;
         keep.items = items2.slice(0, 3);
         p.inventory.push(...items2.slice(3));
         p.units = p.units.filter((u) => !others.includes(u));
-        group = p.units.filter((u) => u.type === type && u.star === star);
+        group = p.units.filter((u) => u.type === type && u.star === star2);
       }
     }
   }
@@ -3704,8 +3708,8 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     return (c.hp * 0.018 + c.attackValue * 0.24 + c.cost * 2) * [1, 1.8, 3.2][u.star - 1];
   };
   function chessItemValue(id, u) {
-    const c = UNITS2[u.type], front = c.role === "\u524D\u536B", star = [1, 1.8, 3.2][u.star - 1];
-    return { blade: (c.range > 1 || c.role === "\u523A\u5BA2" ? 18 : 10) * star, bell: c.attackValue * 0.24 * star, shell: (front ? 23 : 8) * star, seed: front ? 22 : 12, leaf: (front ? 20 : 7) * star, orb: c.role === "\u523A\u5BA2" ? -10 : (c.cost * 3 + 8) * star }[id] || 0;
+    const c = UNITS2[u.type], front = c.role === "\u524D\u536B", star2 = [1, 1.8, 3.2][u.star - 1];
+    return { blade: (c.range > 1 || c.role === "\u523A\u5BA2" ? 18 : 10) * star2, bell: c.attackValue * 0.24 * star2, shell: (front ? 23 : 8) * star2, seed: front ? 22 : 12, leaf: (front ? 20 : 7) * star2, orb: c.role === "\u523A\u5BA2" ? -10 : (c.cost * 3 + 8) * star2 }[id] || 0;
   }
   function chooseChessLoot(s2, actor) {
     const p = s2.players[actor];
@@ -3796,16 +3800,16 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     return s2.players.flatMap((p, actor) => {
       const team = p.units.filter((u) => u.cell !== null), syn = synergies3(team);
       return team.map((u) => {
-        const c = UNITS[u.type], star = [1, 1.8, 3.2][u.star - 1], skill = [1, 1.6, 2.6][u.star - 1];
+        const c = UNITS[u.type], star2 = [1, 1.8, 3.2][u.star - 1], skill = [1, 1.6, 2.6][u.star - 1];
         const raceTier = tier(syn.races[c.race], 3), roleTier = tier(syn.roles[c.role], 4);
-        const hp = Math.round(c.hp * star * (c.race === "\u5CA9\u7075" ? 1 + 0.12 * raceTier : 1));
+        const hp = Math.round(c.hp * star2 * (c.race === "\u5CA9\u7075" ? 1 + 0.12 * raceTier : 1));
         const speed3 = (c.race === "\u6E38\u6C11" ? 0.1 * raceTier : 0) + (c.role === "\u6E38\u51FB" ? 0.15 * roleTier : 0);
         return {
           ...u,
           actor,
           maxHp: hp,
           hp,
-          attack: Math.round(c.attackValue * star),
+          attack: Math.round(c.attackValue * star2),
           range: c.range,
           interval: Math.ceil(c.interval * 10 / (1 + speed3)),
           skill,
@@ -4002,13 +4006,13 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     return s2;
   }
   function merge3(p, type, preferred) {
-    for (let star = 1; star <= 2; star++) {
-      let group = p.units.filter((u) => u.type === type && u.star === star);
+    for (let star2 = 1; star2 <= 2; star2++) {
+      let group = p.units.filter((u) => u.type === type && u.star === star2);
       while (group.length >= 3) {
         const keep = group.find((u) => u.uid === preferred) || group.find((u) => u.cell !== null) || group[0], remove2 = group.filter((u) => u.uid !== keep.uid).slice(0, 2);
         keep.star++;
         p.units = p.units.filter((u) => !remove2.includes(u));
-        group = p.units.filter((u) => u.type === type && u.star === star);
+        group = p.units.filter((u) => u.type === type && u.star === star2);
       }
     }
   }
@@ -4939,8 +4943,8 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     recordToWatch = null;
     message = "";
     lastAI = "";
-    const previous2 = restore3 && location.protocol.startsWith("http") ? savedRoom() : null;
-    if (previous2 && cap.rooms) connectRoom(previous2);
+    const previous3 = restore3 && location.protocol.startsWith("http") ? savedRoom() : null;
+    if (previous3 && cap.rooms) connectRoom(previous3);
     else if (!(restore3 && game2 === "cards" && resumeCard())) singleMatch();
   }
   function newMatch() {
@@ -5182,13 +5186,13 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     updateRoomClock();
   }
   function updateRoomClock() {
-    const box2 = root().querySelector(".room-controls");
-    if (!room || !box2) return;
-    let clock2 = box2.querySelector("#room-clock");
+    const box3 = root().querySelector(".room-controls");
+    if (!room || !box3) return;
+    let clock2 = box3.querySelector("#room-clock");
     if (!clock2) {
       clock2 = document.createElement("p");
       clock2.id = "room-clock";
-      box2.append(clock2);
+      box3.append(clock2);
     }
     const s2 = state(), seconds = Math.max(0, Math.ceil((view?.deadline - view?.now) / 1e3));
     clock2.textContent = !s2 ? "\u52A0\u5165\u540E\u5F00\u59CB\u8BA1\u65F6" : s2.winner !== null ? "\u5BF9\u5C40\u5DF2\u7ED3\u675F" : (kind === "cards" ? s2.phase === "mulligan" ? "\u786E\u8BA4\u8D77\u624B" : s2.turn === me() ? "\u4F60\u7684\u56DE\u5408" : "\u5BF9\u65B9\u56DE\u5408" : s2.phase === "battle" ? "\u81EA\u52A8\u6218\u6597" : "\u51C6\u5907\u9636\u6BB5") + " \xB7 \u5269\u4F59 " + seconds + " \u79D2";
@@ -6243,13 +6247,13 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
       if (watch) setTimeout(advanceWatch, 600);
     }
   }
-  function paintBattleFocus(frame7, previous2) {
+  function paintBattleFocus(frame7, previous3) {
     const unit3 = frame7.units.find((u) => u.uid === selected2), range = unit3 ? chessInfo(unit3.type)?.range || 1 : 0;
     root2().querySelectorAll("[data-cell]").forEach((node) => {
       const cell2 = Number(node.dataset.cell);
       node.classList.toggle("in-range", !!unit3 && Math.max(Math.abs(cell2 % 8 - unit3.cell % 8), Math.abs(Math.floor(cell2 / 8) - Math.floor(unit3.cell / 8))) <= range);
     });
-    const old = previous2?.units.find((u) => u.uid === selected2), moving = unit3 && old && unit3.cell !== old.cell, path = root2().querySelector(".ac-focus-path");
+    const old = previous3?.units.find((u) => u.uid === selected2), moving = unit3 && old && unit3.cell !== old.cell, path = root2().querySelector(".ac-focus-path");
     if (path) path.innerHTML = moving ? `<path d="M ${old.cell % 8 * 100 + 50} ${Math.floor(old.cell / 8) * 100 + 50} L ${unit3.cell % 8 * 100 + 50} ${Math.floor(unit3.cell / 8) * 100 + 50}"/>` : "";
     const label = root2().querySelector("#ac-live-readout");
     if (label) {
@@ -6385,7 +6389,7 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     for (let i = 0; i < battle.frames.length; i++) {
       const f = battle.frames[i];
       if (f.tick <= lastFxTick || f.tick > tick3) continue;
-      const previous2 = battle.frames[i - 1]?.units || [], positions = new Map([...previous2, ...f.units].map((u) => [u.uid, u.cell]));
+      const previous3 = battle.frames[i - 1]?.units || [], positions = new Map([...previous3, ...f.units].map((u) => [u.uid, u.cell]));
       const hits = /* @__PURE__ */ new Map();
       for (const e of f.events || []) {
         const cell2 = positions.get(e.kind === "cast" ? e.source : e.target);
@@ -6397,7 +6401,7 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
         }
       }
       for (const e of hits.values()) flash(e.cell, (e.kind === "heal" ? "+" : "\u2212") + e.amount, e.kind);
-      for (const u of previous2) if (!f.units.some((v) => v.uid === u.uid)) flash(u.cell, "\xD7", "fallen");
+      for (const u of previous3) if (!f.units.some((v) => v.uid === u.uid)) flash(u.cell, "\xD7", "fallen");
     }
     lastFxTick = tick3;
   }
@@ -7119,9 +7123,9 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     return { x: (e.clientX - r.left) / r.width * 24, y: (e.clientY - r.top) / r.height * 16 };
   }
   function drawRescue(canvas2, s2, { selected: selected4 = "all", building: building2 = false, support: support2 = null, hover: hover2 = null, reduced: reduced4 = false } = {}) {
-    const box2 = canvas2.getBoundingClientRect();
-    if (!box2.width) return;
-    const dpr = Math.min(devicePixelRatio || 1, 2), width = Math.round(box2.width * dpr), height = Math.round(box2.height * dpr);
+    const box3 = canvas2.getBoundingClientRect();
+    if (!box3.width) return;
+    const dpr = Math.min(devicePixelRatio || 1, 2), width = Math.round(box3.width * dpr), height = Math.round(box3.height * dpr);
     if (canvas2.width !== width || canvas2.height !== height) {
       canvas2.width = width;
       canvas2.height = height;
@@ -7131,15 +7135,15 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     ctx.clearRect(0, 0, m.w, m.h);
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
-    const circle2 = (x, y, r, fill, stroke, lw = 0.05) => {
+    const circle2 = (x, y, r, fill, stroke2, lw = 0.05) => {
       ctx.beginPath();
       ctx.arc(x, y, r, 0, Math.PI * 2);
       if (fill) {
         ctx.fillStyle = fill;
         ctx.fill();
       }
-      if (stroke) {
-        ctx.strokeStyle = stroke;
+      if (stroke2) {
+        ctx.strokeStyle = stroke2;
         ctx.lineWidth = lw;
         ctx.stroke();
       }
@@ -7738,10 +7742,10 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     if (s2.version >= 3) {
       const e = s2.evac, remaining = Math.ceil((e.required - e.progress) / 30), raging = st.raging && s2.winner === null, alarm = e.alertTick !== null && s2.tick < e.alertTick;
       const status4 = { idle: "\u63A5\u5E94\u5E73\u6C11 \u2192 \u64A4\u79BB\u533A\u96C6\u7ED3", gathering: "\u5E73\u6C11\u5DF2\u96C6\u7ED3 \xB7 \u9009\u62E9\u65F6\u673A\u547C\u53EB", called: "\u547C\u53EB\u5DF2\u53D1\u51FA \xB7 \u51C6\u5907\u5B88\u4F4F\u9635\u5730", waiting: "\u7B49\u5F85\u5E73\u6C11\u8FD4\u56DE\u96C6\u7ED3", loading: "\u6B63\u5728\u63A5\u9A73 \xB7 \u5B88\u4F4F\u9635\u5730", contested: "\u654C\u4EBA\u903C\u8FD1 \xB7 \u8BFB\u79D2\u6682\u505C", unguarded: "\u7F3A\u5C11\u62A4\u536B \xB7 \u8BFB\u79D2\u6682\u505C", complete: "\u63A5\u9A73\u5B8C\u6210" }[e.phase];
-      const box2 = $("rs-evac");
-      box2.dataset.phase = e.phase;
-      box2.className = "rs-evac " + e.phase + (raging ? " raging" : "");
-      box2.innerHTML = `<div class="rs-evac-dial" style="--progress:${e.progress / e.required * 100}%"><b>${e.phase === "complete" ? "\u2713" : remaining}</b><small>${e.phase === "complete" ? "\u5DF2\u64A4\u79BB" : "\u79D2"}</small></div><div class="rs-evac-info"><strong>${status4}</strong><span>${st.boarding ? st.boarding + " \u4EBA\u7B49\u5F85\u64A4\u79BB" : "\u81F3\u5C11\u64A4\u79BB " + m.quota + " \u4EBA"}${e.phase === "idle" ? s2.version >= 4 ? " \xB7 \u96C6\u7ED3\u540E\u81EA\u4E3B\u547C\u53EB" : " \xB7 \u8FDB\u5165\u540E\u547C\u53EB\u63A5\u9A73" : ""}</span><div class="rs-evac-track" role="progressbar" aria-label="\u64A4\u79BB\u63A5\u9A73\u8FDB\u5EA6" aria-valuemin="0" aria-valuemax="${e.required}" aria-valuenow="${e.progress}"><i style="width:${e.progress / e.required * 100}%"></i></div></div><b class="rs-rage-label">${alarm ? "\u26A0 \u5C38\u6F6E " + Math.ceil((e.alertTick - s2.tick) / 30) + " \u79D2\u540E\u7A81\u5165" : raging ? "\u25B2 \u5C38\u6F6E\u72C2\u66B4" : e.phase === "complete" ? "\u2713 \u5DF2\u767B\u8F66" : "\u2199 \u96C6\u7ED3\u70B9"}</b>`;
+      const box3 = $("rs-evac");
+      box3.dataset.phase = e.phase;
+      box3.className = "rs-evac " + e.phase + (raging ? " raging" : "");
+      box3.innerHTML = `<div class="rs-evac-dial" style="--progress:${e.progress / e.required * 100}%"><b>${e.phase === "complete" ? "\u2713" : remaining}</b><small>${e.phase === "complete" ? "\u5DF2\u64A4\u79BB" : "\u79D2"}</small></div><div class="rs-evac-info"><strong>${status4}</strong><span>${st.boarding ? st.boarding + " \u4EBA\u7B49\u5F85\u64A4\u79BB" : "\u81F3\u5C11\u64A4\u79BB " + m.quota + " \u4EBA"}${e.phase === "idle" ? s2.version >= 4 ? " \xB7 \u96C6\u7ED3\u540E\u81EA\u4E3B\u547C\u53EB" : " \xB7 \u8FDB\u5165\u540E\u547C\u53EB\u63A5\u9A73" : ""}</span><div class="rs-evac-track" role="progressbar" aria-label="\u64A4\u79BB\u63A5\u9A73\u8FDB\u5EA6" aria-valuemin="0" aria-valuemax="${e.required}" aria-valuenow="${e.progress}"><i style="width:${e.progress / e.required * 100}%"></i></div></div><b class="rs-rage-label">${alarm ? "\u26A0 \u5C38\u6F6E " + Math.ceil((e.alertTick - s2.tick) / 30) + " \u79D2\u540E\u7A81\u5165" : raging ? "\u25B2 \u5C38\u6F6E\u72C2\u66B4" : e.phase === "complete" ? "\u2713 \u5DF2\u767B\u8F66" : "\u2199 \u96C6\u7ED3\u70B9"}</b>`;
     }
     if (s2.version >= 4) {
       const e = s2.evac, canCall = e.phase === "gathering" && s2.soldiers.some((u) => u.hp > 0 && insideExit(m, u));
@@ -8008,10 +8012,10 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
   }
   function replayKart(record) {
     if (record?.format !== "kart-1" || record.game !== "kart" || !Array.isArray(record.inputs) || record.inputs.length > 12e3 || !Number.isInteger(record.end?.tick) || record.end.tick < 0 || record.end.tick > 11e3) throw Error("\u65E0\u6548\u8D5B\u8F66\u56DE\u653E");
-    let state6 = createKart(record.options), input2 = kartInput(), cursor4 = 0, previous2 = -1;
+    let state6 = createKart(record.options), input2 = kartInput(), cursor4 = 0, previous3 = -1;
     for (const row of record.inputs) {
-      if (!Number.isInteger(row.tick) || row.tick < 0 || row.tick <= previous2 || row.tick >= record.end.tick) throw Error("\u65E0\u6548\u8D5B\u8F66\u64CD\u4F5C");
-      previous2 = row.tick;
+      if (!Number.isInteger(row.tick) || row.tick < 0 || row.tick <= previous3 || row.tick >= record.end.tick) throw Error("\u65E0\u6548\u8D5B\u8F66\u64CD\u4F5C");
+      previous3 = row.tick;
     }
     while (state6.tick < record.end.tick) {
       if (record.inputs[cursor4]?.tick === state6.tick) input2 = kartInput(record.inputs[cursor4++].input);
@@ -8025,13 +8029,13 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
 
   // web/kart-view.mjs
   var colors = ["#f4b953", "#ee846f", "#85bdd9", "#90c9aa"];
-  function kartRenderState(previous2, current, alpha = 1) {
-    if (!previous2 || previous2.track !== current.track || current.tick !== previous2.tick + 1 || current.phase === "finished") return current;
+  function kartRenderState(previous3, current, alpha = 1) {
+    if (!previous3 || previous3.track !== current.track || current.tick !== previous3.tick + 1 || current.phase === "finished") return current;
     const t = Math.max(0, Math.min(1, alpha));
     if (t === 1) return current;
     const mix = (a, b) => a + (b - a) * t;
-    return { ...current, time: mix(previous2.time, current.time), cars: current.cars.map((car, i) => {
-      const before = previous2.cars[i];
+    return { ...current, time: mix(previous3.time, current.time), cars: current.cars.map((car, i) => {
+      const before = previous3.cars[i];
       if (!before || before.id !== car.id) return car;
       return { ...car, z: mix(before.z, car.z), x: mix(before.x, car.x), speed: mix(before.speed, car.speed), slip: mix(before.slip, car.slip) };
     }) };
@@ -8238,8 +8242,8 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     if (saved || watch3) return;
     saved = true;
     if (state2.finishTime === null) return;
-    const previous2 = best();
-    if (!previous2 || state2.finishTime < previous2.time) try {
+    const previous3 = best();
+    if (!previous3 || state2.finishTime < previous3.time) try {
       localGameStorage.setItem("kart-best-" + options.track + "-" + options.difficulty, JSON.stringify({ time: state2.finishTime }));
     } catch {
     }
@@ -9081,8 +9085,8 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
       sources.clear();
       if (!saved2 && !watch4) {
         saved2 = true;
-        const previous2 = best2();
-        if (!previous2 || previous2.score < state3.players[0].score) try {
+        const previous3 = best2();
+        if (!previous3 || previous3.score < state3.players[0].score) try {
           localGameStorage.setItem("rhythm-best-" + options2.song + "-" + options2.difficulty, JSON.stringify({ score: state3.players[0].score, accuracy: rhythmAccuracy(state3.players[0]) }));
         } catch {
         }
@@ -9493,8 +9497,8 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
       music2.stop();
       if (!saved3 && !watch5) {
         saved3 = true;
-        const previous2 = best3();
-        if (!previous2 || previous2.score < state4.players[0].score) try {
+        const previous3 = best3();
+        if (!previous3 || previous3.score < state4.players[0].score) try {
           localGameStorage.setItem("dance-best-" + options3.song + "-" + options3.difficulty, JSON.stringify({ score: state4.players[0].score, accuracy: danceAccuracy(state4.players[0], state4.chart.length) }));
         } catch {
         }
@@ -9649,7 +9653,7 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     if (document.hidden && active6) pause3();
   });
 
-  // src/runner.mjs
+  // src/runner-v1.mjs
   var RUNNER_DT = 1 / 60;
   var ROW_SPACE = 34;
   var RUNNER_ACTIONS = ["left", "right", "jump", "roll", "board"];
@@ -9760,7 +9764,179 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     return s2;
   }
 
+  // src/runner-routes.mjs
+  var ROUTE_LENGTH = 400;
+  var ROUTE_ROWS = 8;
+  var RUNNER_ZONES = Object.freeze([
+    { id: "station", name: "\u6668\u5149\u8F66\u7AD9", color: "#458f9d", sky: "#d5edf1", ground: "#a9c8b2", road: "#879da5", edge: "#edf0d9", vehicle: "#5796aa" },
+    { id: "market", name: "\u6865\u4E0B\u5E02\u96C6", color: "#b77d51", sky: "#e8e7d6", ground: "#b6c7a3", road: "#bdaf8f", edge: "#f3e7bf", vehicle: "#d29a64" },
+    { id: "river", name: "\u6EE8\u6CB3\u6808\u6865", color: "#528eaf", sky: "#d7edf3", ground: "#8fcbd0", road: "#b8b797", edge: "#e4d8ad", vehicle: "#719db6" }
+  ]);
+  var routes = [
+    [
+      { lanes: ["train", null, null], safe: 1 },
+      { lanes: [null, "barrier", "train"], safe: 0, bonus: 1 },
+      { lanes: ["train", "arch", null], safe: 2, bonus: 1 },
+      { lanes: [null, null, null], safe: 1 },
+      { lanes: ["train", null, "barrier"], safe: 1, bonus: 2 },
+      { lanes: [null, "train", "train"], safe: 0 },
+      { lanes: ["arch", null, "train"], safe: 1, bonus: 0 },
+      { lanes: [null, null, null], safe: 1 }
+    ],
+    [
+      { lanes: [null, "train", "barrier"], safe: 0, bonus: 2 },
+      { lanes: ["arch", null, "train"], safe: 1, bonus: 0 },
+      { lanes: ["train", "barrier", null], safe: 2, bonus: 1 },
+      { lanes: [null, null, null], safe: 1 },
+      { lanes: ["barrier", "train", null], safe: 2, bonus: 0 },
+      { lanes: [null, "arch", "train"], safe: 0, bonus: 1 },
+      { lanes: ["train", null, "barrier"], safe: 1, bonus: 2 },
+      { lanes: [null, null, null], safe: 1 }
+    ],
+    [
+      { lanes: ["gap", null, "train"], safe: 1, bonus: 0 },
+      { lanes: ["train", "gap", null], safe: 2, bonus: 1 },
+      { lanes: [null, "train", "gap"], safe: 0, bonus: 2 },
+      { lanes: [null, null, null], safe: 1 },
+      { lanes: ["arch", null, "train"], safe: 1, bonus: 0 },
+      { lanes: [null, "gap", "train"], safe: 0, bonus: 1 },
+      { lanes: ["train", null, "gap"], safe: 1, bonus: 2 },
+      { lanes: [null, null, null], safe: 1 }
+    ]
+  ];
+  var runnerRowZ = (index) => Math.floor(index / ROUTE_ROWS) * ROUTE_LENGTH + 80 + index % ROUTE_ROWS * 40;
+  function runnerRoute(z) {
+    const index = Math.floor(Math.max(0, z) / ROUTE_LENGTH), zone = RUNNER_ZONES[index % RUNNER_ZONES.length];
+    return { index, zone, progress: (z - index * ROUTE_LENGTH) / ROUTE_LENGTH, remaining: Math.ceil((index + 1) * ROUTE_LENGTH - z), next: RUNNER_ZONES[(index + 1) % RUNNER_ZONES.length] };
+  }
+  function routeRow(seed, index) {
+    const chapter = Math.floor(index / ROUTE_ROWS), slot = index % ROUTE_ROWS, zone = RUNNER_ZONES[chapter % 3];
+    const variants = [[0, 1, 2, 3, 4, 5, 6, 7], [4, 5, 6, 3, 0, 1, 2, 7], [1, 2, 0, 3, 5, 6, 4, 7]], order = variants[chapter < 3 ? 0 : Math.floor(noise(seed, chapter, 43) * variants.length)], template = routes[chapter % 3][order[slot]];
+    const mirror = chapter > 0 && noise(seed, chapter, 41) > 0.5, map2 = (lane) => mirror ? 2 - lane : lane, z = runnerRowZ(index), safe = map2(template.safe);
+    const obstacles = template.lanes.flatMap((kind2, lane) => kind2 ? [{ id: index + "-" + map2(lane), z, lane: map2(lane), kind: kind2, zone: zone.id }] : []);
+    const coins = [-12, -6, 0, 6, 12].map((offset, i) => ({ id: index + "-c" + i, z: z + offset, lane: safe, height: 0, value: 1, bonus: false }));
+    if (template.bonus !== void 0) {
+      const kind2 = template.lanes[template.bonus];
+      for (const [i, offset] of [-5, 0, 5].entries()) coins.push({ id: index + "-b" + i, z: z + offset, lane: map2(template.bonus), height: kind2 === "arch" ? 0 : i === 1 ? 1.8 : 1.1, value: 2, bonus: true });
+    }
+    const item = slot === 7 ? { kind: chapter % 2 ? "board" : "magnet", lane: safe, z: z + 18 } : null;
+    return { index, z, safe, zone: zone.id, rest: obstacles.length === 0, obstacles, coins, item };
+  }
+  function routeScene(state6, ahead = 260) {
+    const start4 = Math.max(0, Math.floor((state6.z - 40) / ROUTE_LENGTH) * ROUTE_ROWS), end = Math.floor((state6.z + ahead + 20) / ROUTE_LENGTH) * ROUTE_ROWS + 7;
+    return Array.from({ length: end - start4 + 1 }, (_, i) => routeRow(state6.seed, start4 + i)).filter((r) => r.z + 22 >= state6.z - 4 && r.z - 12 <= state6.z + ahead);
+  }
+
+  // src/runner.mjs
+  var RUNNER_DT2 = 1 / 60;
+  var RUNNER_ACTIONS2 = ["left", "right", "jump", "roll", "board"];
+  var runnerScene2 = (state6, ahead = 260) => state6.version === 1 ? runnerScene(state6, ahead) : routeScene(state6, ahead);
+  function createRunner2({ seed = 41003, difficulty: difficulty2 = "practice", rules = 2 } = {}) {
+    if (rules === 1) return createRunner({ seed, difficulty: difficulty2 });
+    if (rules !== 2) throw Error("\u672A\u77E5\u8DD1\u9177\u7248\u672C");
+    if (!["practice", "standard"].includes(difficulty2)) throw Error("\u672A\u77E5\u8DD1\u9177\u96BE\u5EA6");
+    return { version: 2, seed: seed >>> 0, difficulty: difficulty2, tick: 0, time: 0, countdown: 3, phase: "countdown", z: 0, speed: 0, lane: 1, x: 1, jump: -1, roll: 0, board: 0, boards: 1, magnet: 0, invincible: 0, coins: 0, score: 0, cleared: [], events: [], reason: null };
+  }
+  var jumpHeight2 = (s2) => s2.jump < 0 ? 0 : Math.sin(Math.PI * clamp(s2.jump / 0.96, 0, 1)) * 2.3;
+  function stepRunner2(state6, actions = []) {
+    if (state6.version === 1) return stepRunner(state6, actions);
+    if (state6.phase === "finished") return state6;
+    const s2 = { ...state6, tick: state6.tick + 1, events: [], cleared: [...state6.cleared] };
+    if (s2.countdown > 0) {
+      s2.countdown = Math.max(0, 3 - s2.tick * RUNNER_DT2);
+      if (!s2.countdown) {
+        s2.phase = "running";
+        s2.events.push({ kind: "go" });
+      }
+      return s2;
+    }
+    s2.time = state6.time + RUNNER_DT2;
+    for (const action2 of [...new Set(actions)]) {
+      if (action2 === "left") s2.lane = Math.max(0, s2.lane - 1);
+      else if (action2 === "right") s2.lane = Math.min(2, s2.lane + 1);
+      else if (action2 === "jump" && s2.jump < 0) {
+        s2.jump = 0;
+        s2.roll = 0;
+        s2.events.push({ kind: "jump" });
+      } else if (action2 === "roll") {
+        s2.roll = 0.72;
+        s2.jump = -1;
+        s2.events.push({ kind: "roll" });
+      } else if (action2 === "board" && s2.boards > 0 && s2.board <= 0) {
+        s2.boards--;
+        s2.board = 10;
+        s2.events.push({ kind: "board" });
+      }
+    }
+    s2.x += clamp(s2.lane - s2.x, -RUNNER_DT2 * 7, RUNNER_DT2 * 7);
+    if (s2.jump >= 0) {
+      s2.jump += RUNNER_DT2;
+      if (s2.jump >= 0.96) s2.jump = -1;
+    }
+    for (const key of ["roll", "board", "magnet", "invincible"]) s2[key] = Math.max(0, s2[key] - RUNNER_DT2);
+    s2.speed = Math.min(s2.difficulty === "practice" ? 27 : 34, (s2.difficulty === "practice" ? 16 : 20) + s2.time * 0.095);
+    s2.z = state6.z + s2.speed * RUNNER_DT2;
+    const rows = runnerScene2(s2, 30);
+    for (const row of rows) {
+      for (const coin of row.coins) if (state6.z < coin.z && s2.z >= coin.z && (Math.abs(s2.x - coin.lane) < 0.42 && (coin.bonus && coin.height > 0 ? jumpHeight2(s2) > 0.45 : Math.abs(jumpHeight2(s2) - coin.height) < 0.85) || s2.magnet > 0)) {
+        s2.coins += coin.value;
+        s2.events.push({ kind: "coin", lane: coin.lane, value: coin.value });
+      }
+      const item = row.item;
+      if (item && state6.z < item.z && s2.z >= item.z && Math.abs(s2.x - item.lane) < 0.42) {
+        if (item.kind === "magnet") s2.magnet = 10;
+        else s2.boards = Math.min(3, s2.boards + 1);
+        s2.events.push({ kind: item.kind === "magnet" ? "magnet" : "pickup-board" });
+      }
+      for (const o of row.obstacles) {
+        const before = o.kind === "train" ? 2 : 1.6, after2 = o.kind === "train" ? 12 : 1.6;
+        if (s2.z < o.z - before || s2.z > o.z + after2 || Math.abs(s2.x - o.lane) > 0.43 || s2.cleared.includes(o.id)) continue;
+        const safe = o.kind === "barrier" ? jumpHeight2(s2) > 0.9 : o.kind === "arch" ? s2.roll > 0 : o.kind === "gap" ? jumpHeight2(s2) > 0.65 : false;
+        if (safe || s2.invincible > 0) continue;
+        if (s2.board > 0) {
+          s2.board = 0;
+          s2.invincible = 1.1;
+          s2.cleared.push(o.id);
+          s2.events.push({ kind: "saved", obstacle: o.kind, lane: o.lane });
+        } else {
+          s2.phase = "finished";
+          s2.reason = { kind: o.kind, lane: o.lane };
+          s2.events.push({ kind: "crash", obstacle: o.kind, lane: o.lane });
+          break;
+        }
+      }
+      if (s2.phase === "finished") break;
+    }
+    s2.cleared = s2.cleared.filter((id) => runnerRowZ(Number(id.split("-")[0])) > s2.z - 16);
+    s2.score = Math.floor(s2.z) + s2.coins * 15;
+    return s2;
+  }
+  function sealRunner2(options5, inputs5, state6) {
+    if (state6.version === 1) return sealRunner(options5, inputs5, state6);
+    return { format: "runner-2", game: "runner", options: { ...options5, rules: 2 }, inputs: inputs5, end: { tick: state6.tick, hash: fingerprint(state6) } };
+  }
+  function replayRunner2(record) {
+    if (record?.format === "runner-1") return replayRunner(record);
+    if (record?.format !== "runner-2" || record.game !== "runner" || record.options?.rules !== 2 || !Array.isArray(record.inputs) || record.inputs.length > 4e4 || !Number.isInteger(record.end?.tick) || record.end.tick < 0 || record.end.tick > 108e3) throw Error("\u65E0\u6548\u8DD1\u9177\u56DE\u653E");
+    let s2 = createRunner2(record.options), cursor4 = 0, last4 = -1;
+    for (const row of record.inputs) {
+      if (!Number.isInteger(row.tick) || row.tick <= last4 || row.tick >= record.end.tick || !Array.isArray(row.actions) || row.actions.length > 5 || row.actions.some((a) => !RUNNER_ACTIONS2.includes(a))) throw Error("\u65E0\u6548\u8DD1\u9177\u64CD\u4F5C");
+      last4 = row.tick;
+    }
+    while (s2.tick < record.end.tick) {
+      const actions = record.inputs[cursor4]?.tick === s2.tick ? record.inputs[cursor4++].actions : [], next = stepRunner2(s2, actions);
+      if (next === s2) throw Error("\u8DD1\u9177\u7ED3\u675F\u540E\u7684\u64CD\u4F5C");
+      s2 = next;
+    }
+    if (fingerprint(s2) !== record.end.hash) throw Error("\u8DD1\u9177\u56DE\u653E\u6821\u9A8C\u5931\u8D25");
+    return s2;
+  }
+
   // web/runner-view.mjs
+  var ink = "#315765";
+  var shell = "#ed9475";
+  var light = "#ffc39a";
+  var mint = "#6cbba5";
   function poly(c, color2, pts) {
     c.fillStyle = color2;
     c.beginPath();
@@ -9768,208 +9944,260 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     c.closePath();
     c.fill();
   }
-  function runner(c, x, y, size, s2, reduced4) {
+  function oval(c, color2, x, y, rx, ry) {
+    c.fillStyle = color2;
+    c.beginPath();
+    c.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
+    c.fill();
+  }
+  function box2(c, color2, x, y, w, h, r = 0) {
+    c.fillStyle = color2;
+    c.beginPath();
+    c.roundRect(x, y, w, h, r);
+    c.fill();
+  }
+  function stroke(c, color2, width, points) {
+    c.strokeStyle = color2;
+    c.lineWidth = width;
+    c.lineCap = "round";
+    c.lineJoin = "round";
+    c.beginPath();
+    points.forEach(([x, y], i) => i ? c.lineTo(x, y) : c.moveTo(x, y));
+    c.stroke();
+  }
+  function star(c, x, y, size, color2) {
+    poly(c, color2, Array.from({ length: 10 }, (_, i) => {
+      const a = i * Math.PI / 5 - Math.PI / 2, r = i % 2 ? size * 0.45 : size;
+      return [x + Math.cos(a) * r, y + Math.sin(a) * r];
+    }));
+  }
+  function blend(a, b, t) {
+    return "#" + [1, 3, 5].map((i) => Math.round(parseInt(a.slice(i, i + 2), 16) * (1 - t) + parseInt(b.slice(i, i + 2), 16) * t).toString(16).padStart(2, "0")).join("");
+  }
+  function courierPortrait() {
+    return `<svg class="runner-portrait" viewBox="0 0 116 104" role="img" aria-label="\u963F\u7C73\uFF1A\u80CC\u7740\u90AE\u5305\u7684\u5706\u6EDA\u6EDA\u5C0F\u867E"><ellipse cx="58" cy="97" rx="34" ry="5" fill="#244f6630"/><path d="M44 28Q25 0 18 13M69 28Q91 0 99 14" fill="none" stroke="#eea07d" stroke-width="4" stroke-linecap="round"/><path d="M83 66Q111 74 92 91Q78 96 75 83" fill="#ee9475" stroke="#bc7663" stroke-width="2"/><rect x="29" y="39" width="60" height="52" rx="28" fill="#ed9475"/><ellipse cx="58" cy="40" rx="33" ry="25" fill="#ffc39a"/><ellipse cx="45" cy="40" rx="4" ry="5" fill="#315765"/><ellipse cx="71" cy="40" rx="4" ry="5" fill="#315765"/><circle cx="44" cy="38" r="1.4" fill="white"/><circle cx="70" cy="38" r="1.4" fill="white"/><path d="M53 49q5 5 10 0" fill="none" stroke="#a56f5e" stroke-width="2.5" stroke-linecap="round"/><ellipse cx="35" cy="49" rx="5" ry="3" fill="#ef9b86"/><ellipse cx="81" cy="49" rx="5" ry="3" fill="#ef9b86"/><path d="M29 60q29 13 58 0l-3 10q-27 11-51 0z" fill="#6cbba5"/><rect x="41" y="71" width="34" height="22" rx="5" fill="#efcf80"/><path d="m44 75 14 9 14-9" fill="none" stroke="#a88554" stroke-width="2"/><path d="M39 92v4h12M68 92v4h12" stroke="#315765" stroke-width="8" stroke-linecap="round"/></svg>`;
+  }
+  function drawCourier(c, x, y, size, s2, { reduced: reduced4 = false } = {}) {
     c.save();
     c.translate(x, y);
     c.scale(size, size);
-    const stride = reduced4 ? 0 : Math.sin(s2.time * 16) * 14;
-    c.fillStyle = "#1c38584d";
-    c.beginPath();
-    c.ellipse(0, 0, 27, 7, 0, 0, 7);
-    c.fill();
+    oval(c, "#234c6535", 0, 1, 32, 7);
     if (s2.board > 0) {
-      c.fillStyle = "#6edbcf";
-      c.beginPath();
-      c.ellipse(0, 2, 37, 7, 0, 0, 7);
-      c.fill();
-      c.fillStyle = "#fff2bf";
-      c.fillRect(-25, 0, 50, 3);
+      oval(c, "#469b99", 0, 4, 41, 8);
+      box2(c, "#a0ead2", -34, 0, 68, 5, 3);
+      star(c, 0, 2, 5, "#fff0ae");
     }
-    c.translate(0, -jumpHeight(s2) * 35);
-    if (s2.phase === "finished") c.rotate(-0.3);
+    const jump = jumpHeight2(s2), wave = reduced4 || s2.countdown > 0 ? 0 : Math.sin(s2.time * 16), bob = jump > 0 ? 0 : Math.abs(wave) * 2.5;
+    c.translate(0, -jump * 33 - bob);
+    c.rotate(s2.phase === "finished" ? -0.13 : (s2.lane - s2.x) * 0.11);
     if (s2.roll > 0) {
-      c.fillStyle = "#e88c79";
+      oval(c, "#b97762", 0, -24, 30, 25);
+      oval(c, shell, -2, -26, 28, 24);
+      c.strokeStyle = light;
+      c.lineWidth = 5;
       c.beginPath();
-      c.ellipse(0, -23, 25, 24, 0, 0, 7);
-      c.fill();
-      c.strokeStyle = "#3e547d";
-      c.lineWidth = 12;
-      c.beginPath();
-      c.arc(0, -20, 20, 0, Math.PI);
+      c.arc(-3, -27, 17, 0.1, Math.PI * 1.8);
       c.stroke();
-      c.fillStyle = "#f1c2a0";
-      c.beginPath();
-      c.arc(8, -35, 12, 0, 7);
-      c.fill();
+      box2(c, mint, -21, -36, 39, 15, 7);
+      box2(c, "#f2d48a", -8, -34, 15, 12, 3);
+      star(c, 0, -28, 4, ink);
+      stroke(c, light, 3, [[20, -40], [28, -45], [32, -43]]);
       c.restore();
       return;
     }
-    const limb2 = (pts, color2, width) => {
-      c.strokeStyle = color2;
-      c.lineWidth = width;
-      c.lineCap = "round";
-      c.lineJoin = "round";
-      c.beginPath();
-      pts.forEach(([a, b], i) => i ? c.lineTo(a, b) : c.moveTo(a, b));
-      c.stroke();
-    };
-    limb2([[-7, -42], [-12, -21 + stride * 0.35], [-14 - stride * 0.4, -2]], "#425b86", 13);
-    limb2([[7, -42], [12, -21 - stride * 0.35], [14 + stride * 0.4, -2]], "#6988ad", 13);
-    limb2([[-14 - stride * 0.4, -2], [-23 - stride * 0.4, -2]], "#fdf4d6", 9);
-    limb2([[14 + stride * 0.4, -2], [22 + stride * 0.4, -2]], "#fdf4d6", 9);
-    limb2([[0, -75], [0, -43]], "#e68d7a", 30);
-    limb2([[-12, -72], [-26, -56 + stride * 0.6], [-21, -44 + stride]], "#edb498", 10);
-    limb2([[12, -72], [26, -56 - stride * 0.6], [21, -44 - stride]], "#edb498", 10);
-    c.fillStyle = "#f1c2a0";
-    c.beginPath();
-    c.arc(0, -96, 19, 0, 7);
-    c.fill();
-    c.fillStyle = "#376b74";
-    c.beginPath();
-    c.arc(0, -101, 20, Math.PI, Math.PI * 2);
-    c.fill();
-    c.fillRect(-22, -103, 43, 9);
-    c.fillStyle = "#a7dfc6";
-    c.fillRect(-11, -103, 10, 7);
-    c.fillStyle = "#88c7bb";
-    c.fillRect(-14, -76, 28, 9);
-    c.fillStyle = "#eacb87";
-    c.beginPath();
-    c.roundRect(-10, -66, 20, 24, 6);
-    c.fill();
+    oval(c, "#c87961", 25, -31, 15, 15);
+    oval(c, shell, 28, -34, 11, 10);
+    stroke(c, light, 3, [[29, -27], [36, -30], [35, -36]]);
+    const step = jump > 0 ? -5 : wave * 6;
+    for (const side of [-1, 1]) {
+      const footY = -3 + side * step;
+      box2(c, ink, side * 12 - 9, footY - 10, 18, 14, 7);
+      box2(c, "#fff2cf", side * 12 - 10, footY, 20, 4, 2);
+    }
+    oval(c, "#bc7965", 0, -43, 29, 32);
+    oval(c, shell, 0, -46, 27, 31);
+    for (const side of [-1, 1]) oval(c, light, side * (29 + wave * side * 2), -47 + side * wave * 5, 8, 11);
+    oval(c, shell, 0, -79, 32, 25);
+    oval(c, light, -5, -85, 24, 16);
+    stroke(c, "#d48569", 4, [[-15, -98], [-26, -114 - wave * 2], [-35, -115 - wave * 2]]);
+    stroke(c, "#d48569", 4, [[15, -98], [27, -116 + wave * 2], [36, -116 + wave * 2]]);
+    oval(c, light, -35, -115 - wave * 2, 3, 3);
+    oval(c, light, 36, -116 + wave * 2, 3, 3);
+    stroke(c, "#d8856c", 3, [[-24, -76], [-12, -71], [12, -71], [24, -77]]);
+    box2(c, "#417d77", -23, -69, 46, 39, 12);
+    box2(c, mint, -21, -71, 42, 35, 10);
+    stroke(c, "#b8e5c6", 3, [[-17, -65], [17, -65]]);
+    box2(c, "#f4d895", -11, -57, 23, 17, 4);
+    stroke(c, "#b8955c", 2, [[-8, -53], [0, -47], [9, -53]]);
+    box2(c, "#e7bb77", -4, -70, 8, 8, 2);
     if (s2.magnet > 0) {
-      c.strokeStyle = "#a5f0e4";
-      c.lineWidth = 2;
+      c.strokeStyle = "#b0f3d9";
+      c.lineWidth = 2.5;
       c.beginPath();
-      c.arc(0, -55, 48, 0, 7);
+      c.arc(0, -57, 47, 0, Math.PI * 2);
       c.stroke();
     }
     c.restore();
   }
-  function drawRunner(canvas2, s2, { reduced: reduced4 = false } = {}) {
-    const c = canvas2.getContext("2d"), w = canvas2.width, h = canvas2.height, horizon = h * 0.2, focal = Math.min(w * 1.25, h * 1.65), project = (worldX, z) => {
-      const d = z - s2.z + 17;
-      return { x: w / 2 + worldX * focal / d, y: horizon + h * 12.5 / d, scale: focal / d };
+  function runnerRenderState(previous3, current, alpha = 1) {
+    if (!previous3 || current.tick !== previous3.tick + 1 || previous3.version !== current.version || current.phase === "finished") return current;
+    const t = Math.max(0, Math.min(1, alpha)), mix = (a, b) => a + (b - a) * t;
+    return { ...current, z: mix(previous3.z, current.z), x: mix(previous3.x, current.x), time: mix(previous3.time, current.time), jump: previous3.jump >= 0 && current.jump >= 0 ? mix(previous3.jump, current.jump) : current.jump };
+  }
+  function runnerProjection(state6, w, h) {
+    const horizon = h * 0.23, focal = Math.min(w * 1.3, h * 1.65), center2 = (z) => 8 * Math.sin(z / 190) + 2 * Math.sin(z / 85), slope = 8 / 190 * Math.cos(state6.z / 190) + 2 / 85 * Math.cos(state6.z / 85), base = center2(state6.z);
+    return (worldX, z, height = 0) => {
+      const dz = z - state6.z, depth = dz + 17, scale = focal / depth, bend = state6.version === 1 ? 0 : center2(z) - base - dz * slope;
+      return { x: w / 2 + (worldX + bend) * scale, y: horizon + h * 11.4 / depth - height * scale, scale };
     };
-    c.fillStyle = "#c7e8ec";
-    c.fillRect(0, 0, w, h);
-    c.fillStyle = "#fff0bf";
-    c.beginPath();
-    c.arc(w * 0.78, h * 0.11, h * 0.055, 0, 7);
-    c.fill();
-    for (let i = 0; i < 14; i++) {
-      const x = i * w / 13, hh = h * (0.08 + i * 7 % 5 * 0.025);
-      c.fillStyle = i % 2 ? "#a5c7cc" : "#b3d2d2";
-      c.fillRect(x, horizon - hh, w * 0.065, hh + 15);
-    }
-    c.fillStyle = "#e6d7b4";
-    c.fillRect(0, horizon, w, h - horizon);
-    const close = project(0, s2.z), far = project(0, s2.z + 300);
-    poly(c, "#899ba2", [[w / 2 - 6 * close.scale, close.y], [w / 2 + 6 * close.scale, close.y], [w / 2 + 6 * far.scale, far.y], [w / 2 - 6 * far.scale, far.y]]);
-    for (let lane = 0; lane < 3; lane++) {
-      const x = (lane - 1) * 3.4;
-      for (const offset of [-1.05, 1.05]) poly(c, "#485c6b", [[project(x + offset - 0.07, s2.z).x, close.y], [project(x + offset + 0.07, s2.z).x, close.y], [project(x + offset + 0.07, s2.z + 300).x, far.y], [project(x + offset - 0.07, s2.z + 300).x, far.y]]);
-    }
-    for (let z = Math.floor((s2.z + 270) / 5) * 5; z > s2.z - 1; z -= 5) {
-      const p = project(0, z);
-      for (let lane = 0; lane < 3; lane++) {
-        const x = w / 2 + (lane - 1) * 3.4 * p.scale;
-        c.fillStyle = "#c3b9a0";
-        c.fillRect(x - 1.4 * p.scale, p.y, 2.8 * p.scale, Math.max(1, p.scale * 0.16));
+  }
+  function scenery(c, project, z, side, zone) {
+    const p = project(side * 7.8, z), u = p.scale;
+    if (u <= 0) return;
+    if (zone.id === "station") {
+      const x = p.x, shade = side > 0 ? "#aac3b9" : "#b9cec0";
+      box2(c, shade, x - side * u * 0.3, p.y - u * 6, side * u * 4.2, u * 6, 0);
+      for (let j = 0; j < 3; j++) box2(c, "#edf4de", x + side * u * 0.5, p.y - u * (5 - j * 1.6), side * u * 2.6, u * 0.8, 0);
+      const lamp = project(side * 6.1, z + 9), lu = lamp.scale;
+      stroke(c, "#648d88", Math.max(1, lu * 0.1), [[lamp.x, lamp.y], [lamp.x, lamp.y - lu * 4.5]]);
+      oval(c, "#fff0ad", lamp.x, lamp.y - lu * 4.5, lu * 0.3, lu * 0.3);
+    } else if (zone.id === "market") {
+      const x = p.x, ww = u * 4.5, hh = u * 3.2, xx = side < 0 ? x - ww : x;
+      box2(c, "#d7be93", xx, p.y - hh, ww, hh, 0);
+      box2(c, "#7c9b8a", xx + ww * 0.12, p.y - hh * 0.75, ww * 0.76, hh * 0.48, 0);
+      for (let i = 0; i < 5; i++) poly(c, i % 2 ? "#f5e7bd" : "#d89a79", [[xx + i * ww / 5, p.y - hh - ww * 0.3], [xx + (i + 1) * ww / 5, p.y - hh - ww * 0.3], [xx + (i + 1) * ww / 5 + side * ww * 0.12, p.y - hh * 0.8], [xx + i * ww / 5 + side * ww * 0.12, p.y - hh * 0.8]]);
+      for (let i = 0; i < 3; i++) oval(c, ["#c6d393", "#e8ae7a", "#deb477"][i], xx + ww * (0.22 + i * 0.25), p.y - hh * 0.3, u * 0.35, u * 0.27);
+    } else {
+      const x = p.x;
+      stroke(c, "#d4d6b7", Math.max(1, u * 0.12), [[x, p.y], [x, p.y - u * 2.1]]);
+      oval(c, "#f2e3ba", x, p.y - u * 2.1, u * 0.14, u * 0.14);
+      if (Math.floor(z / 28) % 3 === 0) {
+        const boat = project(side * 12, z + 6);
+        poly(c, "#e4dfbc", [[boat.x - u * 1.8, boat.y - u * 0.5], [boat.x + u * 1.8, boat.y - u * 0.5], [boat.x + u, boat.y + u * 0.2], [boat.x - u, boat.y + u * 0.2]]);
+        stroke(c, "#6e9ca6", Math.max(1, u * 0.1), [[boat.x, boat.y - u * 0.5], [boat.x, boat.y - u * 3]]);
+        poly(c, "#eef2d8", [[boat.x, boat.y - u * 3], [boat.x, boat.y - u * 0.7], [boat.x + u * 1.8, boat.y - u * 0.7]]);
       }
+    }
+  }
+  function obstacle(c, o, project, s2) {
+    const p = project((o.lane - 1) * 3.4, o.z), u = p.scale, x = p.x, y = p.y, zone = RUNNER_ZONES.find((z) => z.id === o.zone) || RUNNER_ZONES[0];
+    if (s2.cleared.includes(o.id)) return;
+    if (o.kind === "train") {
+      const back = project((o.lane - 1) * 3.4, o.z + 12), width = 2.7 * u, height = 5 * u;
+      poly(c, zone.vehicle, [[x - width / 2, y - height], [x + width / 2, y - height], [back.x + 1.35 * back.scale, back.y - 5 * back.scale], [back.x - 1.35 * back.scale, back.y - 5 * back.scale]]);
+      poly(c, "#7393a2", [[x + width / 2, y], [x + width / 2, y - height], [back.x + 1.35 * back.scale, back.y - 5 * back.scale], [back.x + 1.35 * back.scale, back.y]]);
+      box2(c, "#f0edda", x - width / 2, y - height, width, height, u * 0.25);
+      box2(c, zone.vehicle, x - width / 2, y - height * 0.46, width, height * 0.32, 0);
+      box2(c, ink, x - width * 0.38, y - height * 0.82, width * 0.76, height * 0.28, u * 0.1);
+      box2(c, "#b6dde2", x - width * 0.3, y - height * 0.78, width * 0.23, height * 0.2, u * 0.04);
+      for (const sign of [-1, 1]) oval(c, "#ffe3a2", x + sign * width * 0.28, y - height * 0.18, u * 0.18, u * 0.13);
+      box2(c, ink, x - width * 0.36, y - u * 0.14, width * 0.72, u * 0.14, 0);
+    } else if (o.kind === "barrier") {
+      for (const side of [-1, 1]) box2(c, "#638a85", x + side * u - u * 0.08, y - u * 1.4, u * 0.16, u * 1.4, 0);
+      box2(c, "#e7a076", x - u * 1.3, y - u * 1.55, u * 2.6, u * 0.95, u * 0.1);
+      for (const side of [-1, 1]) poly(c, "#fff1c7", [[x + side * u * 0.85 - u * 0.17, y - u * 1.5], [x + side * u * 0.85 + u * 0.17, y - u * 1.5], [x + side * u * 0.85 - u * 0.15, y - u * 0.65], [x + side * u * 0.85 - u * 0.49, y - u * 0.65]]);
+      c.fillStyle = ink;
+      c.textAlign = "center";
+      c.font = `bold ${u * 0.85}px system-ui`;
+      c.fillText("\u2191", x, y - u * 0.83);
+    } else if (o.kind === "arch") {
+      for (const side of [-1, 1]) box2(c, "#679a91", x + side * u * 1.25 - u * 0.1, y - u * 3.1, u * 0.2, u * 3.1, 0);
+      box2(c, "#85b7a3", x - u * 1.42, y - u * 3.1, u * 2.84, u * 1.4, u * 0.12);
+      box2(c, "#e3e8bb", x - u * 1.42, y - u * 1.78, u * 2.84, u * 0.18, 0);
+      c.fillStyle = "#fff6d6";
+      c.textAlign = "center";
+      c.font = `bold ${u * 1.3}px system-ui`;
+      c.fillText("\u2193", x, y - u * 2.02);
+    } else {
+      const a = project((o.lane - 1) * 3.4, o.z - 1.6), b = project((o.lane - 1) * 3.4, o.z + 1.6);
+      poly(c, "#386578", [[a.x - 1.35 * a.scale, a.y], [a.x + 1.35 * a.scale, a.y], [b.x + 1.35 * b.scale, b.y], [b.x - 1.35 * b.scale, b.y]]);
+      stroke(c, "#efce80", Math.max(2, u * 0.13), [[a.x - 1.35 * a.scale, a.y], [a.x + 1.35 * a.scale, a.y]]);
+    }
+  }
+  function drawRunner(canvas2, s2, { reduced: reduced4 = false, effects: effects2 = [], now = 0 } = {}) {
+    const c = canvas2.getContext("2d"), w = canvas2.width, h = canvas2.height, route2 = runnerRoute(s2.version === 1 ? 0 : s2.z), zone = route2.zone, blendTo = Math.max(0, 1 - route2.remaining / 60), project = runnerProjection(s2, w, h), horizon = h * 0.23;
+    c.fillStyle = blend(zone.sky, route2.next.sky, blendTo);
+    c.fillRect(0, 0, w, h);
+    oval(c, "#fff0bf", w * 0.78, h * 0.12, h * 0.055, h * 0.055);
+    for (let i = 0; i < 7; i++) {
+      const x = i * w / 6, hh = h * (0.055 + i * 7 % 5 * 0.02);
+      box2(c, blend("#abc9c8", "#c1cdb9", blendTo), x, horizon - hh, w * 0.08, hh + 3, 0);
+    }
+    c.fillStyle = blend(zone.ground, route2.next.ground, blendTo);
+    c.fillRect(0, horizon, w, h - horizon);
+    for (let z = s2.z + 260; z > s2.z; z -= 10) {
+      const a = project(0, Math.max(s2.z, z - 10)), b = project(0, z), theme = RUNNER_ZONES[s2.version === 1 ? 0 : Math.floor(z / 400) % 3];
+      poly(c, theme.edge, [[a.x - 5.65 * a.scale, a.y], [a.x + 5.65 * a.scale, a.y], [b.x + 5.65 * b.scale, b.y], [b.x - 5.65 * b.scale, b.y]]);
+      poly(c, theme.road, [[a.x - 5.1 * a.scale, a.y], [a.x + 5.1 * a.scale, a.y], [b.x + 5.1 * b.scale, b.y], [b.x - 5.1 * b.scale, b.y]]);
+      for (const lane of [-1, 1]) poly(c, theme.id === "river" ? "#d7cdb0" : "#e6e6cb", [[a.x + lane * 1.7 * a.scale - a.scale * 0.035, a.y], [a.x + lane * 1.7 * a.scale + a.scale * 0.035, a.y], [b.x + lane * 1.7 * b.scale + b.scale * 0.035, b.y], [b.x + lane * 1.7 * b.scale - b.scale * 0.035, b.y]]);
+      if (theme.id === "station") for (let lane = -1; lane <= 1; lane++) for (const offset of [-1.05, 1.05]) poly(c, "#526c79", [[a.x + (lane * 3.4 + offset - 0.05) * a.scale, a.y], [a.x + (lane * 3.4 + offset + 0.05) * a.scale, a.y], [b.x + (lane * 3.4 + offset + 0.05) * b.scale, b.y], [b.x + (lane * 3.4 + offset - 0.05) * b.scale, b.y]]);
+    }
+    for (let z = Math.floor((s2.z + 260) / 5) * 5; z > s2.z; z -= 5) {
+      const p = project(0, z), theme = RUNNER_ZONES[s2.version === 1 ? 0 : Math.floor(z / 400) % 3];
+      stroke(c, theme.id === "river" ? "#9e9f87" : theme.id === "market" ? "#cabfa1" : "#acb5a8", Math.max(1, p.scale * 0.08), [[p.x - 5 * p.scale, p.y], [p.x + 5 * p.scale, p.y]]);
     }
     for (let row = Math.floor((s2.z + 260) / 28); row >= Math.floor(s2.z / 28); row--) {
-      const z = row * 28, p = project(0, z);
-      for (const side of [-1, 1]) {
-        const x = w / 2 + side * 7.1 * p.scale, buildingHeight = (5 + row % 4) * p.scale;
-        c.fillStyle = row % 2 ? "#a6b8b0" : "#b8c7c0";
-        c.fillRect(side < 0 ? x - 5 * p.scale : x, p.y - buildingHeight, 5 * p.scale, buildingHeight);
-        c.fillStyle = "#eff5e5";
-        for (let iy = 0; iy < 3; iy++) c.fillRect(x + side * p.scale, p.y - buildingHeight + (iy + 0.6) * 1.7 * p.scale, side * 2 * p.scale, Math.max(2, 0.7 * p.scale));
+      const z = row * 28, theme = RUNNER_ZONES[s2.version === 1 ? 0 : Math.floor(z / 400) % 3];
+      for (const side of [-1, 1]) scenery(c, project, z, side, theme);
+    }
+    if (s2.version !== 1) {
+      const edge2 = (Math.floor(s2.z / 400) + 1) * 400;
+      if (edge2 - s2.z < 240) {
+        const p = project(0, edge2), theme = runnerRoute(edge2).zone;
+        stroke(c, theme.color, Math.max(1, p.scale * 0.15), [[p.x - 5.4 * p.scale, p.y], [p.x - 5.4 * p.scale, p.y - 6 * p.scale], [p.x + 5.4 * p.scale, p.y - 6 * p.scale], [p.x + 5.4 * p.scale, p.y]]);
+        box2(c, theme.color, p.x - 3.8 * p.scale, p.y - 6.4 * p.scale, 7.6 * p.scale, 1.3 * p.scale, p.scale * 0.15);
+        c.fillStyle = "#fff3cf";
+        c.font = `700 ${Math.max(7, p.scale * 0.7)}px system-ui`;
+        c.textAlign = "center";
+        c.fillText(theme.name, p.x, p.y - 5.48 * p.scale);
       }
     }
-    const objects = runnerScene(s2).flatMap((row) => [...row.obstacles.map((o) => ({ ...o, object: "obstacle" })), ...row.coins.map((o) => ({ ...o, object: "coin" })), ...row.item ? [{ ...row.item, object: "item" }] : []]).filter((o) => o.z > s2.z - 5 && o.z < s2.z + 250).sort((a, b) => b.z - a.z);
+    const objects = runnerScene2(s2).flatMap((row) => [...row.obstacles.map((o) => ({ ...o, object: "obstacle" })), ...row.coins.map((o) => ({ ...o, object: "coin" })), ...row.item ? [{ ...row.item, object: "item" }] : []]).filter((o) => o.z > s2.z - (o.kind === "train" ? 14 : 4) && o.z < s2.z + 250).sort((a, b) => b.z - a.z);
     for (const o of objects) {
-      const p = project((o.lane - 1) * 3.4, o.z), size = p.scale, x = p.x, y = p.y;
-      if (!Number.isFinite(size) || size <= 0) continue;
+      const p = project((o.lane - 1) * 3.4, o.z), u = p.scale;
+      if (u <= 0) continue;
+      if (o.object === "obstacle") {
+        obstacle(c, o, project, s2);
+        continue;
+      }
+      if (o.z < s2.z) continue;
       if (o.object === "coin") {
-        if (o.z < s2.z) continue;
-        c.fillStyle = "#f5ce6d";
-        c.strokeStyle = "#bd8b38";
-        c.lineWidth = Math.max(1, size * 0.07);
-        c.beginPath();
-        c.ellipse(x, y - size * 0.8, Math.max(2, size * 0.24), Math.max(3, size * 0.36), 0, 0, 7);
-        c.fill();
-        c.stroke();
-        c.fillStyle = "#fff1b3";
-        c.fillRect(x - size * 0.04, y - size * 1.02, Math.max(1, size * 0.08), size * 0.4);
-        continue;
-      }
-      if (o.object === "item") {
-        if (o.z < s2.z) continue;
-        c.fillStyle = o.kind === "magnet" ? "#8ad6c5" : "#b7c6ef";
-        c.beginPath();
-        c.arc(x, y - size * 1.4, Math.max(7, size * 0.65), 0, 7);
-        c.fill();
-        c.fillStyle = "#254e5e";
-        c.font = `bold ${Math.max(9, size * 0.9)}px system-ui`;
-        c.textAlign = "center";
-        c.fillText(o.kind === "magnet" ? "\u2229" : "\u25B0", x, y - size * 1.12);
-        continue;
-      }
-      if (s2.cleared.includes(o.id)) continue;
-      if (o.kind === "train") {
-        const back = project((o.lane - 1) * 3.4, o.z + 13), body = 2.8 * size, height = 5.5 * size;
-        poly(c, "#638dae", [[x - body / 2, y - height], [x + body / 2, y - height], [back.x + 1.4 * back.scale, back.y - 5.5 * back.scale], [back.x - 1.4 * back.scale, back.y - 5.5 * back.scale]]);
-        poly(c, "#567d9c", [[x + body / 2, y], [x + body / 2, y - height], [back.x + 1.4 * back.scale, back.y - 5.5 * back.scale], [back.x + 1.4 * back.scale, back.y]]);
-        c.fillStyle = "#f2eee0";
-        c.beginPath();
-        c.roundRect(x - body / 2, y - height, body, height, Math.max(2, size * 0.28));
-        c.fill();
-        c.fillStyle = "#447c9b";
-        c.fillRect(x - body / 2, y - height * 0.46, body, height * 0.33);
-        c.fillStyle = "#294b63";
-        c.fillRect(x - body * 0.39, y - height * 0.82, body * 0.78, height * 0.3);
-        c.fillStyle = "#b5dfe5";
-        c.fillRect(x - body * 0.31, y - height * 0.78, body * 0.19, height * 0.23);
-        c.fillStyle = "#ffe6aa";
-        for (const sign of [-1, 1]) c.fillRect(x + sign * body * 0.31 - size * 0.15, y - height * 0.21, size * 0.3, size * 0.21);
-        c.fillStyle = "#344b5a";
-        c.fillRect(x - body * 0.39, y - size * 0.15, body * 0.78, size * 0.15);
-      } else if (o.kind === "barrier") {
-        c.fillStyle = "#6f7f7f";
-        for (const side of [-1, 1]) c.fillRect(x + side * size - size * 0.08, y - size * 1.4, size * 0.16, size * 1.4);
-        c.fillStyle = "#e89a7a";
-        c.fillRect(x - size * 1.25, y - size * 1.5, size * 2.5, size * 0.85);
-        c.fillStyle = "#fff3d0";
-        for (let i = 0; i < 3; i++) poly(c, "#fff3d0", [[x - size * (1.2 - i * 0.85), y - size * 1.5], [x - size * (0.8 - i * 0.85), y - size * 1.5], [x - size * (1.2 - i * 0.85), y - size * 0.65], [x - size * (1.6 - i * 0.85), y - size * 0.65]]);
-      } else if (o.kind === "arch") {
-        c.fillStyle = "#657d87";
-        for (const side of [-1, 1]) c.fillRect(x + side * size * 1.25 - size * 0.1, y - size * 3.2, size * 0.2, size * 3.2);
-        c.fillStyle = "#eaa37c";
-        c.fillRect(x - size * 1.4, y - size * 3.2, size * 2.8, size * 1.6);
-        c.fillStyle = "#fff0cc";
-        c.font = `bold ${size * 1.5}px system-ui`;
-        c.textAlign = "center";
-        c.fillText("\u2193", x, y - size * 1.9);
+        const y = p.y - u * (0.85 + (o.height || 0) * 1.2);
+        if (o.bonus) {
+          star(c, p.x, y, Math.max(3, u * 0.48), "#edb356");
+          star(c, p.x, y, Math.max(2, u * 0.26), "#fff0b0");
+        } else {
+          oval(c, "#bd9552", p.x, y, Math.max(2, u * 0.25), Math.max(3, u * 0.35));
+          oval(c, "#f6d581", p.x - u * 0.035, y - u * 0.025, Math.max(1, u * 0.19), Math.max(2, u * 0.28));
+        }
       } else {
-        const a = project((o.lane - 1) * 3.4, o.z - 1.6), b = project((o.lane - 1) * 3.4, o.z + 1.6);
-        poly(c, "#263c4e", [[a.x - 1.35 * a.scale, a.y], [a.x + 1.35 * a.scale, a.y], [b.x + 1.35 * b.scale, b.y], [b.x - 1.35 * b.scale, b.y]]);
-        c.strokeStyle = "#f2d68d";
-        c.lineWidth = Math.max(2, size * 0.13);
-        c.beginPath();
-        c.moveTo(a.x - 1.35 * a.scale, a.y);
-        c.lineTo(a.x + 1.35 * a.scale, a.y);
-        c.stroke();
+        oval(c, o.kind === "magnet" ? "#83c7b3" : "#8aabc5", p.x, p.y - u * 1.3, Math.max(7, u * 0.65), Math.max(7, u * 0.65));
+        c.fillStyle = "#fff5c9";
+        c.font = `bold ${Math.max(10, u * 0.9)}px system-ui`;
+        c.textAlign = "center";
+        c.fillText(o.kind === "magnet" ? "\u2229" : "\u25B0", p.x, p.y - u * 1.02);
       }
     }
-    const bodySize = Math.min(w / 450, h / 390), px = w / 2 + (s2.x - 1) * 3.4 * focal / 19, py = h * 0.9;
-    runner(c, px, py, bodySize, s2, reduced4);
+    const hero = project((s2.x - 1) * 3.4, s2.z + 1.2), bodySize = Math.min(w / 430, h / 370), py = h * 0.91;
+    drawCourier(c, hero.x, py, bodySize, s2, { reduced: reduced4 });
+    for (const e of effects2) {
+      const t = (now - e.at) / 600;
+      if (t < 0 || t > 1) continue;
+      c.save();
+      c.globalAlpha = 1 - t;
+      const x = hero.x + (e.lane - s2.x) * bodySize * 18, y = py - bodySize * (90 + t * 45);
+      star(c, x, y, bodySize * (e.value === 2 ? 8 : 5), "#f4c66f");
+      c.fillStyle = ink;
+      c.font = `bold ${Math.max(13, bodySize * 14)}px system-ui`;
+      c.textAlign = "center";
+      c.fillText("+" + e.value, x + bodySize * 14, y + bodySize * 4);
+      c.restore();
+    }
     if (s2.invincible > 0 && !reduced4) {
-      c.strokeStyle = "#b3f4e5";
-      c.lineWidth = 4;
+      c.strokeStyle = "#d6f9c8";
+      c.lineWidth = 3;
       c.beginPath();
-      c.arc(px, py - 45 * bodySize, 55 * bodySize, 0, 7);
+      c.arc(hero.x, py - 53 * bodySize, 53 * bodySize, 0, Math.PI * 2);
       c.stroke();
     }
   }
@@ -9993,6 +10221,8 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
   var noticeUntil2 = 0;
   var gesture = null;
   var lastTap = 0;
+  var previous2 = null;
+  var effects = [];
   var causes = { train: "\u649E\u5230\u4E86\u5217\u8F66", barrier: "\u78B0\u5230\u4E86\u8DEF\u969C", arch: "\u6CA1\u6709\u8EB2\u8FC7\u6A2A\u6881", gap: "\u843D\u5165\u4E86\u7F3A\u53E3" };
   var observer4 = new ResizeObserver(() => {
     const canvas2 = root7().querySelector("canvas");
@@ -10004,14 +10234,17 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
   });
   function best4() {
     try {
-      return JSON.parse(localGameStorage.getItem("runner-best-" + options4.difficulty));
+      return JSON.parse(localGameStorage.getItem((state5?.version === 1 ? "runner-best-" : "runner2-best-") + options4.difficulty));
     } catch {
       return null;
     }
   }
   function reset2() {
-    state5 = createRunner({ ...options4, seed: crypto.getRandomValues(new Uint32Array(1))[0] });
-    recordOptions4 = { ...options4, seed: state5.seed };
+    state5 = createRunner2({ ...options4, rules: 2, seed: crypto.getRandomValues(new Uint32Array(1))[0] });
+    previous2 = state5;
+    effects = [];
+    lastTap = 0;
+    recordOptions4 = { ...options4, rules: 2, seed: state5.seed };
     running4 = false;
     watch6 = null;
     cursor3 = 0;
@@ -10036,6 +10269,10 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
   function closeRunner() {
     active7 = false;
     running4 = false;
+    previous2 = state5;
+    balance2 = 0;
+    effects = [];
+    lastTap = 0;
     queue = [];
     gesture = null;
     cancelAnimationFrame(raf5);
@@ -10043,11 +10280,12 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     document.body.classList.remove("motion-mode", "runner-mode");
   }
   function watchRunner(record) {
-    replayRunner(record);
+    replayRunner2(record);
     closeRunner();
     recordOptions4 = record.options;
-    options4 = { difficulty: record.options.difficulty };
-    state5 = createRunner(record.options);
+    state5 = createRunner2({ ...record.options, rules: record.format === "runner-1" ? 1 : 2 });
+    previous2 = state5;
+    options4 = { difficulty: state5.difficulty };
     inputs4 = [];
     watch6 = record;
     cursor3 = 0;
@@ -10063,6 +10301,9 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
   function toggle2() {
     if (state5.phase === "finished") return;
     running4 = !running4;
+    previous2 = state5;
+    effects = [];
+    lastTap = 0;
     last3 = performance.now();
     queue = [];
     gesture = null;
@@ -10073,7 +10314,7 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     if (!active7) return;
     observer4.disconnect();
     const b = best4();
-    root7().innerHTML = `<div class="motion-top"><div><h1>\u5FAE\u5149\u75BE\u884C</h1><span>\u4E09\u9053\u57CE\u5E02\u8DD1\u9177</span></div><div><button id="runner-pause" class="quiet">\u6682\u505C</button><button id="runner-reset" class="quiet">\u91CD\u65B0\u51FA\u53D1</button></div></div><div class="runner-cabinet"><canvas id="runner-canvas" aria-label="\u4E09\u6761\u8DD1\u9177\u8DEF\u7EBF\uFF0C\u5DE6\u53F3\u6ED1\u52A8\u6362\u9053\uFF0C\u4E0A\u6ED1\u8DF3\u8DC3\uFF0C\u4E0B\u6ED1\u7FFB\u6EDA" tabindex="0"></canvas><div class="runner-hud"><div><b id="runner-distance">0</b><span>\u7C73</span></div><div><span class="runner-coin">\u25CF</span><b id="runner-coins">0</b></div><div><span>\u5F97\u5206</span><b id="runner-score">0</b></div></div><div class="runner-powers"><span id="runner-magnet"></span><span id="runner-shield"></span></div><div id="runner-pop" class="runner-pop" role="status"></div><div id="runner-overlay" class="motion-overlay"></div><div class="runner-lane-dots" aria-hidden="true"><i></i><i></i><i></i></div></div><div class="runner-controls"><div><button data-runner="left" aria-label="\u5411\u5DE6\u6362\u9053">\u2190</button><button data-runner="right" aria-label="\u5411\u53F3\u6362\u9053">\u2192</button></div><button data-runner="jump">\u8DF3\u8DC3 <kbd>\u2191</kbd></button><button data-runner="roll">\u7FFB\u6EDA <kbd>\u2193</kbd></button><button data-runner="board" id="runner-board">\u62A4\u677F \xD71 <kbd>\u7A7A\u683C / \u53CC\u51FB</kbd></button></div><div class="motion-options runner-options"><label>\u96BE\u5EA6<select id="runner-level"><option value="practice" ${options4.difficulty === "practice" ? "selected" : ""}>\u8212\u7F13\u8D77\u8DD1</option><option value="standard" ${options4.difficulty === "standard" ? "selected" : ""}>\u75BE\u901F\u6311\u6218</option></select></label><span id="runner-best">${b ? "\u672C\u5730\u7EAA\u5F55 " + b.score.toLocaleString() + " \u5206 \xB7 " + b.distance + " \u7C73" : "\u5DE6\u53F3\u6ED1\u6362\u9053\uFF0C\u4E0A\u6ED1\u8DF3\uFF0C\u4E0B\u6ED1\u6EDA\uFF1B\u53CC\u51FB\u542F\u7528\u62A4\u677F"}</span><button id="runner-export" class="quiet">\u5BFC\u51FA\u56DE\u653E</button></div>`;
+    root7().innerHTML = `<div class="motion-top"><div><h1>\u5FAE\u5149\u75BE\u884C</h1><span>\u963F\u7C73\u7684\u57CE\u5E02\u5FEB\u9012</span></div><div><button id="runner-pause" class="quiet">\u6682\u505C</button><button id="runner-reset" class="quiet">\u91CD\u65B0\u51FA\u53D1</button></div></div><div class="runner-cabinet"><canvas id="runner-canvas" aria-label="\u4E09\u6761\u8DD1\u9177\u8DEF\u7EBF\uFF0C\u5DE6\u53F3\u6ED1\u52A8\u6362\u9053\uFF0C\u4E0A\u6ED1\u8DF3\u8DC3\uFF0C\u4E0B\u6ED1\u7FFB\u6EDA" tabindex="0"></canvas><div class="runner-hud"><div><b id="runner-distance">0</b><span>\u7C73</span></div><div><span class="runner-coin">\u25CF</span><b id="runner-coins">0</b></div><div><span>\u5F97\u5206</span><b id="runner-score">0</b></div></div><div id="runner-route" class="runner-route"><span id="runner-zone"></span><small id="runner-next-zone"></small><progress id="runner-route-progress" max="1" value="0" aria-label="\u5F53\u524D\u8DEF\u6BB5\u8FDB\u5EA6"></progress></div><div class="runner-powers"><span id="runner-magnet"></span><span id="runner-shield"></span></div><div id="runner-pop" class="runner-pop" role="status"></div><div id="runner-overlay" class="motion-overlay"></div><div class="runner-lane-dots" aria-hidden="true"><i></i><i></i><i></i></div></div><div class="runner-controls"><div><button data-runner="left" aria-label="\u5411\u5DE6\u6362\u9053">\u2190</button><button data-runner="right" aria-label="\u5411\u53F3\u6362\u9053">\u2192</button></div><button data-runner="jump">\u8DF3\u8DC3 <kbd>\u2191</kbd></button><button data-runner="roll">\u7FFB\u6EDA <kbd>\u2193</kbd></button><button data-runner="board" id="runner-board">\u62A4\u677F \xD71 <kbd>\u7A7A\u683C / \u53CC\u51FB</kbd></button></div><div class="motion-options runner-options"><label>\u96BE\u5EA6<select id="runner-level"><option value="practice" ${options4.difficulty === "practice" ? "selected" : ""}>\u8212\u7F13\u8D77\u8DD1</option><option value="standard" ${options4.difficulty === "standard" ? "selected" : ""}>\u75BE\u901F\u6311\u6218</option></select></label><span id="runner-best">${b ? "\u672C\u5730\u7EAA\u5F55 " + b.score.toLocaleString() + " \u5206 \xB7 " + b.distance + " \u7C73" : "\u8DDF\u7740\u91D1\u5E01\u8D70\uFF0C\u661F\u661F\u52A0\u500D\uFF1B\u5DE6\u53F3\u6362\u9053\uFF0C\u4E0A\u8DF3\u4E0B\u6EDA"}</span><button id="runner-export" class="quiet">\u5BFC\u51FA\u56DE\u653E</button></div>`;
     root7().querySelector("#runner-reset").onclick = reset2;
     root7().querySelector("#runner-pause").onclick = toggle2;
     root7().querySelector("#runner-level").onchange = (e) => {
@@ -10081,7 +10322,7 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
       reset2();
     };
     root7().querySelector("#runner-export").onclick = () => {
-      const a = document.createElement("a"), url = URL.createObjectURL(new Blob([JSON.stringify(watch6 || sealRunner(recordOptions4, inputs4, state5))], { type: "application/json" }));
+      const a = document.createElement("a"), url = URL.createObjectURL(new Blob([JSON.stringify(watch6 || sealRunner2(recordOptions4, inputs4, state5))], { type: "application/json" }));
       a.href = url;
       a.download = "glimmer-runner-" + state5.seed + ".json";
       a.click();
@@ -10140,13 +10381,18 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     if (!active7) return;
     balance2 += running4 && !document.hidden ? Math.min(0.1, Math.max(0, (now - last3) / 1e3)) : 0;
     last3 = now;
-    while (running4 && balance2 >= RUNNER_DT) {
+    while (running4 && balance2 >= RUNNER_DT2) {
       const actions = watch6 ? watch6.inputs[cursor3]?.tick === state5.tick ? watch6.inputs[cursor3++].actions : [] : queue;
       queue = [];
       if (!watch6 && actions.length) inputs4.push({ tick: state5.tick, actions });
-      state5 = stepRunner(state5, actions);
-      balance2 -= RUNNER_DT;
+      previous2 = state5;
+      state5 = stepRunner2(state5, actions);
+      balance2 -= RUNNER_DT2;
       for (const e of state5.events) {
+        if (e.kind === "coin") {
+          effects.push({ at: now, lane: e.lane, value: e.value || 1 });
+          window.dispatchEvent(new CustomEvent("glimmer-effect", { detail: "coin" }));
+        }
         if (["go", "board", "magnet", "pickup-board", "saved"].includes(e.kind)) {
           notice2 = { go: "\u51FA\u53D1\uFF01", board: "\u62A4\u677F\u5F00\u542F \xB7 \u53EF\u62B5\u6321\u4E00\u6B21\u78B0\u649E", magnet: "\u78C1\u94C1 \xB7 \u91D1\u5E01\u81EA\u52A8\u5438\u5F15", "pickup-board": "\u62A4\u677F +1", saved: "\u62A4\u677F\u7834\u788E \xB7 \u6321\u4F4F\u4E86\u78B0\u649E" }[e.kind];
           noticeUntil2 = now + 1400;
@@ -10158,9 +10404,9 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
         queue = [];
         if (!saved4 && !watch6) {
           saved4 = true;
-          const previous2 = best4();
-          if (!previous2 || previous2.score < state5.score) try {
-            localGameStorage.setItem("runner-best-" + options4.difficulty, JSON.stringify({ score: state5.score, distance: Math.floor(state5.z), coins: state5.coins }));
+          const previous3 = best4();
+          if (!previous3 || previous3.score < state5.score) try {
+            localGameStorage.setItem("runner2-best-" + options4.difficulty, JSON.stringify({ score: state5.score, distance: Math.floor(state5.z), coins: state5.coins }));
           } catch {
           }
         }
@@ -10173,7 +10419,13 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     if (!active7 || !state5) return;
     const $3 = (id) => root7().querySelector("#runner-" + id);
     if (!$3("canvas")) return;
-    drawRunner($3("canvas"), state5, { reduced: matchMedia("(prefers-reduced-motion: reduce)").matches });
+    effects = effects.filter((e) => now - e.at < 600);
+    drawRunner($3("canvas"), runnerRenderState(previous2, state5, running4 ? balance2 / RUNNER_DT2 : 1), { reduced: matchMedia("(prefers-reduced-motion: reduce)").matches, effects, now });
+    const route2 = runnerRoute(state5.z);
+    $3("route").hidden = state5.version === 1;
+    $3("zone").textContent = route2.zone.name;
+    $3("next-zone").textContent = route2.remaining + " m \u540E \xB7 " + route2.next.name;
+    $3("route-progress").value = route2.progress;
     $3("distance").textContent = Math.floor(state5.z);
     $3("coins").textContent = state5.coins;
     $3("score").textContent = state5.score.toLocaleString();
@@ -10193,7 +10445,7 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     let content = "";
     if (state5.phase === "finished") content = `<b>${Math.floor(state5.z)} \u7C73</b><span>${causes[state5.reason?.kind] || "\u672C\u6B21\u7ED3\u675F"}</span><div class="runner-results"><span>\u91D1\u5E01 <b>${state5.coins}</b></span><span>\u5F97\u5206 <b>${state5.score.toLocaleString()}</b></span></div><button id="runner-go" class="primary">\u518D\u8DD1\u4E00\u6B21</button>`;
     else if (watch6 && state5.tick >= watch6.end.tick) content = '<b>\u56DE\u653E\u7ED3\u675F</b><button id="runner-replay-again" class="primary">\u518D\u770B\u4E00\u6B21</button>';
-    else if (!running4) content = state5.tick === 0 ? '<b>\u7A7F\u8FC7\u4E0B\u4E00\u7AD9</b><div class="runner-gesture-demo"><span>\u2194<small>\u6362\u9053</small></span><span>\u2191<small>\u8DF3\u8DC3</small></span><span>\u2193<small>\u7FFB\u6EDA</small></span></div><span>\u6ED1\u52A8\u8DD1\u9177 \xB7 \u62A4\u677F\u62B5\u6321\u4E00\u6B21\u78B0\u649E</span><button id="runner-go" class="primary">\u51FA\u53D1</button>' : '<b>\u5DF2\u6682\u505C</b><button id="runner-go" class="primary">\u7EE7\u7EED\u8DD1\u9177</button>';
+    else if (!running4) content = state5.tick === 0 ? `<div class="runner-welcome">${courierPortrait()}<div><b>\u867E\u7C73\u5FEB\u9012\u5458</b><span>\u963F\u7C73\uFF0C\u51FA\u53D1\uFF01</span></div></div><div class="runner-gesture-demo"><span>\u2194<small>\u6362\u9053</small></span><span>\u2191<small>\u8DF3\u8DC3</small></span><span>\u2193<small>\u7FFB\u6EDA</small></span></div><button id="runner-go" class="primary">\u51FA\u53D1</button>` : '<b>\u5DF2\u6682\u505C</b><button id="runner-go" class="primary">\u7EE7\u7EED\u8DD1\u9177</button>';
     else if (state5.countdown > 0) content = `<b class="motion-count">${Math.ceil(state5.countdown)}</b><span>\u5DE6\u53F3\u6362\u9053\uFF0C\u4E0A\u8DF3\u4E0B\u6EDA</span>`;
     overlay.hidden = !content;
     overlay.classList.toggle("counting", running4);
@@ -10211,7 +10463,9 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
       };
       const again = $3("replay-again");
       if (again) again.onclick = () => {
-        state5 = createRunner(watch6.options);
+        state5 = createRunner2({ ...watch6.options, rules: watch6.format === "runner-1" ? 1 : 2 });
+        previous2 = state5;
+        effects = [];
         cursor3 = 0;
         running4 = true;
         balance2 = 0;
@@ -10314,7 +10568,7 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     osc.stop(start4 + 0.08);
   }
   window.addEventListener("glimmer-effect", (e) => {
-    const frequencies = { cast: 520, power: 430, damage: 170, heal: 660, shield: 780, block: 260, freeze: 880, buff: 590, draw: 360, silence: 240, shot: 125, rescue: 720, infection: 145, gate: 320, victory: 850 };
+    const frequencies = { coin: 820, cast: 520, power: 430, damage: 170, heal: 660, shield: 780, block: 260, freeze: 880, buff: 590, draw: 360, silence: 240, shot: 125, rescue: 720, infection: 145, gate: 320, victory: 850 };
     beep(frequencies[e.detail] || 440);
     if (["heal", "buff", "cast", "victory", "rescue"].includes(e.detail)) setTimeout(() => beep((frequencies[e.detail] || 440) * 1.25), 65);
   });
@@ -10652,13 +10906,13 @@ body.motion-mode{height:100dvh;overflow:hidden;display:flex;flex-direction:colum
     requestAnimationFrame(frame6);
   }
   function watch7(record) {
-    if (["kart-1", "dance-1", "rhythm-1", "runner-1"].includes(record?.format)) {
-      const play = { "kart-1": watchKart, "dance-1": watchDance2, "rhythm-1": watchDance, "runner-1": watchRunner }[record.format];
+    if (["kart-1", "dance-1", "rhythm-1", "runner-1", "runner-2"].includes(record?.format)) {
+      const play = { "kart-1": watchKart, "dance-1": watchDance2, "rhythm-1": watchDance, "runner-1": watchRunner, "runner-2": watchRunner }[record.format];
       play(record);
       if (record.format !== "kart-1") closeKart();
       if (record.format !== "dance-1") closeDance2();
       if (record.format !== "rhythm-1") closeDance();
-      if (record.format !== "runner-1") closeRunner();
+      if (!["runner-1", "runner-2"].includes(record.format)) closeRunner();
       document.body.classList.add("motion-mode");
       stashArcade();
       cancelDecision();

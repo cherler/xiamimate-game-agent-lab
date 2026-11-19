@@ -32,7 +32,8 @@
     "rollback:pages": "node scripts/rollback-pages.mjs",
     "check:gameplay": "node scripts/check-gameplay-browser.mjs",
     "bench:gameplay": "node scripts/compare-gameplay.mjs",
-    "check:chess-screen": "node scripts/check-chess-screen.mjs"
+    "check:chess-screen": "node scripts/check-chess-screen.mjs",
+    "check:chess-phase": "node scripts/check-chess-phase-browser.mjs"
   },
   "devDependencies": {
     "esbuild": "0.28.2"

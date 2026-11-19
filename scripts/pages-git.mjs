@@ -14,7 +14,7 @@ export function pagesHead(){
 }
 export function addPagesFiles(parent,files){
  const directory=fs.mkdtempSync(path.join(os.tmpdir(),'arena-pages-')),index=path.join(directory,'index');
- try{git(['read-tree',parent],undefined,index);for(const [name,data]of files){
+ try{git(parent?['read-tree',parent]:['read-tree','--empty'],undefined,index);for(const [name,data]of files){
   if(!/^[\w./-]+$/.test(name)||name.startsWith('/')||name.split('/').includes('..'))throw Error('发布路径无效');
   const hash=git(['hash-object','-w','--stdin'],data);git(['update-index','--add','--cacheinfo','100644',hash,name],undefined,index);
  }return git(['write-tree'],undefined,index);}finally{fs.rmSync(directory,{recursive:true,force:true});}

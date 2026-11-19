@@ -27,8 +27,6 @@
     "check:polish": "node scripts/check-polish-browser.mjs",
     "deploy:pages": "node scripts/publish-pages.mjs",
     "check:extraction": "node scripts/check-rescue-extraction-browser.mjs",
-    "build:compare": "node scripts/build-comparison.mjs",
-    "deploy:preview": "node scripts/publish-preview.mjs",
     "rollback:pages": "node scripts/rollback-pages.mjs",
     "check:gameplay": "node scripts/check-gameplay-browser.mjs",
     "bench:gameplay": "node scripts/compare-gameplay.mjs",
@@ -38,7 +36,8 @@
     "check:kart-motion": "node scripts/check-kart-motion-browser.mjs",
     "check:runner-routes": "node scripts/check-runner-routes-browser.mjs",
     "check:runner-rush": "node scripts/check-runner-rush-browser.mjs",
-    "check:runner-stride": "node scripts/check-runner-stride-browser.mjs"
+    "check:runner-stride": "node scripts/check-runner-stride-browser.mjs",
+    "check:runner-depth": "node scripts/check-runner-depth-browser.mjs"
   },
   "devDependencies": {
     "esbuild": "0.28.2"

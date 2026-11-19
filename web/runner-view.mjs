@@ -35,31 +35,54 @@ function impactBurst(c,hero,py,size,hit,reduced){
 
 
 export function runnerProjection(state,w,h){
- const horizon=h*.2,focal=Math.min(w*1.3,h*1.65)*(1.04+Math.min(state.speed,52)/52*.07),center=z=>8*Math.sin(z/190)+2*Math.sin(z/85),slope=8/190*Math.cos(state.z/190)+2/85*Math.cos(state.z/85),base=center(state.z);
- // Keep the three lanes fixed under the player; swiping moves the courier, not the camera.
- return (worldX,z,height=0)=>{const dz=z-state.z,depth=Math.max(3,dz+17),scale=focal/depth,bend=state.version===1?0:center(z)-base-dz*slope;return {x:w/2+(worldX+bend)*scale,y:horizon+h*11.9/depth-height*scale,scale};};
-}
-export function runnerOcclusion(s,o){
- if(!['train','arch'].includes(o.kind))return 1;
- const proximity=clamp((70-(o.z-s.z))/40),outsideLane=clamp((Math.abs(o.lane-s.x)-.43)/.42);
- return 1-.66*proximity*outsideLane;
+ const horizon=h*.2,focal=Math.min(w*1.3,h*1.65)*1.09;
+ // One fixed vanishing point for the road AND obstacle volumes. Speed never widens or bends the lanes.
+ return (worldX,z,height=0)=>{const depth=Math.max(3,z-state.z+17),scale=focal/depth;return {x:w/2+worldX*scale,y:horizon+h*11.9/depth-height*scale,scale};};
 }
 function floorQuad(c,project,x1,x2,z1,z2,color){const a=project(x1,z1),b=project(x2,z1),d=project(x2,z2),e=project(x1,z2);poly(c,color,[[a.x,a.y],[b.x,b.y],[d.x,d.y],[e.x,e.y]]);}
-const heightFor=o=>o.kind==='train'?4.1:o.kind==='arch'?3.1:o.kind==='barrier'?1.55:.1;
+export function runnerFootprint(o,version=3){const x=(o.lane-1)*3.4,before=o.kind==='train'?(version===1?4:2):1.6,after=o.kind==='train'?(version===1?4:12):1.6;return {left:x-3.4*.43,right:x+3.4*.43,near:o.z-before,far:o.z+after};}
+export function runnerLaneHazards(s,objects=runnerScene(s).flatMap(row=>row.obstacles)){
+ return [0,1,2].map(lane=>{
+  const o=objects.filter(o=>o.lane===lane&&(!o.object||o.object==='obstacle')&&!s.cleared.includes(o.id)&&runnerFootprint(o,s.version).far>=s.z).sort((a,b)=>a.z-b.z)[0];
+  if(!o||runnerFootprint(o,s.version).near-s.z>Math.max(52,s.speed*1.65))return null;
+  const bounds=runnerFootprint(o,s.version),alongside=s.z>=bounds.near,safe=o.kind==='arch'?s.roll>0:o.kind==='barrier'?jumpHeight(s)>.9:o.kind==='gap'?jumpHeight(s)>.65:false;
+  return {obstacle:o,bounds,alongside,safe};
+ });
+}
+export function runnerVehicleGeometry(o,project,version=3){
+ const x=(o.lane-1)*3.4,near=runnerFootprint(o,version).near+.6,far=runnerFootprint(o,version).far,half=1.3,height=3.4,point=(side,z,h)=>project(x+side*half,z,h);
+ const front=[point(-1,near,0),point(1,near,0),point(1,near,height),point(-1,near,height)],back=[point(-1,far,0),point(1,far,0),point(1,far,height),point(-1,far,height)];
+ return {front,back,roof:[front[3],front[2],back[2],back[3]],side:o.lane<1?1:o.lane>1?-1:0};
+}
 function obstacle(c,o,project,s,zone){
  const p=project((o.lane-1)*3.4,o.z),u=p.scale,x=p.x,y=p.y;
  if(o.kind==='train'){
-  const back=project((o.lane-1)*3.4,o.z+12),width=2.65*u,height=4.1*u,rock=['forest','canyon'].includes(zone.id),cargo=zone.id==='river';
+  const frontPoint=project((o.lane-1)*3.4,runnerFootprint(o,s.version).near+.6),u=frontPoint.scale,x=frontPoint.x,y=frontPoint.y;
+  const width=2.65*u,height=3.4*u,rock=['forest','canyon'].includes(zone.id),cargo=zone.id==='river';
   if(rock){
+   const f=runnerFootprint(o,s.version),xx=(o.lane-1)*3.4,section=[[-1.3,0],[-1.3,2.1],[-.73,3.4],[.6,3.2],[1.3,1.94],[1.3,0]],front=section.map(([dx,h])=>project(xx+dx,f.near+.6,h)),back=section.map(([dx,h])=>project(xx+dx,f.far,h));
+   for(let i=0;i<5;i++)if(i>0&&i<4||i===0&&o.lane===2||i===4&&o.lane===0)poly(c,i===2?(zone.id==='forest'?'#9ea88a':'#cf9a72'):zone.vehicle,[front[i],front[i+1],back[i+1],back[i]].map(p=>[p.x,p.y]));
    const base=zone.vehicle;poly(c,base,[[x-width*.48,y],[x-width*.5,y-height*.62],[x-width*.28,y-height],[x+width*.23,y-height*.94],[x+width*.5,y-height*.57],[x+width*.48,y]]);
    poly(c,zone.id==='forest'?'#9ea88a':'#cf9a72',[[x-width*.28,y-height],[x+width*.23,y-height*.94],[x+width*.1,y-height*.55],[x-width*.5,y-height*.62]]);stroke(c,'#4f665c',Math.max(1,u*.08),[[x+width*.1,y-height*.55],[x+width*.17,y-height*.2]]);
    if(zone.id==='forest'){oval(c,'#75935e',x-width*.15,y-height*.93,u*.75,u*.17);oval(c,'#75935e',x+width*.32,y-height*.32,u*.22,u*.55);}
   }else{
-   poly(c,zone.vehicle,[[x-width/2,y-height],[x+width/2,y-height],[back.x+1.325*back.scale,back.y-4.1*back.scale],[back.x-1.325*back.scale,back.y-4.1*back.scale]]);
-   poly(c,'#688997',[[x+width/2,y],[x+width/2,y-height],[back.x+1.325*back.scale,back.y-4.1*back.scale],[back.x+1.325*back.scale,back.y]]);box(c,cargo?'#b99060':'#efe9cf',x-width/2,y-height,width,height,u*.2);box(c,zone.vehicle,x-width/2,y-height*.46,width,height*.32);
-   if(cargo){stroke(c,'#e7c88d',u*.15,[[x-width*.4,y-height*.88],[x+width*.4,y-height*.12]]);stroke(c,'#e7c88d',u*.15,[[x+width*.4,y-height*.88],[x-width*.4,y-height*.12]]);}
-   else{box(c,ink,x-width*.38,y-height*.82,width*.76,height*.28,u*.1);box(c,'#b6dde2',x-width*.3,y-height*.78,width*.23,height*.2,u*.04);for(const sign of [-1,1])oval(c,'#ffe3a2',x+sign*width*.28,y-height*.18,u*.18,u*.13);box(c,ink,x-width*.36,y-u*.14,width*.72,u*.14);}
-   if(zone.id==='snow'){box(c,'#edf5ec',x-width*.52,y-height-u*.12,width*1.04,u*.23,u*.1);poly(c,'#da9b57',[[x-width*.6,y],[x+width*.6,y],[x+width*.48,y-u*.6],[x-width*.48,y-u*.6]]);}
+   const g=runnerVehicleGeometry(o,project,s.version),face=(color,points)=>poly(c,color,points.map(p=>[p.x,p.y])),xx=(o.lane-1)*3.4,frontZ=runnerFootprint(o,s.version).near+.6;
+   const frontRect=(color,l,r,low,high)=>face(color,[[l,low],[r,low],[r,high],[l,high]].map(([dx,h])=>project(xx+dx,frontZ,h)));
+   face(zone.id==='station'?'#f4d798':zone.vehicle,g.roof);
+   stroke(c,zone.id==='station'?'#9e754b':'#4f727b',Math.max(1,u*.055),[...g.roof,g.roof[0]].map(p=>[p.x,p.y]));
+   // Roof panels stay visible after the nose passes: the remaining carriage must not look like empty road.
+   for(let z=frontZ+2;z<runnerFootprint(o,s.version).far-1.5;z+=3){
+    const a=project(xx-1.2,z,3.41),b=project(xx+1.2,z,3.41);stroke(c,zone.id==='station'?'#cba46a':'#8ba4aa',Math.max(1,u*.035),[[a.x,a.y],[b.x,b.y]]);
+    if(!cargo){face('#657a7b',[[-.53,z+.2],[.53,z+.2],[.53,z+1.4],[-.53,z+1.4]].map(([dx,zz])=>project(xx+dx,zz,3.43)));const a=project(xx-.46,z+.8,3.44),b=project(xx+.46,z+.8,3.44);stroke(c,'#a8b9b5',Math.max(1,u*.04),[[a.x,a.y],[b.x,b.y]]);}
+   }
+   if(g.side){const i=g.side>0?1:0,j=g.side>0?2:3;face(zone.id==='station'?'#ad7549':'#63818b',[g.front[i],g.back[i],g.back[j],g.front[j]]);
+    for(let z=o.z+1;z<runnerFootprint(o,s.version).far-2;z+=3)face('#31525c',[[z,1.65],[z+1.9,1.65],[z+1.9,2.65],[z,2.65]].map(([zz,hh])=>project(xx+g.side*1.305,zz,hh)));
+   }
+   face(cargo?'#b99060':zone.id==='station'?'#e5ae5f':'#efe9cf',g.front);frontRect(zone.id==='station'?'#c37a4c':zone.vehicle,-1.3,1.3,.5,1.1);
+   if(cargo){for(const side of [-1,1]){const a=project(xx-side,frontZ,.4),b=project(xx+side,frontZ,3);stroke(c,'#e7c88d',u*.15,[[a.x,a.y],[b.x,b.y]]);}}
+   else{frontRect('#294651',-1.04,1.04,1.65,2.85);frontRect('#a6c9cf',-.92,-.12,1.8,2.68);frontRect('#a6c9cf',.12,.92,1.8,2.68);for(const sign of [-1,1]){const lamp=project(xx+sign*.85,frontZ,.7);oval(c,'#fff0be',lamp.x,lamp.y,u*.18,u*.13);}frontRect('#293e49',-1.05,1.05,.05,.3);}
+   stroke(c,'#344650',Math.max(1,u*.07),[...g.front,g.front[0]].map(p=>[p.x,p.y]));
+   if(zone.id==='snow')frontRect('#edf5ec',-1.3,1.3,3.2,3.4);
   }
  }else if(o.kind==='barrier'){
   for(const side of [-1,1])box(c,'#4c6c70',x+side*u-u*.08,y-u*1.4,u*.16,u*1.4);
@@ -75,13 +98,12 @@ function obstacle(c,o,project,s,zone){
 }
 function hazardGuides(c,project,s,objects,dpr){
  if(s.countdown||s.phase!=='running')return;
- for(let lane=0;lane<3;lane++){
-  const o=objects.filter(o=>o.object==='obstacle'&&o.lane===lane&&o.z>s.z+2&&!s.cleared.includes(o.id)).sort((a,b)=>a.z-b.z)[0];
-  if(!o||o.z-s.z>Math.max(52,s.speed*1.65))continue;
-  const p=project((lane-1)*3.4,o.z),u=p.scale,safe=o.kind==='arch'?s.roll>0:['barrier','gap'].includes(o.kind)&&jumpHeight(s)>.9,urgent=Math.abs(s.x-lane)<.43&&o.z-s.z<s.speed*.65&&!safe,color=urgent?'#c9634e':o.kind==='arch'?'#347e79':'#a8793e';
-  stroke(c,color,Math.max(2*dpr,u*.13),[[p.x-1.35*u,p.y],[p.x+1.35*u,p.y]]);
-  const r=clamp(u*.6,9*dpr,15*dpr),y=p.y-heightFor(o)*u-r-3*dpr;
-  oval(c,'#f7f0cf',p.x,y,r+1.5*dpr,r+1.5*dpr);oval(c,color,p.x,y,r,r);c.fillStyle='#fff6db';c.font=`800 ${r*1.45}px system-ui`;c.textAlign='center';c.textBaseline='middle';c.fillText(o.kind==='train'?'↔':o.kind==='arch'?'↓':'↑',p.x,y);c.textBaseline='alphabetic';
+ for(const hazard of runnerLaneHazards(s,objects)){
+  if(!hazard)continue;const {obstacle:o,bounds,alongside,safe}=hazard,lane=o.lane,p=project((lane-1)*3.4,alongside?s.z:bounds.near-2.2),u=p.scale,urgent=(alongside||Math.abs(s.x-lane)<.43&&o.z-s.z<s.speed*.65)&&!safe,color=urgent?'#c9634e':o.kind==='arch'?'#347e79':'#a8793e';
+  const z=alongside?s.z:bounds.near,a=project(bounds.left,z),b=project(bounds.right,z);stroke(c,color,Math.max(2*dpr,u*.13),[[a.x,a.y],[b.x,b.y]]);
+  // Grounded signs belong to the obstacle's track, never to a neighbouring lane behind its roof.
+  const r=clamp(u*.46,6*dpr,13*dpr),y=p.y;
+  oval(c,'#f7f0cf',p.x,y,r+1.5*dpr,r+1.5*dpr);oval(c,color,p.x,y,r,r);c.fillStyle='#fff6db';c.font=`800 ${r*1.45}px system-ui`;c.textAlign='center';c.textBaseline='middle';c.fillText(alongside&&o.kind==='train'?'×':o.kind==='train'?'↔':o.kind==='arch'?'↓':'↑',p.x,y);c.textBaseline='alphabetic';
  }
 }
 export function drawRunner(canvas,s,{reduced=false,effects=[],impact=null,landedAt=-Infinity,turnAt=-Infinity,turnDirection=0,now=0}={}){
@@ -91,17 +113,24 @@ export function drawRunner(canvas,s,{reduced=false,effects=[],impact=null,landed
  // Scenic props are painted before the road, so canopies and stalls cannot cover a lane.
  for(let row=Math.floor((s.z+240)/32);row>=Math.floor(s.z/32);row--){const z=row*32;for(const side of [-1,1])worldScenery(c,project,z,side,worldAt(z));}
  for(let z=s.z+256;z>s.z-2;z-=8){
-  const near=Math.max(s.z-2,z-8),theme=worldAt(z);floorQuad(c,project,-5.65,5.65,near,z,theme.edge);
-  for(let lane=0;lane<3;lane++)floorQuad(c,project,(lane-1)*3.4-1.7,(lane-1)*3.4+1.7,near,z,theme.lanes[lane]);
-  for(const boundary of [-1.7,1.7]){floorQuad(c,project,boundary-.15,boundary+.15,near,z,'#365261');floorQuad(c,project,boundary-.07,boundary+.07,near,z,'#fff1c6');}
+  const near=Math.max(s.z-2,z-8),theme=worldAt(z),station=theme.id==='station';
+  if(station)for(const side of [-1,1]){const l=side<0?-8:5.3,r=side<0?-5.3:8;floorQuad(c,project,l,r,near,z,'#8b9c97');floorQuad(c,project,side*5.5-.12,side*5.5+.12,near,z,'#c9b98e');}
+  floorQuad(c,project,-5.3,5.3,near,z,station?'#263e4b':theme.edge);
+  for(let lane=0;lane<3;lane++){
+   const x=(lane-1)*3.4;floorQuad(c,project,x-1.5,x+1.5,near,z,theme.lanes[lane]);
+   for(const side of [-1,1]){const edge=x+side*1.51;floorQuad(c,project,edge-.045,edge+.045,near,z,station?'#a8babc':'#eee7bd');}
+  }
  }
  for(let z=Math.floor((s.z+200)/8)*8;z>s.z-1;z-=8){
-  const theme=worldAt(z);for(let lane=0;lane<3;lane++){const p=project((lane-1)*3.4,z),q=p.scale;c.save();c.globalAlpha=theme.id==='river'?.28:.13;stroke(c,'#f9e8c2',Math.max(1,q*.045),[[p.x-q*1.4,p.y],[p.x+q*1.4,p.y]]);c.restore();}
+  const theme=worldAt(z);for(let lane=0;lane<3;lane++){const x=(lane-1)*3.4,p=project(x,z),q=p.scale;c.save();c.globalAlpha=theme.id==='station'?.65:theme.id==='river'?.28:.13;stroke(c,theme.id==='station'?'#283f4b':'#f9e8c2',Math.max(1,q*(theme.id==='station'?.21:.045)),[[p.x-q*1.2,p.y],[p.x+q*1.2,p.y]]);c.restore();}
  }
+ // Each station lane has its own pair of rails; sleepers stop at that track's edge.
+ for(let z=s.z+256;z>s.z-2;z-=8)if(worldAt(z).id==='station'){const near=Math.max(s.z-2,z-8);for(let lane=0;lane<3;lane++)for(const side of [-1,1]){const x=(lane-1)*3.4+side*.88;floorQuad(c,project,x-.065,x+.065,near,z,'#253b46');floorQuad(c,project,x-.023,x+.035,near,z,'#b2c5c8');}}
  const objects=runnerScene(s).flatMap(row=>[...row.obstacles.map(o=>({...o,object:'obstacle'})),...row.coins.map(o=>({...o,object:'coin'})),...(row.item?[{...row.item,object:'item'}]:[])]).filter(o=>o.z>s.z-(o.kind==='train'?14:4)&&o.z<s.z+230).sort((a,b)=>b.z-a.z);
+ for(const o of objects)if(o.object==='obstacle'&&o.kind!=='gap'&&!s.cleared.includes(o.id)&&o.z<s.z+100){const f=runnerFootprint(o,s.version);if(f.far<s.z-2)continue;c.save();c.globalAlpha=.2;floorQuad(c,project,f.left,f.right,Math.max(s.z-2,f.near),f.far,o.kind==='arch'?'#82c4aa':'#e1a96b');c.restore();}
  for(const o of objects){const p=project((o.lane-1)*3.4,o.z),u=p.scale;if(o.object==='obstacle'){
    if(s.cleared.includes(o.id))continue;
-   c.save();c.globalAlpha=runnerOcclusion(s,o);obstacle(c,o,project,s,worldAt(o.z));c.restore();
+   obstacle(c,o,project,s,worldAt(o.z));
    if(o.z>s.z-2&&o.z<s.z+70){const a=project((o.lane-1)*3.4,o.z);stroke(c,'#395763',Math.max(1,u*.06),[[a.x-u*1.35,a.y],[a.x+u*1.35,a.y]]);}continue;
   }if(o.z<s.z)continue;
   if(o.object==='coin'){const y=p.y-u*(.85+(o.height||0)*1.2);if(o.bonus){star(c,p.x,y,Math.max(3,u*.48),'#edb356');star(c,p.x,y,Math.max(2,u*.26),'#fff0b0');}else{oval(c,'#bd9552',p.x,y,Math.max(2,u*.25),Math.max(3,u*.35));oval(c,'#f6d581',p.x-u*.035,y-u*.025,Math.max(1,u*.19),Math.max(2,u*.28));}}

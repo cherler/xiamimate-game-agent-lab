@@ -1,6 +1,6 @@
 import {poly,oval,box,stroke} from './runner-paint.mjs';
 export const RUNNER_WORLDS=Object.freeze([
- {id:'station',name:'晨光车站',color:'#458f9d',sky:'#d5edf1',ground:'#acc6b0',lanes:['#667e8c','#8b9da5','#667e8c'],edge:'#f0e3bb',vehicle:'#5796aa',block:'列车'},
+ {id:'station',name:'晨光车站',color:'#458f9d',sky:'#d5edf1',ground:'#b7c5bb',lanes:['#4f6875','#617d89','#4f6875'],edge:'#c9b98e',vehicle:'#e5ae5f',block:'列车'},
  {id:'market',name:'桥下市集',color:'#b77d51',sky:'#f2e4cd',ground:'#c5ba9b',lanes:['#806a55','#aa9073','#806a55'],edge:'#f7dfad',vehicle:'#cc9560',block:'货车'},
  {id:'river',name:'滨河栈桥',color:'#528eaf',sky:'#d7edf3',ground:'#79b6c0',lanes:['#747d72','#a6a88e','#747d72'],edge:'#f4dfa5',vehicle:'#769ca6',block:'货箱'},
  {id:'forest',name:'雨林遗迹',color:'#467b65',sky:'#d4e6c9',ground:'#527c68',lanes:['#657557','#98a484','#657557'],edge:'#ecdfac',vehicle:'#718575',block:'巨石'},
@@ -20,8 +20,9 @@ export function worldBackdrop(c,w,h,zone){
 export function worldScenery(c,project,z,side,zone){
  const p=project(side*9.5,z),u=p.scale;if(u<=0)return;const x=p.x,y=p.y;
  if(zone.id==='station'){
-  const xx=side<0?x-u*4:x;box(c,side>0?'#a7c0b6':'#bacfc1',xx,y-u*6,u*4,u*6);for(let j=0;j<3;j++)box(c,'#e9efdb',xx+u*.6,y-u*(5-j*1.6),u*2.8,u*.75);
-  const lamp=project(side*7,z+9);stroke(c,'#729b8b',Math.max(1,lamp.scale*.1),[[lamp.x,lamp.y],[lamp.x,lamp.y-lamp.scale*4.2]]);oval(c,'#fff0ad',lamp.x,lamp.y-lamp.scale*4.2,lamp.scale*.25,lamp.scale*.25);
+  if(Math.floor(z/32)%2)return;
+  const xx=side<0?x-u*4:x;box(c,side>0?'#aebeb5':'#b3c3b9',xx,y-u*5,u*4,u*5);for(let j=0;j<2;j++)box(c,'#cfdbd0',xx+u*.6,y-u*(4-j*1.6),u*2.8,u*.75);
+  const lamp=project(side*7,z+9);stroke(c,'#7b9690',Math.max(1,lamp.scale*.1),[[lamp.x,lamp.y],[lamp.x,lamp.y-lamp.scale*4.2]]);oval(c,'#fff0ad',lamp.x,lamp.y-lamp.scale*4.2,lamp.scale*.25,lamp.scale*.25);
  }else if(zone.id==='market'){
   const ww=u*4.2,hh=u*3.1,xx=side<0?x-ww:x;box(c,'#d8bb8b',xx,y-hh,ww,hh);box(c,'#7c9b8a',xx+ww*.12,y-hh*.75,ww*.76,hh*.48);
   for(let i=0;i<5;i++)poly(c,i%2?'#f5e7bd':'#cf8b6a',[[xx+i*ww/5,y-hh-ww*.25],[xx+(i+1)*ww/5,y-hh-ww*.25],[xx+(i+1)*ww/5,y-hh*.8],[xx+i*ww/5,y-hh*.8]]);

@@ -13,8 +13,7 @@
 | 微光救援 | 分队接应平民，在撤离区守住读秒，抵挡信号引来的狂暴尸潮；第三关还需推进清剿。 |
 | 微光漂移 | ↑ 油门，← → 转向，↓ 刹车，Shift 漂移，空格氮气；两条赛道、两圈比赛、三位规则车手，触屏默认自动油门，可同时按转向与漂移。 |
 | 微光舞台 | 四轨下落音符；D F J K 或直接点音轨，点按、长按与双键。两首原创合成曲、两档谱面、规则对手与节拍校准。 |
-
-| 微光疾行 | 带着小虾快递员阿米穿过车站、市集、滨河栈桥；左右滑动换道，上跳下滚，双击护板，也支持方向键。沿金币安全绕行，或挑战双倍星星的跳跃、下滑路线。 |
+| 微光疾行 | 带着小虾快递员阿米穿过车站、市集、滨河、雨林、峡谷与雪山；左右滑动换道，上跳下滚，双击护板，也支持方向键。沿金币安全绕行，或挑战双倍星星的跳跃、下滑路线。 |
 
 在线展示版的八款游戏都在浏览器中运行，不需要登录。进度与纪录保存在当前浏览器，支持导入、导出对局回放。赛车、音游和跑酷保存本地最好成绩，进行中的比赛在页面内切换时暂停，刷新页面会重新开始。它们仍处于玩法验证阶段，欢迎反馈操作体验与难度。
 
@@ -26,11 +25,11 @@
 
 同日新增：[微光漂移](https://cherler.github.io/xiamimate-game-agent-lab/#kart)与[微光舞台](https://cherler.github.io/xiamimate-game-agent-lab/#dance)首个可玩版本；棋阵战斗移除部署分界，点棋子可看动态普攻范围与走位。详见 [赛车音游首版与棋阵战斗反馈](docs/赛车音游首版与棋阵战斗反馈.md)。
 
-同日更新：舞台改为音乐同步的四轨音符，赛车增加触屏自动油门，新增三道跑酷[微光疾行](https://cherler.github.io/xiamimate-game-agent-lab/#runner)。[更新前的七款游戏](https://cherler.github.io/xiamimate-game-agent-lab/versions/before-rhythm-runner-2026-11-19/)与源码基线均保留。详见 [触屏音游与跑酷首版](docs/触屏音游与跑酷首版.md)。
+同日更新：舞台改为音乐同步的四轨音符，赛车增加触屏自动油门，新增三道跑酷[微光疾行](https://cherler.github.io/xiamimate-game-agent-lab/#runner)。此前改动保留在源码分支中。详见 [触屏音游与跑酷首版](docs/触屏音游与跑酷首版.md)。
 
 赛车补充修复：对手按实际位置连续绘制，消除吸附路面分段产生的顿挫；弯道衔接与高刷新率画面同步平滑。详见 [赛车对手顿挫修复](docs/赛车对手顿挫修复.md)。
 
-疾行更新：主角改为小虾快递员阿米，每 400 米更换城区。最新一轮默认使用疾速奔跑，加快起跑、加速和动作响应，增加碰撞后仰、坠落、护板碎裂与风声；撞击后再结算。练习档、两代旧录像及成绩均保留。详见 [疾行阿米与城市路线](docs/疾行阿米与城市路线.md)。 新增雨林遗迹、落日峡谷、雪山驿道，六种起点可选；镜头与跑道边界稳定，邻道大物件淡化，阿米使用关节步态、落地缓冲和回正动作。
+疾行更新：主角改为小虾快递员阿米，每 400 米更换城区。最新一轮默认使用疾速奔跑，加快起跑、加速和动作响应，增加碰撞后仰、坠落、护板碎裂与风声；撞击后再结算。练习档、两代旧录像及成绩均保留。详见 [疾行阿米与城市路线](docs/疾行阿米与城市路线.md)。 新增雨林遗迹、落日峡谷、雪山驿道，六种起点可选；镜头稳定，阿米使用关节步态、落地缓冲和回正动作。最新修正取消障碍物透明度，列车的车头、车身和车尾按真实占位绘制；换道判断覆盖车身经过期间，阿米改为朝前倾身奔跑。
 
 ## 进度存在哪里
 
@@ -40,7 +39,7 @@
 
 ## 本地运行
 
-访问 [新旧玩法对照](https://cherler.github.io/xiamimate-game-agent-lab/compare/)，可分别试玩原版和当前版。主站沿用上一轮试验版的存储空间；没有新版进度时复制原版进度，原存档仍保留供回滚。历史改动见 [三款玩法对照与回滚](docs/三款玩法对照与回滚.md)。
+线上只提供当前试玩版本，历史改动保留在 Git 源码分支和提交中。原有浏览器存档及回放兼容逻辑继续保留；下线历史页面不会清除玩家存档。
 
 需要 Node.js 22 或以上。
 
@@ -65,7 +64,7 @@ npm run build:pages
 
 本仓库使用 `gh-pages` 分支根目录发布。发布页和源码分开维护，源代码在 `main`；提交源代码本身不会自动更新试玩页。维护者提交并推送源码后，运行 `npm run deploy:pages` 即可生成并推送新的试玩版本。备用的 Actions 模板位于 [docs/examples/pages-workflow.yml](docs/examples/pages-workflow.yml)。
 
-`deploy:pages` 仅允许在 `main` 使用，更新主入口及对照页，保留 `preview/` 与 `versions/` 中已有页面并逐个校验其内容未变。`preview/strategy-depth/` 保留上一轮试验时的棋阵布局；原版快照在 `versions/gameplay-2026-11-18/`。回滚工具默认只预览，见下方文档。
+`deploy:pages` 仅允许在 `main` 使用，每次只发布 `.nojekyll`、`index.html` 与 `release.json`，移除历史试玩、试验版和对照页面。历史源码保留在各开发分支；需要恢复某次改动时，从对应分支或提交恢复源码后重新构建发布。`rollback:pages` 默认只预览，加 `--apply` 才替换当前入口，且不会恢复旧版页面目录。
 
 ## 可选模型与好友房
 
@@ -91,19 +90,8 @@ npm run check:kart-motion
 npm run check:runner-routes
 npm run check:runner-rush
 npm run check:runner-stride
+npm run check:runner-depth
 ```
-
-本轮的对照与专项检查：
-
-```sh
-npm run bench:gameplay
-npm run build:compare
-python3 -m http.server 4842 --bind 127.0.0.1 --directory .runtime/compare-site
-# 另一个终端：
-npm run check:gameplay
-```
-
-对照服务器同时提供 `/compare/`、`/preview/strategy-depth/` 与 `/versions/gameplay-2026-11-18/`。专项检查的 `ARENA_URL` 应指向服务器或仓库根地址，检查脚本自行拼接这些路径。
 
 浏览器验收需要先启动预览，并安装 Playwright 与 Chromium；也可用 `ARENA_PLAYWRIGHT` 指向现有安装的 `index.mjs`。`ARENA_URL` 可更改测试地址，`ARENA_RESULTS` 可指定结果目录。
 

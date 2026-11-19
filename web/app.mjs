@@ -15,6 +15,7 @@ import {openKart,closeKart,watchKart} from './kart-ui.mjs';
 import {openDance,closeDance,watchDance} from './dance-ui.mjs';
 import {closeDance as closeClassicDance,watchDance as watchClassicDance} from './dance-classic-ui.mjs';
 import {openRunner,closeRunner,watchRunner} from './runner-ui.mjs';
+import {createRunnerAudio} from './runner-audio.mjs';
 
 const $=id=>document.getElementById(id), canvas=$('board');
 const samples=JSON.parse($('samples').textContent);
@@ -31,7 +32,7 @@ let prepared=null, gate=null, request=null, matchId='', nextAt=0, lastTime=0, re
 let lastPaint=null,movedAt=0,reader=null,replayData=null,replayCursor=0,items=[],lastHud='',audio=null;
 let difficulty='normal',botY=300,trail=[],foodBursts=[],snakeQueue=[];
 let pongView='bottom';try{const stored=localStorage.getItem('arena-pong-view');if(PONG_VIEWS.includes(stored))pongView=stored;}catch{}
-let sound=false;const history={};const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let sound=false,runnerAudio=null;const history={};const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const playing=()=>mode==='playing';
 const replaying=()=>mode.startsWith('replay');
 const snapshot=()=>match.state;
@@ -42,7 +43,8 @@ function beep(freq=480){
   osc.type='sine';osc.frequency.value=freq;vol.gain.setValueAtTime(.048,start);
   vol.gain.exponentialRampToValueAtTime(.001,start+.075);osc.connect(vol);vol.connect(audio.destination);osc.start(start);osc.stop(start+.08);
 }
-window.addEventListener('glimmer-effect',e=>{const frequencies={coin:820,cast:520,power:430,damage:170,heal:660,shield:780,block:260,freeze:880,buff:590,draw:360,silence:240,shot:125,rescue:720,infection:145,gate:320,victory:850};beep(frequencies[e.detail]||440);if(['heal','buff','cast','victory','rescue'].includes(e.detail))setTimeout(()=>beep((frequencies[e.detail]||440)*1.25),65);});
+window.addEventListener('glimmer-effect',e=>{if(e.detail.startsWith('runner-')){if(sound&&audio)(runnerAudio??=createRunnerAudio(audio)).cue(e.detail);return;}const frequencies={coin:820,cast:520,power:430,damage:170,heal:660,shield:780,block:260,freeze:880,buff:590,draw:360,silence:240,shot:125,rescue:720,infection:145,gate:320,victory:850};beep(frequencies[e.detail]||440);if(['heal','buff','cast','victory','rescue'].includes(e.detail))setTimeout(()=>beep((frequencies[e.detail]||440)*1.25),65);});
+window.addEventListener('glimmer-runner-motion',e=>{if(sound&&audio)(runnerAudio??=createRunnerAudio(audio)).update(e.detail);else runnerAudio?.stop();});
 function cancelDecision(){gate?.cancel();gate=null;prepared=null;request?.abort();request=null;}
 function saveCurrent(){
   if(!match||replaying()||!match.record.frames.length)return;
@@ -218,9 +220,9 @@ function frame(now){
   lastTime=now;requestAnimationFrame(frame);
 }
 function watch(record){
-  if(['kart-1','dance-1','rhythm-1','runner-1','runner-2'].includes(record?.format)){
-    const play={'kart-1':watchKart,'dance-1':watchClassicDance,'rhythm-1':watchDance,'runner-1':watchRunner,'runner-2':watchRunner}[record.format];play(record);
-    if(record.format!=='kart-1')closeKart();if(record.format!=='dance-1')closeClassicDance();if(record.format!=='rhythm-1')closeDance();if(!['runner-1','runner-2'].includes(record.format))closeRunner();document.body.classList.add('motion-mode');
+  if(['kart-1','dance-1','rhythm-1','runner-1','runner-2','runner-3'].includes(record?.format)){
+    const play={'kart-1':watchKart,'dance-1':watchClassicDance,'rhythm-1':watchDance,'runner-1':watchRunner,'runner-2':watchRunner,'runner-3':watchRunner}[record.format];play(record);
+    if(record.format!=='kart-1')closeKart();if(record.format!=='dance-1')closeClassicDance();if(record.format!=='rhythm-1')closeDance();if(!['runner-1','runner-2','runner-3'].includes(record.format))closeRunner();document.body.classList.add('motion-mode');
     stashArcade();cancelDecision();mode='paused';closeChess();closeStrategy();closeRescue();
     $('arcade').hidden=true;$('strategy').hidden=true;$('rescue').hidden=true;$('kart').hidden=record.game!=='kart';$('dance').hidden=record.game!=='dance';$('runner').hidden=record.game!=='runner';
     document.querySelectorAll('[data-game]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.game===record.game)));window.history.replaceState(null,'','#'+record.game);return;
@@ -284,6 +286,7 @@ $('new-seed').onclick=()=>{$('seed').value=crypto.getRandomValues(new Uint32Arra
 $('seed').onchange=()=>reset();$('start').onclick=start;$('restart').onclick=()=>reset();
 async function setSound(value){
   sound=value;
+  if(!sound)runnerAudio?.stop();
   $('sound').setAttribute('aria-pressed',String(sound));$('sound').textContent=sound?'声音开':'声音关';
   window.dispatchEvent(new CustomEvent('glimmer-sound',{detail:sound}));
   if(sound){try{audio??=new (window.AudioContext||window.webkitAudioContext)();await audio.resume();beep();}catch{/* The dance stage also supports a visual timing mode. */}}

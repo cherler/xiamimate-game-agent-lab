@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {fingerprint} from '../src/common.mjs';
-import {createRunner,stepRunner,runnerRow,runnerScene,runnerRoute,sealRunner,replayRunner} from '../src/runner.mjs';
+import {createRunner,stepRunner,runnerRow,runnerScene,runnerRoute,sealRunner,replayRunner} from '../src/runner-v2.mjs';
 import {runnerProjection,runnerRenderState} from '../web/runner-view.mjs';
 
 function approach(kind){

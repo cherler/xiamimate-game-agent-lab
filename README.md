@@ -14,11 +14,13 @@
 
 在线展示版的五款游戏都在浏览器中运行，不需要登录。存档保存在当前浏览器，支持导入、导出对局回放。它们仍处于玩法验证阶段，欢迎反馈操作体验与难度。
 
-微光救援已更新撤离坚守玩法：三关分别需要守住 16／18／20 秒；敌人逼近或护卫离开会暂停读秒，进度保留。旧版行动仍按旧规则恢复，点击“体验撤离坚守版”可重新部署新版。
+微光救援需要主动呼叫接驳，三关分别守住 16／18／20 秒，可用共享补给投放诱饵或范围急救；敌人逼近或护卫离开会暂停读秒。旧版行动仍按旧规则恢复，可点击“体验战术救援版”重新部署。
+
+2026-11-19：三款玩法升级已合并到主入口。微光棋阵采用一屏布局，棋盘与八个备战位连续摆放，招募商店浮层可用按钮或空格开合；开战自动收起，下一轮自动展开。详见 [棋阵一屏界面与主站合并](docs/棋阵一屏界面与主站合并.md)。
 
 ## 本地运行
 
-当前分支是独立的玩法试验版：访问 [新旧玩法对照](https://cherler.github.io/xiamimate-game-agent-lab/compare/)，可分别试玩原版和新版。线上主入口保留原版，试验版使用独立浏览器存档。改动与验证见 [三款玩法对照与回滚](docs/三款玩法对照与回滚.md)。
+访问 [新旧玩法对照](https://cherler.github.io/xiamimate-game-agent-lab/compare/)，可分别试玩原版和当前版。主站沿用上一轮试验版的存储空间；没有新版进度时复制原版进度，原存档仍保留供回滚。历史改动见 [三款玩法对照与回滚](docs/三款玩法对照与回滚.md)。
 
 需要 Node.js 22 或以上。
 
@@ -43,7 +45,7 @@ npm run build:pages
 
 本仓库使用 `gh-pages` 分支根目录发布。发布页和源码分开维护，源代码在 `main`；提交源代码本身不会自动更新试玩页。维护者提交并推送源码后，运行 `npm run deploy:pages` 即可生成并推送新的试玩版本。备用的 Actions 模板位于 [docs/examples/pages-workflow.yml](docs/examples/pages-workflow.yml)。
 
-玩法试验分支只使用 `npm run deploy:preview`，发布至 `preview/strategy-depth/`，同时提供原版快照和对照页。发布脚本校验主入口完全未变；`deploy:pages` 仅允许在 `main` 使用。回滚工具默认只预览，见下方文档。
+`deploy:pages` 仅允许在 `main` 使用，更新主入口及对照页，保留 `preview/` 与 `versions/` 中已有页面并逐个校验其内容未变。`preview/strategy-depth/` 保留上一轮试验时的棋阵布局；原版快照在 `versions/gameplay-2026-11-18/`。回滚工具默认只预览，见下方文档。
 
 ## 可选模型与好友房
 
@@ -62,6 +64,7 @@ npm test
 npm run bench:rescue
 npm run check:extraction
 npm run check:polish
+npm run check:chess-screen
 ```
 
 本轮的对照与专项检查：
@@ -83,6 +86,7 @@ npm run check:gameplay
 - [撤离坚守玩法与验证](docs/撤离坚守玩法与验证.md)
 - [GitHub Pages 发布记录](docs/GitHubPages发布.md)
 - [三款玩法对照与回滚](docs/三款玩法对照与回滚.md)
+- [棋阵一屏界面与主站合并](docs/棋阵一屏界面与主站合并.md)
 - [免费试玩托管方案](docs/免费试玩托管方案.md)
 
 历史报告中的本机截图与对战结果不随源码仓库发布，可运行对应检查重新生成。游戏使用原创名称、绘制、地图与规则实现；参考玩法的讨论记录在开发文档中。

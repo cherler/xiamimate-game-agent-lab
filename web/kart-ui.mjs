@@ -52,3 +52,5 @@ function background(){keys.clear();pointers.clear();if(active&&running){running=
 window.addEventListener('blur',background);document.addEventListener('visibilitychange',()=>{if(document.hidden)background();});
 
 window.addEventListener('glimmer-screen-pause',()=>{if(active)background();});
+
+export const kartMusicActive=()=>active&&running&&state?.phase!=='finished';

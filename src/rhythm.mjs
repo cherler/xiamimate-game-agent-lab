@@ -4,9 +4,9 @@ export const RHYTHM_WINDOW=160;
 export const RHYTHM_JUDGMENTS={perfect:{name:'Perfect',points:1000},great:{name:'Great',points:700},good:{name:'Good',points:400},miss:{name:'Miss',points:0}};
 export const rhythmJudge=delta=>Math.abs(delta)<=50?'perfect':Math.abs(delta)<=100?'great':Math.abs(delta)<=RHYTHM_WINDOW?'good':'miss';
 const player=()=>({score:0,combo:0,bestCombo:0,counts:{perfect:0,great:0,good:0,miss:0},last:null});
-export function createRhythm({song='bay',difficulty='practice',seed=41003,offset=0}={}){
- const notes=rhythmChart(song,difficulty);
- return {version:1,song,difficulty,seed:seed>>>0,offset:clamp(Number(offset)||0,-150,150),notes,duration:rhythmDuration(song),time:0,phase:'playing',held:[false,false,false,false],holds:[null,null,null,null],judgments:notes.map(()=>null),aiJudged:notes.map(()=>false),players:[player(),player()],feedback:null};
+export function createRhythm({song='bay',difficulty='practice',seed=41003,offset=0,version=2}={}){
+ if(![1,2].includes(version))throw Error('未知音符版本');const notes=rhythmChart(song,difficulty,version);
+ return {version,song,difficulty,seed:seed>>>0,offset:clamp(Number(offset)||0,-150,150),notes,duration:rhythmDuration(song,version),time:0,phase:'playing',held:[false,false,false,false],holds:[null,null,null,null],judgments:notes.map(()=>null),aiJudged:notes.map(()=>false),players:[player(),player()],feedback:null};
 }
 function copy(s){return {...s,held:[...s.held],holds:s.holds.map(h=>h&&({...h})),judgments:[...s.judgments],aiJudged:[...s.aiJudged],players:s.players.map(p=>({...p,counts:{...p.counts}}))};}
 function score(s,actor,n,kind,at,delta=null,reason=''){
@@ -43,10 +43,10 @@ export function releaseRhythm(state,lane,time){
  return s;
 }
 export const rhythmAccuracy=p=>{const count=Object.values(p.counts).reduce((a,b)=>a+b,0);return count?Math.round((p.counts.perfect+p.counts.great*.7+p.counts.good*.4)/count*100):100;};
-export function sealRhythm(options,inputs,state){return {format:'rhythm-1',game:'dance',options,inputs,end:{time:state.time,hash:fingerprint(state)}};}
+export function sealRhythm(options,inputs,state){return {format:'rhythm-'+state.version,game:'dance',options,inputs,end:{time:state.time,hash:fingerprint(state)}};}
 export function replayRhythm(record){
- if(record?.format!=='rhythm-1'||record.game!=='dance'||!Array.isArray(record.inputs)||record.inputs.length>12000||!Number.isFinite(record.end?.time))throw Error('无效音符回放');
- let s=createRhythm(record.options),last=0;if(record.end.time<0||record.end.time>s.duration)throw Error('无效音符时长');
+ if(!['rhythm-1','rhythm-2'].includes(record?.format)||record.game!=='dance'||!Array.isArray(record.inputs)||record.inputs.length>12000||!Number.isFinite(record.end?.time))throw Error('无效音符回放');
+ let s=createRhythm({...record.options,version:record.format==='rhythm-1'?1:2}),last=0;if(record.end.time<0||record.end.time>s.duration)throw Error('无效音符时长');
  for(const e of record.inputs){if(!Number.isFinite(e.time)||e.time<last||e.time>record.end.time||!Number.isInteger(e.lane)||e.lane<0||e.lane>3||!['down','up'].includes(e.type))throw Error('无效音符操作');last=e.time;s=e.type==='down'?pressRhythm(s,e.lane,e.time):releaseRhythm(s,e.lane,e.time);}
  s=advanceRhythm(s,record.end.time);if(fingerprint(s)!==record.end.hash)throw Error('音符回放校验失败');return s;
 }

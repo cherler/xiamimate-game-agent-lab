@@ -200,3 +200,5 @@ document.addEventListener('visibilitychange',()=>{
  syncPhase();saveClock();if(!document.hidden){paintPhase();animateBattle();}
 });
 window.addEventListener('pagehide',()=>{phaseClock.suspend(true);save();});
+
+export const chessMusicActive=()=>active&&match?.state.phase!=='ended'&&!phaseClock.paused;

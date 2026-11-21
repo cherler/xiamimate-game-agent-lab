@@ -319,3 +319,5 @@ async function pumpChess(){
  match.record.decisions??=[];match.record.decisions.push({round:s.round,actor:1,source,style,operations:actions.length});
  lastAI=source+'：'+({balanced:'兼顾阵容与存款',economy:'保留利息',strength:'花钱补强',level:'优先升级人口'})[style];busy=false;render();
 }
+
+export const strategyMusicActive=()=>active&&kind==='cards'&&!!state()&&state().phase!=='ended';

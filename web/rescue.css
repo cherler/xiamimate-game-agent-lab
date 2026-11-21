@@ -20,3 +20,12 @@ body.rescue-mode main,body.rescue-mode .head-inner{max-width:clamp(980px,calc(15
 .rs-control-status{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 3px;font-size:12px;color:#356780}.rs-control-status span{font-size:11px;color:#68808b}.rs-squads .part-selected{border-color:#438bac;border-style:dashed;background:#e9f3f8}.rs-squads kbd{font:inherit;font-size:10px;color:#658492}
 #rs-box-select{font-size:11px;white-space:nowrap;min-height:36px}#rs-box-select[aria-pressed=true]{background:#c5e7f4;border-color:#368aac}.rs-live-bar>div{flex:1}
 @media(max-width:720px){.rs-control-status{font-size:11px}.rs-control-status span{font-size:9px}.rs-live-bar{gap:4px}#rs-box-select{min-width:44px;min-height:44px;padding:5px}.rs-squads b{font-size:11px}}
+
+/* One team, one map target. Keep the three optional actions together. */
+.rs-simple-commands{background:#eef5f3;border:1px solid var(--rs-line);border-radius:9px;padding:10px 12px}
+.rs-team-state{display:flex;align-items:center;gap:10px;font-size:12px;color:#376c7f;margin-bottom:9px;min-height:20px}
+#rs-autonomy{margin-left:auto;font-size:11px;color:#52806e}
+.rs-simple-commands .rs-orders{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.rs-simple-commands .rs-orders button{flex-direction:row;gap:8px;min-height:44px;font-size:12px;padding:9px 16px}
+.rs-simple-commands .rs-orders button b{top:2px;right:4px}
+@media(max-width:720px){.rs-simple-commands{padding:9px}.rs-team-state{gap:7px;font-size:11px}#rs-autonomy{font-size:10px}.rs-simple-commands .rs-orders{gap:6px}.rs-simple-commands .rs-orders button{padding:8px 4px;font-size:11px;gap:5px}}

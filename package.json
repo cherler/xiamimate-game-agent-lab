@@ -21,6 +21,7 @@
     "check:round3": "node scripts/check-round3-browser.mjs",
     "bench:round3": "node scripts/check-round3-balance.mjs",
     "bench:rescue": "node scripts/check-rescue.mjs",
+    "check:rescue-simple": "node scripts/check-rescue-simple-browser.mjs",
     "check:rescue": "node scripts/check-rescue-browser.mjs",
     "build:pages": "node scripts/build.mjs --static",
     "preview:background": "node scripts/launch.mjs --background --no-model",

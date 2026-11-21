@@ -25,7 +25,7 @@ export const RESCUE_MAPS = [
   [{at:12,entry:0,count:8,fast:0},{at:30,entry:1,count:9,fast:1},{at:50,entry:2,count:9,fast:2},{at:71,entry:0,count:10,fast:2},{at:92,entry:2,count:12,fast:3}])
 ];
 const latestMaps=new Map();
-export function rescueMap(id,version=5){
+export function rescueMap(id,version=6){
  const key=version+':'+id;if(version>=3&&latestMaps.has(key))return latestMaps.get(key);
  let map=RESCUE_MAPS.find(m=>m.id===id);if(!map)throw Error('关卡不存在');
  if(id===2&&version>=2)map={...map,waves:[{at:5,entry:1,count:6,fast:1},{at:15,entry:0,count:8,fast:1},{at:33,entry:1,count:8,fast:1},{at:50,entry:0,count:10,fast:2}]};

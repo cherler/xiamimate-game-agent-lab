@@ -3,13 +3,21 @@ import raspberry from '../assets/music/raspberry.mp3';
 import raceway from '../assets/music/raceway.mp3';
 import skyline from '../assets/music/skyline.mp3';
 import calm from '../assets/music/calm.mp3';
-import tension from '../assets/music/tension.mp3';
+import siege from '../assets/music/rescue-siege.mp3';
 import xiami from '../assets/music/xiami.mp3';
-export const MUSIC_URLS={street,raspberry,raceway,skyline,calm,tension,xiami};
+export const MUSIC_URLS={street,raspberry,raceway,skyline,calm,siege,xiami};
 const buffers=new WeakMap();
-export async function loadMusic(context,id){
- let cache=buffers.get(context);if(!cache){cache=new Map();buffers.set(context,cache);}
+export async function loadMusic(context,id,{shared=true}={}){
  if(!MUSIC_URLS[id])throw Error('未知配乐');
- if(!cache.has(id)){const task=fetch(MUSIC_URLS[id]).then(r=>{if(!r.ok)throw Error('音乐读取失败');return r.arrayBuffer();}).then(data=>context.decodeAudioData(data));cache.set(id,task);while(cache.size>2)cache.delete(cache.keys().next().value);task.catch(()=>{if(cache.get(id)===task)cache.delete(id);});}
+ if(!shared)return fetchRecording(MUSIC_URLS[id]).then(data=>context.decodeAudioData(data));
+ let cache=buffers.get(context);if(!cache){cache=new Map();buffers.set(context,cache);}
+ if(!cache.has(id)){const task=fetchRecording(MUSIC_URLS[id]).then(data=>context.decodeAudioData(data));cache.set(id,task);while(cache.size>2)cache.delete(cache.keys().next().value);task.catch(()=>{if(cache.get(id)===task)cache.delete(id);});}
  return cache.get(id);
+}
+async function fetchRecording(url){
+ for(let attempt=0;attempt<2;attempt++){
+  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),15000);
+  try{const response=await fetch(url,{signal:controller.signal});if(!response.ok)throw Error('音乐读取失败');return await response.arrayBuffer();}
+  catch(error){if(attempt===1)throw error;}finally{clearTimeout(timeout);}
+ }
 }

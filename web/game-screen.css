@@ -148,7 +148,7 @@ body.game-screen .pong-skills small,body.game-screen .pong-skills kbd{display:no
  body.game-screen .visual-table .unit-card .stat-badge>b{font-size:13px!important}
 }
 @media(orientation:landscape) and (max-height:550px){
- body.game-screen #rescue .rs-center{display:grid;grid-template-columns:minmax(0,1fr) 180px;grid-template-rows:36px 32px auto 1fr auto;gap:5px}
+ body.game-screen #rescue .rs-center{display:grid;grid-template-columns:minmax(0,1fr) 180px;grid-template-rows:36px auto auto minmax(85px,1fr) auto;gap:5px}
  body.game-screen .rs-center>*{grid-column:2;min-width:0}
  body.game-screen .rs-center>.rs-map-wrap{grid-column:1;grid-row:1 / 6;height:100%;border:0;border-radius:7px}
  body.game-screen .rs-map-head{padding:0 5px;border-radius:5px;gap:4px}
@@ -205,3 +205,12 @@ body.game-screen.screen-settings-open .screen-motion-actions button{flex:1}
  body.game-screen .visual-table .power-alternative>.table-icon{width:15px;height:15px}
 }
 body.game-screen .screen-motion-actions>[id$="-pause"]{display:none}
+
+@media(orientation:landscape) and (max-height:550px){
+ body.game-screen .rs-live-bar{align-items:flex-start}
+ body.game-screen #rs-field-goals{min-width:0;display:flex;flex-direction:column;align-items:flex-start}
+ body.game-screen #rs-field-goals>span{line-height:1.35}
+ body.game-screen .rs-evac{display:grid;grid-template-columns:30px minmax(0,1fr);align-items:center;gap:4px}
+ body.game-screen .rs-evac .rs-rage-label{grid-column:1/-1;max-width:none;white-space:normal;text-align:left;font-size:9px;padding:2px 3px}
+ body.game-screen .rs-evac-info>span{margin:3px 0;line-height:1.35}
+}

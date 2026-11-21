@@ -29,3 +29,7 @@ body.rescue-mode main,body.rescue-mode .head-inner{max-width:clamp(980px,calc(15
 .rs-simple-commands .rs-orders button{flex-direction:row;gap:8px;min-height:44px;font-size:12px;padding:9px 16px}
 .rs-simple-commands .rs-orders button b{top:2px;right:4px}
 @media(max-width:720px){.rs-simple-commands{padding:9px}.rs-team-state{gap:7px;font-size:11px}#rs-autonomy{font-size:10px}.rs-simple-commands .rs-orders{gap:6px}.rs-simple-commands .rs-orders button{padding:8px 4px;font-size:11px;gap:5px}}
+
+/* Six destinations stay together in the settings drawer and on narrow desktops. */
+.rs-missions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));flex:1;max-width:650px;gap:4px}.rs-missions button{justify-content:center}#rs-export{flex:none;white-space:nowrap}.rs-missions button{padding:8px;min-height:44px}.rs-heading h1{white-space:nowrap}#rs-field-goals{flex-wrap:wrap;row-gap:4px}.rs-evac.unpowered{background:#e8e4f4;border-color:#aaa3c9}
+@media(max-width:720px){.rs-missions button{flex:1 1 30%}.rs-missions span{font-size:11px}}

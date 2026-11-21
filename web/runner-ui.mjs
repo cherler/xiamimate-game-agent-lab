@@ -55,3 +55,5 @@ window.addEventListener('keydown',e=>{if(!active||e.ctrlKey||e.metaKey||e.altKey
 function background(){if(active&&running)toggle();}window.addEventListener('blur',background);document.addEventListener('visibilitychange',()=>{if(document.hidden)background();});
 
 document.addEventListener('visibilitychange',()=>{motionSound();if(document.hidden){balance=0;last=performance.now();}});
+
+window.addEventListener('glimmer-screen-pause',()=>{if(active)background();});

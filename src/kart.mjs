@@ -8,12 +8,13 @@ export const TRACKS=Object.freeze(Object.fromEntries(Object.entries(sections).ma
  return [id,{id,name:id==='harbor'?'晴湾环岛':'云岭弯道',description:id==='harbor'?'宽弯 · 初次上路':'连续弯 · 漂移挑战',segments,length:segments.length*SEGMENT,laps:2}];
 })));
 export const curveAt=(track,z)=>track.segments[((Math.floor(z/SEGMENT)%track.segments.length)+track.segments.length)%track.segments.length].curve;
-export function createKart({track='harbor',difficulty='practice',seed=41003}={}){
- if(!TRACKS[track]||!['practice','standard'].includes(difficulty))throw Error('未知赛道或难度');
- return {version:1,track,difficulty,seed:seed>>>0,tick:0,time:0,phase:'countdown',countdown:3,finishTime:null,rank:null,events:[],cars:['你','橘子','晴空','薄荷'].map((name,i)=>({id:i,name,z:i?-i*18:0,x:[-.25,.3,-.45,.55][i],speed:0,slip:0,drifting:false,drift:0,drifts:0,meter:0,nitro:0,boost:0,mini:0,cooldown:0,finishTime:null,collisions:0}))};
+export function createKart({track='harbor',version=2,difficulty=version===1?'practice':'standard',seed=41003}={}){
+ if(!TRACKS[track]||![1,2].includes(version)||!(version===1?['practice','standard']:['practice','standard','expert']).includes(difficulty))throw Error('未知赛道或难度');
+ return {version,track,difficulty,seed:seed>>>0,tick:0,time:0,phase:'countdown',countdown:3,finishTime:null,rank:null,events:[],cars:['你','橘子','晴空','薄荷'].map((name,i)=>({id:i,name,z:i?-i*18:0,x:[-.25,.3,-.45,.55][i],speed:0,slip:0,drifting:false,drift:0,drifts:0,meter:0,nitro:0,boost:0,mini:0,cooldown:0,finishTime:null,collisions:0}))};
 }
 export function kartInput(input={}){return {steer:clamp(Number(input.steer)||0,-1,1),gas:!!input.gas,brake:!!input.brake,drift:!!input.drift,boost:!!input.boost};}
 export function kartAI(state,id){
+ if(state.version>=2)return racingDriver(state,id);
  const c=state.cars[id],track=TRACKS[state.track],curve=curveAt(track,c.z),ahead=curveAt(track,c.z+170);
  let lane=[-.45,.1,.52,-.1][id]+(noise(state.seed,Math.floor(c.z/800),id)-.5)*.12;
  const front=state.cars.filter(v=>v.id!==id&&v.z>c.z&&v.z-c.z<100&&Math.abs(v.x-c.x)<.35).sort((a,b)=>a.z-b.z)[0];
@@ -21,6 +22,22 @@ export function kartAI(state,id){
  const factor=c.speed/260,steer=clamp(curve*factor*.66+(lane-c.x)*1.9-c.slip*.3,-1,1);
  const target=(state.difficulty==='practice'?207:251)-Math.abs(ahead)*26+id*2;
  return {steer,gas:c.speed<target,brake:c.speed>target+22,drift:Math.abs(curve)>.5&&Math.sign(curve)===Math.sign(steer)&&c.speed>115,boost:Math.abs(ahead)<.2&&c.nitro>0};
+}
+function racingDriver(state,id){
+ const c=state.cars[id],track=TRACKS[state.track],curve=curveAt(track,c.z),ahead=curveAt(track,c.z+120),expert=state.difficulty==='expert',practice=state.difficulty==='practice';
+ // Same engine, top speed and nitro budget as the player. Driving decisions
+ // depend on the road and nearby cars, never the player's controls or rank.
+ let lane=[-.18,.13,-.26,.3][id]+curve*(expert?.18:.1)+(noise(state.seed,Math.floor(c.z/950),id)-.5)*(practice?.16:.06);
+ const front=state.cars.filter(v=>v.id!==id&&v.finishTime===null&&v.z>c.z&&v.z-c.z<110&&Math.abs(v.x-c.x)<.3).sort((a,b)=>a.z-b.z)[0];
+ if(front){const left=front.x-.46,right=front.x+.46;lane=Math.abs(left)<Math.abs(right)?left:right;}
+ lane=clamp(lane,-.7,.7);
+ const drift=Math.abs(curve)>.42&&c.speed>135&&c.mini<=0&&c.drift<(practice?.55:expert?.48:.6)&&Math.abs(c.x)<.88;
+ const balance=curve*(c.speed/260)*.5;
+ const steer=clamp((balance+(lane-c.x)*(expert?2.4:2))/(drift?1.35:.75)-(c.slip-balance)*.16,-1,1);
+ const boost=c.nitro>0&&Math.abs(ahead)<(expert?.75:.38)&&Math.abs(c.x)<.65&&!drift;
+ const cruise=(practice?224:expert?260:251)+[0,1,-2,2][id]-Math.abs(ahead)*(practice?18:expert?0:6);
+ const target=c.boost>0||boost?335:c.mini>0?295:cruise;
+ return {steer,gas:c.speed<target,brake:c.speed>target+28,drift,boost};
 }
 export function kartRank(state,id=0){return [...state.cars].sort((a,b)=>(a.finishTime??Infinity)-(b.finishTime??Infinity)||b.z-a.z||a.id-b.id).findIndex(c=>c.id===id)+1;}
 export function stepKart(state,input={}){
@@ -60,10 +77,10 @@ export function stepKart(state,input={}){
  if(s.cars[0].finishTime!==null||s.time>=180){s.phase='finished';s.finishTime=s.cars[0].finishTime;s.rank=kartRank(s);s.events.push('finish');}
  return s;
 }
-export function sealKart(initial,inputs,state){return {format:'kart-1',game:'kart',options:initial,inputs,end:{tick:state.tick,hash:fingerprint(state)}};}
+export function sealKart(initial,inputs,state){return {format:'kart-'+state.version,game:'kart',options:initial,inputs,end:{tick:state.tick,hash:fingerprint(state)}};}
 export function replayKart(record){
- if(record?.format!=='kart-1'||record.game!=='kart'||!Array.isArray(record.inputs)||record.inputs.length>12000||!Number.isInteger(record.end?.tick)||record.end.tick<0||record.end.tick>11000)throw Error('无效赛车回放');
- let state=createKart(record.options),input=kartInput(),cursor=0,previous=-1;
+ if(!['kart-1','kart-2'].includes(record?.format)||record.game!=='kart'||!Array.isArray(record.inputs)||record.inputs.length>12000||!Number.isInteger(record.end?.tick)||record.end.tick<0||record.end.tick>11000)throw Error('无效赛车回放');
+ let state=createKart({...record.options,version:record.format==='kart-1'?1:2}),input=kartInput(),cursor=0,previous=-1;
  for(const row of record.inputs){if(!Number.isInteger(row.tick)||row.tick<0||row.tick<=previous||row.tick>=record.end.tick)throw Error('无效赛车操作');previous=row.tick;}
  while(state.tick<record.end.tick){if(record.inputs[cursor]?.tick===state.tick)input=kartInput(record.inputs[cursor++].input);const next=stepKart(state,input);if(next===state)throw Error('终点后的操作');state=next;}
  if(fingerprint(state)!==record.end.hash)throw Error('赛车回放校验失败');return state;

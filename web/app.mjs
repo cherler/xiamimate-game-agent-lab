@@ -1,3 +1,4 @@
+import {initGameScreen} from './game-screen.mjs';
 import {localGameStorage as localStorage,sessionGameStorage as sessionStorage} from './storage.mjs';
 import { begin, advance, seal, checkReplay, playback, GAMES, describeAction, pick } from '../src/arena.mjs';
 import { snakeMoves, safeOptions } from '../src/snake.mjs';
@@ -241,9 +242,9 @@ function frame(now){
   lastTime=now;requestAnimationFrame(frame);
 }
 function watch(record){
-  if(['kart-1','dance-1','rhythm-1','runner-1','runner-2','runner-3'].includes(record?.format)){
-    const play={'kart-1':watchKart,'dance-1':watchClassicDance,'rhythm-1':watchDance,'runner-1':watchRunner,'runner-2':watchRunner,'runner-3':watchRunner}[record.format];play(record);
-    if(record.format!=='kart-1')closeKart();if(record.format!=='dance-1')closeClassicDance();if(record.format!=='rhythm-1')closeDance();if(!['runner-1','runner-2','runner-3'].includes(record.format))closeRunner();document.body.classList.add('motion-mode');
+  if(['kart-1','kart-2','dance-1','rhythm-1','runner-1','runner-2','runner-3'].includes(record?.format)){
+    const play={'kart-1':watchKart,'kart-2':watchKart,'dance-1':watchClassicDance,'rhythm-1':watchDance,'runner-1':watchRunner,'runner-2':watchRunner,'runner-3':watchRunner}[record.format];play(record);
+    if(!['kart-1','kart-2'].includes(record.format))closeKart();if(record.format!=='dance-1')closeClassicDance();if(record.format!=='rhythm-1')closeDance();if(!['runner-1','runner-2','runner-3'].includes(record.format))closeRunner();document.body.classList.add('motion-mode');
     stashArcade();cancelDecision();mode='paused';closeChess();closeStrategy();closeRescue();
     $('arcade').hidden=true;$('strategy').hidden=true;$('rescue').hidden=true;$('kart').hidden=record.game!=='kart';$('dance').hidden=record.game!=='dance';$('runner').hidden=record.game!=='runner';
     document.querySelectorAll('[data-game]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.game===record.game)));window.history.replaceState(null,'','#'+record.game);return;
@@ -369,3 +370,6 @@ if(location.protocol.startsWith('http')&&!staticDemo){
     if(!v.arena)return;cap={...v,rooms:true};loaded=true;updateStrategyProviders(cap);if(mode==='ready'){opponentMenu(true);refresh(true);}
   }).catch(()=>{});
 }
+
+window.addEventListener('glimmer-screen-pause',()=>{if(!$('arcade').hidden&&(playing()||mode==='replay')){mode=playing()?'paused':'replay-paused';keyY=0;pongQueue=[];cancelDecision();refresh(true);}});
+initGameScreen();

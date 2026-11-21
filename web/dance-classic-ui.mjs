@@ -51,3 +51,5 @@ const keyMap={ArrowLeft:'left',KeyA:'left',ArrowUp:'up',KeyW:'up',ArrowDown:'dow
 window.addEventListener('keydown',e=>{if(!active||e.ctrlKey||e.metaKey||e.altKey||e.target.closest('input,select,textarea'))return;if(e.code==='Escape'){if(!e.repeat){e.preventDefault();if(running)pause();else if(state.time)start();}return;}const key=keyMap[e.code];if(key&&running){e.preventDefault();if(!e.repeat)input(key);}});
 window.addEventListener('glimmer-sound',e=>music.mute(!e.detail));
 window.addEventListener('blur',()=>{if(active)pause();});document.addEventListener('visibilitychange',()=>{if(document.hidden&&active)pause();});
+
+window.addEventListener('glimmer-screen-pause',()=>{if(active)pause();});

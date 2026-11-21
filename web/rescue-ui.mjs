@@ -121,3 +121,5 @@ window.addEventListener('keydown',e=>{if(!active||e.repeat||e.ctrlKey||e.metaKey
 window.addEventListener('blur',()=>{if(active)cancelInput();});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&active){cancelInput();if(watch)replayPlaying=false;else if(match.state.phase==='running')command({type:'pause'});save();hud(true);}});
 window.addEventListener('pagehide',()=>{if(active){if(!watch&&match.state.phase==='running')issueRescue(match,{type:'pause'});save();}});
+
+window.addEventListener('glimmer-screen-pause',()=>{if(active){cancelInput();if(watch)replayPlaying=false;else if(match.state.phase==='running')command({type:'pause'});hud(true);paint();}});

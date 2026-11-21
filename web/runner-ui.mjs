@@ -57,3 +57,5 @@ function background(){if(active&&running)toggle();}window.addEventListener('blur
 document.addEventListener('visibilitychange',()=>{motionSound();if(document.hidden){balance=0;last=performance.now();}});
 
 window.addEventListener('glimmer-screen-pause',()=>{if(active)background();});
+
+export const runnerMusicActive=()=>active&&running&&state?.phase!=='finished';

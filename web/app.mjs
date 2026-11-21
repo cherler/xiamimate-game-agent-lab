@@ -1,3 +1,4 @@
+import {initArenaAudio,readAudioPreferences} from './arena-audio.mjs';
 import {initGameScreen} from './game-screen.mjs';
 import {localGameStorage as localStorage,sessionGameStorage as sessionStorage} from './storage.mjs';
 import { begin, advance, seal, checkReplay, playback, GAMES, describeAction, pick } from '../src/arena.mjs';
@@ -8,14 +9,14 @@ import {createPongOpponent,pongOpponentInput} from '../src/pong-opponent.mjs';
 import { openWindow } from '../src/decisions.mjs';
 import { draw, geometry } from './board.mjs';
 import {PONG_VIEWS,pongAxis,pongTarget,foodEvents} from './arcade-view.mjs';
-import { openStrategy,closeStrategy,watchStrategy,updateStrategyProviders } from './strategy-ui.mjs';
+import { openStrategy,closeStrategy,watchStrategy,updateStrategyProviders,strategyMusicActive } from './strategy-ui.mjs';
 
-import {openChess,closeChess,watchChess} from './chess-ui.mjs';
-import {openRescue,closeRescue,watchRescue,rescueNotice} from './rescue-ui.mjs';
-import {openKart,closeKart,watchKart} from './kart-ui.mjs';
+import {openChess,closeChess,watchChess,chessMusicActive} from './chess-ui.mjs';
+import {openRescue,closeRescue,watchRescue,rescueNotice,rescueMusicActive} from './rescue-ui.mjs';
+import {openKart,closeKart,watchKart,kartMusicActive} from './kart-ui.mjs';
 import {openDance,closeDance,watchDance} from './dance-ui.mjs';
 import {closeDance as closeClassicDance,watchDance as watchClassicDance} from './dance-classic-ui.mjs';
-import {openRunner,closeRunner,watchRunner} from './runner-ui.mjs';
+import {openRunner,closeRunner,watchRunner,runnerMusicActive} from './runner-ui.mjs';
 import {createRunnerAudio} from './runner-audio.mjs';
 
 const $=id=>document.getElementById(id), canvas=$('board');
@@ -33,7 +34,7 @@ let prepared=null, gate=null, request=null, matchId='', nextAt=0, lastTime=0, re
 let lastPaint=null,movedAt=0,reader=null,replayData=null,replayCursor=0,items=[],lastHud='',audio=null;
 let difficulty='easy',botY=300,trail=[],foodBursts=[],snakeQueue=[],pongQueue=[],pongBrain=createPongOpponent();
 let pongView='bottom';try{const stored=localStorage.getItem('arena-pong-view');if(PONG_VIEWS.includes(stored))pongView=stored;}catch{}
-let sound=false,runnerAudio=null;const history={};const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let sound=readAudioPreferences().enabled,runnerAudio=null,effectsBus=null,soundSystem=null;const history={};const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const playing=()=>mode==='playing';
 const replaying=()=>mode.startsWith('replay');
 const snapshot=()=>match.state;
@@ -42,10 +43,10 @@ function beep(freq=480){
   if(!sound||!audio)return;
   const start=audio.currentTime,osc=audio.createOscillator(),vol=audio.createGain();
   osc.type='sine';osc.frequency.value=freq;vol.gain.setValueAtTime(.048,start);
-  vol.gain.exponentialRampToValueAtTime(.001,start+.075);osc.connect(vol);vol.connect(audio.destination);osc.start(start);osc.stop(start+.08);
+  vol.gain.exponentialRampToValueAtTime(.001,start+.075);osc.connect(vol);vol.connect(effectsBus||audio.destination);osc.onended=()=>{osc.disconnect();vol.disconnect();};osc.start(start);osc.stop(start+.08);
 }
-window.addEventListener('glimmer-effect',e=>{if(e.detail.startsWith('runner-')){if(sound&&audio)(runnerAudio??=createRunnerAudio(audio)).cue(e.detail);return;}const frequencies={coin:820,cast:520,power:430,damage:170,heal:660,shield:780,block:260,freeze:880,buff:590,draw:360,silence:240,shot:125,rescue:720,infection:145,gate:320,victory:850};beep(frequencies[e.detail]||440);if(['heal','buff','cast','victory','rescue'].includes(e.detail))setTimeout(()=>beep((frequencies[e.detail]||440)*1.25),65);});
-window.addEventListener('glimmer-runner-motion',e=>{if(sound&&audio)(runnerAudio??=createRunnerAudio(audio)).update(e.detail);else runnerAudio?.stop();});
+window.addEventListener('glimmer-effect',e=>{if(e.detail.startsWith('runner-')){if(sound&&audio)(runnerAudio??=createRunnerAudio(audio,effectsBus)).cue(e.detail);return;}const frequencies={coin:820,cast:520,power:430,damage:170,heal:660,shield:780,block:260,freeze:880,buff:590,draw:360,silence:240,shot:125,rescue:720,infection:145,gate:320,victory:850};beep(frequencies[e.detail]||440);if(['heal','buff','cast','victory','rescue'].includes(e.detail))setTimeout(()=>beep((frequencies[e.detail]||440)*1.25),65);});
+window.addEventListener('glimmer-runner-motion',e=>{if(sound&&audio)(runnerAudio??=createRunnerAudio(audio,effectsBus)).update(e.detail);else runnerAudio?.stop();});
 function cancelDecision(){gate?.cancel();gate=null;prepared=null;request?.abort();request=null;}
 function saveCurrent(){
   if(!match||replaying()||!match.record.frames.length)return;
@@ -242,9 +243,9 @@ function frame(now){
   lastTime=now;requestAnimationFrame(frame);
 }
 function watch(record){
-  if(['kart-1','kart-2','dance-1','rhythm-1','runner-1','runner-2','runner-3'].includes(record?.format)){
-    const play={'kart-1':watchKart,'kart-2':watchKart,'dance-1':watchClassicDance,'rhythm-1':watchDance,'runner-1':watchRunner,'runner-2':watchRunner,'runner-3':watchRunner}[record.format];play(record);
-    if(!['kart-1','kart-2'].includes(record.format))closeKart();if(record.format!=='dance-1')closeClassicDance();if(record.format!=='rhythm-1')closeDance();if(!['runner-1','runner-2','runner-3'].includes(record.format))closeRunner();document.body.classList.add('motion-mode');
+  if(['kart-1','kart-2','dance-1','rhythm-1','rhythm-2','runner-1','runner-2','runner-3'].includes(record?.format)){
+    const play={'kart-1':watchKart,'kart-2':watchKart,'dance-1':watchClassicDance,'rhythm-1':watchDance,'rhythm-2':watchDance,'runner-1':watchRunner,'runner-2':watchRunner,'runner-3':watchRunner}[record.format];play(record);
+    if(!['kart-1','kart-2'].includes(record.format))closeKart();if(record.format!=='dance-1')closeClassicDance();if(!['rhythm-1','rhythm-2'].includes(record.format))closeDance();if(!['runner-1','runner-2','runner-3'].includes(record.format))closeRunner();document.body.classList.add('motion-mode');
     stashArcade();cancelDecision();mode='paused';closeChess();closeStrategy();closeRescue();
     $('arcade').hidden=true;$('strategy').hidden=true;$('rescue').hidden=true;$('kart').hidden=record.game!=='kart';$('dance').hidden=record.game!=='dance';$('runner').hidden=record.game!=='runner';
     document.querySelectorAll('[data-game]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.game===record.game)));window.history.replaceState(null,'','#'+record.game);return;
@@ -306,15 +307,9 @@ $('difficulty').onchange=e=>{difficulty=e.target.value;pongBrain=createPongOppon
 $('opponent').onchange=e=>{opponent=e.target.value;if(mode!=='ready')reset();refresh(true);};
 $('new-seed').onclick=()=>{$('seed').value=crypto.getRandomValues(new Uint32Array(1))[0];reset();};
 $('seed').onchange=()=>reset();$('start').onclick=start;$('restart').onclick=()=>reset();
-async function setSound(value){
-  sound=value;
-  if(!sound)runnerAudio?.stop();
-  $('sound').setAttribute('aria-pressed',String(sound));$('sound').textContent=sound?'声音开':'声音关';
-  window.dispatchEvent(new CustomEvent('glimmer-sound',{detail:sound}));
-  if(sound){try{audio??=new (window.AudioContext||window.webkitAudioContext)();await audio.resume();beep();}catch{/* The dance stage also supports a visual timing mode. */}}
-}
+function setSound(value){sound=value;if(!sound)runnerAudio?.stop();soundSystem?.setEnabled(value);}
 $('sound').onclick=()=>setSound(!sound);
-window.addEventListener('glimmer-enable-sound',()=>setSound(true));
+window.addEventListener('glimmer-sound',e=>{sound=e.detail;});
 $('sample').onclick=()=>{const rec=game==='snake'&&samples.laya?samples.laya:samples[game];if(rec)watch(rec);};
 $('last').onclick=()=>{const rec=lastRecord();if(rec)watch(rec);};
 $('export').onclick=()=>{
@@ -373,3 +368,5 @@ if(location.protocol.startsWith('http')&&!staticDemo){
 
 window.addEventListener('glimmer-screen-pause',()=>{if(!$('arcade').hidden&&(playing()||mode==='replay')){mode=playing()?'paused':'replay-paused';keyY=0;pongQueue=[];cancelDecision();refresh(true);}});
 initGameScreen();
+
+soundSystem=initArenaAudio(()=>{const current=document.querySelector('.switcher [aria-pressed=true]')?.dataset.game||'snake';const states={cards:strategyMusicActive,chess:chessMusicActive,rescue:rescueMusicActive,kart:kartMusicActive,runner:runnerMusicActive};return {game:current,playing:states[current]?.()??(['snake','pong'].includes(current)&&(mode==='playing'||mode==='replay'))};},(context,bus)=>{audio=context;effectsBus=bus;});

@@ -24,7 +24,7 @@ function arrangePanels(){
 }
 function tagPanel(){
  if(current==='chess'&&!panel()){const section=document.createElement('section');section.className='ac-screen-settings';for(const [id,label] of [['ac-info-toggle','查看阵容与装备'],['ac-export','导出回放'],['ac-new','新对局']]){const button=document.createElement('button');button.textContent=label;button.onclick=()=>{closePanels();$(id)?.click();};section.append(button);}gameRoot().append(section);}
- arrangePanels();const p=panel();if(p){p.dataset.screenSettings='';if(menu){p.setAttribute('role','dialog');p.setAttribute('aria-modal','true');p.setAttribute('aria-label',names[current]+'设置');}}
+ arrangePanels();const p=panel();if(p){p.dataset.screenSettings='';if(!p.querySelector('[data-audio-settings]')){const b=document.createElement('button');b.dataset.audioSettings='';b.className='quiet';b.textContent='音乐与音效';p.append(b);}if(menu){p.setAttribute('role','dialog');p.setAttribute('aria-modal','true');p.setAttribute('aria-label',names[current]+'设置');}}
  bindPause();
 }
 function bindPause(){

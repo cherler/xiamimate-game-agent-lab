@@ -123,3 +123,5 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden&&active){ca
 window.addEventListener('pagehide',()=>{if(active){if(!watch&&match.state.phase==='running')issueRescue(match,{type:'pause'});save();}});
 
 window.addEventListener('glimmer-screen-pause',()=>{if(active){cancelInput();if(watch)replayPlaying=false;else if(match.state.phase==='running')command({type:'pause'});hud(true);paint();}});
+
+export const rescueMusicActive=()=>active&&(watch?replayPlaying&&!replayDone:match?.state.phase==='running');

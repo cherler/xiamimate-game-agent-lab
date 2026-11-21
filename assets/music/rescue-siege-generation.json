@@ -1,0 +1,10 @@
+{
+  "title": "破晓救援 / Light Through the Siege",
+  "generated": "2026-11-21",
+  "provider": "MiniMax",
+  "model": "music-3.0",
+  "prompt": "Instrumental original soundtrack for a small tactical zombie rescue game, title \"Light Through the Siege\". A genuinely melodic, polished modern cinematic electronic action score, heroic but restrained and enjoyable to loop while escorting civilians. 118 BPM, steady 4/4, D minor with a hopeful rising four-note motif. Warm rounded analog arpeggio, expressive cello and short rhythmic strings, tasteful low brass accents, deep clean bass, tight punchy acoustic/electronic drums. Memorable melody begins within the first two seconds; no long ambient intro. Medium tension and constant forward motion, a determined rescue-team feeling rather than horror. Build the arrangement around 30 seconds with fuller percussion and strings, keep the pulse and harmony consistent, then return naturally to the opening groove. About 100 seconds. Balanced warm mix, clear midrange melody, controlled low end and smooth high frequencies, leave space for weapon sound effects. Fully instrumental: no singing, no choir, no speech. No chiptune or 8-bit bleeps, no dissonant drone, no shrill lead, no sirens, no gunshot sound effects, no white noise wash, no abrupt silence, no huge trailer drops. End on a sustained tonic that can crossfade smoothly back to the opening.",
+  "is_instrumental": true,
+  "source_duration_ms": 163317,
+  "generation_count": 1
+}

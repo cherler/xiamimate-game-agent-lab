@@ -42,7 +42,7 @@ test('返回后自动呼叫一次，仍需真实守点读秒，暂停及无护�
  s=stepRescue(s);assert.equal(s.evac.phase,'loading');assert.equal(s.evac.alerts,1);assert.equal(s.saved,0);assert.equal(s.evac.progress,1);
  s=commandRescue(s,{type:'pause'});assert.equal(stepRescue(s).evac.progress,1);s=commandRescue(s,{type:'resume'});
  for(const u of s.soldiers)place(u,19.5,11.5);s=stepRescue(s);assert.equal(s.evac.phase,'unguarded');assert.equal(s.evac.progress,1);assert.equal(s.evac.alerts,1);
- place(s.soldiers[0],4.5,11.5);s=stepRescue(s);assert.equal(s.evac.progress,2);assert.equal(s.evac.alerts,1);assert.equal(s.schedule.filter(w=>w.assault).length,12);
+ place(s.soldiers[0],4.5,11.5);s=stepRescue(s);assert.equal(s.evac.progress,2);assert.equal(s.evac.alerts,1);assert.equal(s.schedule.filter(w=>w.assault).length,rescueMap(s.level,s.version).extraction.count);
 });
 test('简易操作三关可通关且能完整回放，挂机仍失败，旧版本存档不改规则',()=>{
  for(const level of [1,2,3]){

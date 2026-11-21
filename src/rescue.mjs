@@ -1,7 +1,7 @@
 import {noise,fingerprint} from './common.mjs';
 import {RESCUE_HZ,rescueMap,insideExit,UPGRADES} from './rescue-maps.mjs';
 export {RESCUE_HZ,rescueMap,insideExit,UPGRADES};
-export const RESCUE_FORMAT='rescue-6';
+export const RESCUE_FORMAT='rescue-7';
 const round=v=>Math.round(v*10000)/10000;
 const dist=(a,b)=>Math.round(Math.hypot(a.x-b.x,a.y-b.y)*1e6)/1e6;
 const cell=(m,u)=>Math.floor(u.y)*m.w+Math.floor(u.x);
@@ -46,19 +46,28 @@ function move(s,u,speed,team='human'){
 }
 function spacing(s){
  const people=[...s.soldiers.filter(living),...s.civilians.filter(civilian),...s.zombies.filter(living)];
- for(let i=0;i<people.length;i++)for(let j=i+1;j<people.length;j++){
+ // Dense waves only need nearby collision pairs. Keep index order deterministic.
+ const buckets=new Map(),key=u=>Math.floor(u.y)*32+Math.floor(u.x),update=u=>{if(s.version<7)return;const k=key(u);if(u.bucket===k)return;if(u.bucket!==undefined)buckets.get(u.bucket)?.delete(u.index);if(!buckets.has(k))buckets.set(k,new Set());buckets.get(k).add(u.index);u.bucket=k;};
+ const refs=people.map((u,index)=>({x:u.x,y:u.y,index}));if(s.version>=7)refs.forEach(update);
+ for(let i=0;i<people.length;i++){
+  let candidates;
+  if(s.version>=7){const u=people[i],near=new Set();for(let y=Math.floor(u.y)-2;y<=Math.floor(u.y)+2;y++)for(let x=Math.floor(u.x)-2;x<=Math.floor(u.x)+2;x++)for(const j of buckets.get(y*32+x)||[])if(j>i)near.add(j);candidates=[...near].sort((a,b)=>a-b);}
+  else candidates=Array.from({length:people.length-i-1},(_,n)=>n+i+1);
+  for(const j of candidates){
+  if(s.version>=7&&(Math.abs(people[i].x-people[j].x)>1||Math.abs(people[i].y-people[j].y)>1))continue;
   const a=people[i],b=people[j],d=dist(a,b),friendly=a.kind!=='zombie'&&b.kind!=='zombie',limit=(a.r+b.r)*(friendly?.64:1);if(d>=limit)continue;
   const nx=d>.0001?(b.x-a.x)/d:1,ny=d>.0001?(b.y-a.y)/d:0,push=(limit-d)*.5+.001;
   // Escort crowds yield to troops; hard friendly collisions can deadlock a doorway.
   for(const [u,sign]of [[a,-1],[b,1]]){const other=u===a?b:a,ratio=friendly&&u.kind==='soldier'&&other.kind==='civilian'?0:u.kind==='soldier'&&u.path.length===0?.12:1,x=u.x+sign*nx*push*ratio,y=u.y+sign*ny*push*ratio;
-   if(walkable(s,x,y,u.kind==='zombie'?'zombie':'human',u.r)){u.x=round(x);u.y=round(y);}
+   if(walkable(s,x,y,u.kind==='zombie'?'zombie':'human',u.r)){u.x=round(x);u.y=round(y);if(s.version>=7){const ref=refs[u===a?i:j];ref.x=u.x;ref.y=u.y;update(ref);}}
   }
  }
+ }
 }
-export function initRescue({level=1,seed=41003,difficulty='normal',upgrades=[],version=6}={}){
- const m=rescueMap(level,version);if(!Number.isInteger(seed)||seed<0||seed>0xffffffff||!['normal','challenge'].includes(difficulty)||!Array.isArray(upgrades)||upgrades.length>2||upgrades.some(x=>!UPGRADES[x]))throw Error('开局设置无效');
+export function initRescue({level=1,seed=41003,difficulty='normal',upgrades=[],version=7}={}){
+ const m=rescueMap(level,version);if(!Number.isInteger(seed)||seed<0||seed>0xffffffff||!['normal','challenge'].includes(difficulty)||!Array.isArray(upgrades)||upgrades.length>(version>=7?5:2)||upgrades.some(x=>!UPGRADES[x]))throw Error('开局设置无效');
  const boost=id=>upgrades.filter(x=>x===id).length;
- if(![1,2,3,4,5,6].includes(version))throw Error('救援规则版本无效');
+ if(![1,2,3,4,5,6,7].includes(version))throw Error('救援规则版本无效');
  const s={game:'rescue',version,level,seed,difficulty,upgrades:[...upgrades],tick:0,phase:'deploy',winner:null,reason:'',nav:0,uid:0,eventId:0,events:[],log:[],gates:[],gateCharges:2+boost('gate'),saved:0,lost:0,kills:0,wave:0,spawned:0,schedule:[],zombies:[],bullets:[],soldiers:[],civilians:[],stats:{shots:0,hits:0,infected:0}};
  if(version>=3)s.evac={phase:'idle',progress:0,required:m.extraction.seconds*RESCUE_HZ,batches:0,alerts:0,alertTick:null,rageUntil:0};
  if(version>=4){s.evac.active=false;s.supplies=2;s.crates=m.supplies.map(c=>({...c,claimed:false}));s.decoys=[];s.supportUid=0;s.supportUsed={decoy:0,medic:0};}
@@ -66,11 +75,25 @@ export function initRescue({level=1,seed=41003,difficulty='normal',upgrades=[],v
  if(version>=6){s.autoMedicAt=0;for(const u of s.soldiers)Object.assign(u,{anchor:{x:u.x,y:u.y},intent:'guard',orderedAt:-30});}
  for(const group of m.groups)for(let i=0;i<group.n;i++){const x=group.x+(i%3)*.7,y=group.y+Math.floor(i/3)*.65;s.civilians.push({id:'c'+s.civilians.length,kind:'civilian',x,y,r:.18,status:'waiting',leader:null,path:[],goal:null,nav:0,infection:0,threat:null,hitTick:-100});}
  if(version>=6)for(const c of s.civilians)c.shelter={x:c.x,y:c.y};
- m.waves.forEach((wave,index)=>{for(let i=0;i<wave.count;i++)s.schedule.push({tick:Math.round((wave.at+i*.5)*RESCUE_HZ),entry:wave.entry,fast:i<wave.fast,wave:index+1});});
+ if(version>=7){
+  const roles=['rifle','rifle','gunner','grenadier','shield'];
+  for(const [i,u]of s.soldiers.entries()){u.role=roles[i];u.hp=u.maxHp=u.role==='shield'?320:140;u.ammo=weapon(u).ammo;}
+  s.objectives=m.objectives.map((o,i)=>({...structuredClone(o),kind:o.type,done:false,active:false,progress:0,required:o.type==='power'?o.seconds*RESCUE_HZ:o.type==='convoy'?o.waypoints.length:o.hp,maxHp:o.hp||0,r:o.type==='convoy'?.32:.4,path:[],goal:null,nav:0,angle:0,checkpoint:0,nextSpawn:(2+i*2)*RESCUE_HZ}));
+ }
+
+ m.waves.forEach((wave,index)=>{for(let i=0;i<wave.count;i++){
+  const regular=m.entrances.map((e,j)=>!e.evacOnly?j:-1).filter(j=>j>=0),entry=version>=7&&i%4===0?regular[(regular.indexOf(wave.entry)+1)%regular.length]:wave.entry;
+  const item={tick:Math.round((wave.at+i*(version>=7?.16:.5))*RESCUE_HZ),entry,fast:i<wave.fast,wave:index+1};if(version>=7)item.brute=level>=3&&i>=wave.fast&&i%13===0;s.schedule.push(item);
+ }});if(version>=7)s.schedule.sort((a,b)=>a.tick-b.tick||a.wave-b.wave);
+
  note(s,'小队已就位，等待行动');return s;
 }
-function newZombie(s,at,fast=false,infection=false){
- const hp=(fast?26:45)*(s.difficulty==='challenge'?1.15:1),z={id:'z'+s.uid++,kind:'zombie',x:at.x,y:at.y,r:fast?.19:.23,hp,maxHp:hp,fast,angle:0,path:[],goal:null,target:null,nav:-1,cooldown:infection?15:0,hitTick:-100};
+function newZombie(s,at,fast=false,infection=false,brute=false){
+ const hp=(brute?180:fast?26:45)*(s.difficulty==='challenge'?1.15:1),z={id:'z'+s.uid++,kind:'zombie',x:at.x,y:at.y,r:fast?.19:.23,hp,maxHp:hp,fast,angle:0,path:[],goal:null,target:null,nav:-1,cooldown:infection?15:0,hitTick:-100};
+ if(s.version>=7){z.brute=brute;if(brute)z.r=.31;
+  // A newly infected civilian can be closer to a wall than a larger zombie fits.
+  if(!walkable(s,z.x,z.y,'zombie',z.r)){const m=rescueMap(s.level,s.version),c=cell(m,z),spots=[c,...neighbors(m,c)].map(c=>center(m,c)).filter(p=>walkable(s,p.x,p.y,'zombie',z.r)).sort((a,b)=>dist(a,z)-dist(b,z));if(spots[0])Object.assign(z,spots[0]);}
+ }
  s.zombies.push(z);event(s,infection?'infection':'spawn',z,{who:z.id});return z;
 }
 export function commandRescue(s,command){
@@ -189,15 +212,17 @@ function assistCivilian(s,c,m,mobility){
  }else{c.path=[];c.goal=null;c.avoidingUntil=0;}
 }
 function zombieTargets(s,z){
+ if(s.version>=7&&!s.decoys.length){siegeTarget(s,z);return;}
  const m=rescueMap(s.level,s.version),f=field(s,cell(m,z),'zombie');
  if(s.version>=4){const lure=s.decoys.filter(d=>d.expires>s.tick&&dist(z,d)<=6&&f.cost[cell(m,d)]>=0).sort((a,b)=>f.cost[cell(m,a)]-f.cost[cell(m,b)]||a.id.localeCompare(b.id))[0];if(lure){z.target=lure.id;route(s,z,lure,'zombie');return;}}
- const candidates=[...s.civilians.filter(civilian),...s.soldiers.filter(living)];
+ const candidates=[...s.civilians.filter(civilian),...s.soldiers.filter(living),...(s.version>=7?s.objectives.filter(o=>o.type==='convoy'&&!o.done&&o.hp>0):[])];
  const ranked=candidates.filter(u=>f.cost[cell(m,u)]>=0).sort((a,b)=>(f.cost[cell(m,a)]*1.0+(a.kind==='soldier'?1.5:0)+dist(z,a)*.08)-(f.cost[cell(m,b)]*1.0+(b.kind==='soldier'?1.5:0)+dist(z,b)*.08)||a.id.localeCompare(b.id));
  if(ranked.length){const target=ranked[0];z.target=target.id;route(s,z,target,'zombie');return;}
  const gates=s.gates.filter(g=>g.hp>0).flatMap(g=>neighbors(m,g.cell).filter(c=>f.cost[c]>=0).map(c=>({g,c,cost:f.cost[c]}))).sort((a,b)=>a.cost-b.cost);
  if(gates[0]){z.target=gates[0].g.id;route(s,z,center(m,gates[0].c),'zombie');}else{z.target=null;z.path=[];}
 }
 function shots(s){
+ if(s.version>=7){siegeShots(s);return;}
  const modern=s.version>=5;
  for(const u of s.soldiers.filter(living)){
   if(u.reload>0){u.reload--;if(!u.reload)u.ammo=modern?10:u.role==='rifle'?6:8;continue;}
@@ -215,13 +240,18 @@ function shots(s){
  }
 }
 function projectileHits(s){
- const remaining=[];
+ const remaining=[],targets=[...s.zombies,...(s.version>=7?s.objectives.filter(o=>o.type==='nest'&&!o.done):[])];
  for(const b of s.bullets){
   const step=16/RESCUE_HZ;let consumed=false;
   for(let i=0;i<6;i++){
    b.x=round(b.x+b.dx*step/6);b.y=round(b.y+b.dy*step/6);b.left-=step/6;
    if(!walkable(s,b.x,b.y)||b.left<=0){event(s,'wall',b);consumed=true;break;}
-   const hit=s.zombies.find(z=>living(z)&&dist(b,z)<z.r+.1);if(hit){hit.hp=Math.max(0,round(hit.hp-b.damage));hit.hitTick=s.tick;s.stats.hits++;event(s,'hit',hit,{amount:b.damage,source:b.origin});consumed=true;break;}
+   const hit=targets.find(z=>living(z)&&!(b.hitIds||[]).includes(z.id)&&(s.version<7||Math.abs(b.x-z.x)<.6&&Math.abs(b.y-z.y)<.6)&&dist(b,z)<z.r+.1);if(hit){
+    const victims=b.kind==='grenade'?[...s.zombies,...s.objectives.filter(o=>o.type==='nest'&&!o.done)].filter(z=>living(z)&&dist(hit,z)<1.45&&lineOfSight(s,hit,z)):[hit];
+    for(const victim of victims){victim.hp=Math.max(0,round(victim.hp-b.damage));victim.hitTick=s.tick;s.stats.hits++;event(s,'hit',victim,{amount:b.damage,source:b.origin});}
+    if(b.kind==='grenade')event(s,'blast',hit,{radius:1.45});
+    if(b.pierce>1){b.pierce--;b.hitIds.push(hit.id);}else{consumed=true;break;}
+   }
   }
   if(!consumed)remaining.push(b);
  }
@@ -230,7 +260,7 @@ function projectileHits(s){
  s.zombies=s.zombies.filter(living);
 }
 function rescueContacts(s){
- const m=rescueMap(s.level,s.version),threshold=s.difficulty==='challenge'?1:18,infectors=[...s.zombies],conversions=[];
+ const m=rescueMap(s.level,s.version),threshold=s.difficulty==='challenge'?1:s.version>=7?24:18,infectors=[...s.zombies],conversions=[];
  for(const c of s.civilians.filter(civilian)){
   const threat=infectors.find(z=>dist(z,c)<=z.r+c.r+.13&&lineOfSight(s,z,c));c.threat=threat?.id||null;
   if(threat){c.infection++;if(c.infection===1){event(s,'danger',c,{source:threat.id});note(s,'平民受到感染威胁','danger');}}
@@ -250,21 +280,23 @@ function rescueContacts(s){
   if(z.cooldown>0){z.cooldown--;continue;}
   const soldier=s.soldiers.filter(living).find(u=>dist(z,u)<z.r+u.r+.2&&lineOfSight(s,z,u));
   if(soldier){const damage=Math.round((soldier.role==='shield'?6:14)*(rescueRaging(s)?1.3:1));soldier.hp=Math.max(0,soldier.hp-damage);soldier.hitTick=s.tick;z.cooldown=rescueRaging(s)?18:24;event(s,'hurt',soldier,{amount:damage,source:z.id});if(!soldier.hp){event(s,'fallen',soldier);note(s,'一名队员倒下','danger');}continue;}
+  const convoy=s.version>=7?s.objectives.find(o=>o.type==='convoy'&&!o.done&&o.hp>0&&dist(z,o)<z.r+o.r+.22&&lineOfSight(s,z,o)):null;if(convoy){convoy.hp=Math.max(0,convoy.hp-(z.brute?18:8));convoy.hitTick=s.tick;z.cooldown=24;event(s,'hurt',convoy,{amount:8,source:z.id});continue;}
   const gate=s.gates.find(g=>g.hp>0&&dist(z,g)<1.1);if(gate){gate.hp=Math.max(0,gate.hp-(z.fast?9:15));z.cooldown=24;event(s,'gateHit',gate);if(!gate.hp){s.nav++;event(s,'break',gate);note(s,'门障被突破','danger');}}
  }
 }
 function extraction(s){
  if(s.version<3)return;
  const m=rescueMap(s.level,s.version),e=s.evac,queue=s.civilians.filter(c=>c.status==='boarding'&&insideExit(m,c)),at={x:m.exit.x+m.exit.w/2,y:m.exit.y+m.exit.h/2};
+ if(s.version>=7&&s.objectives.some(o=>o.type==='power'&&!o.done)){e.phase='unpowered';return;}
  if(!queue.length){if(e.phase!=='idle'&&e.phase!=='complete')e.phase=s.version>=4&&!e.active?'idle':'waiting';return;}
  if(s.version>=6&&!e.active&&s.soldiers.some(u=>living(u)&&insideExit(m,u))){e.phase='called';note(s,'护送队自动呼叫接驳，守住撤离区','rescue');}
  if(s.version>=4&&!e.active&&e.phase!=='called'){e.phase='gathering';return;}
  if(e.phase==='idle'||e.phase==='complete'||e.phase==='called'){
   if(s.version>=4)e.active=true;
   e.progress=0;e.alerts++;e.alertTick=s.tick+m.extraction.warning*RESCUE_HZ;e.rageUntil=s.tick+(m.extraction.warning+m.extraction.seconds+10)*RESCUE_HZ;
-  for(let i=0;i<m.extraction.count;i++)s.schedule.push({tick:e.alertTick+Math.round(i*.5*RESCUE_HZ),entry:m.extraction.entry,fast:i<m.extraction.fast,wave:m.waves.length+e.alerts,assault:true});
+  for(let i=0;i<m.extraction.count;i++){const row={tick:e.alertTick+Math.round(i*(s.version>=7?.16:.5)*RESCUE_HZ),entry:s.version>=7?m.extraction.entries[i%m.extraction.entries.length]:m.extraction.entry,fast:i<m.extraction.fast,wave:m.waves.length+e.alerts,assault:true};if(s.version>=7)row.brute=s.level>=3&&i>=m.extraction.fast&&i%14===0;s.schedule.push(row);}
   s.schedule.sort((a,b)=>a.tick-b.tick||a.wave-b.wave);
-  event(s,'evacAlarm',at);note(s,'撤离信号引来尸潮，'+m.extraction.warning+' 秒后从'+m.entrances[m.extraction.entry].name+'突入','danger');
+  event(s,'evacAlarm',at);note(s,s.version>=7?'撤离信号引来尸潮，'+m.extraction.warning+' 秒后多路突入':'撤离信号引来尸潮，'+m.extraction.warning+' 秒后从'+m.entrances[m.extraction.entry].name+'突入','danger');
  }
  const threat=s.zombies.some(z=>z.hp>0&&z.x>=m.exit.x-.9&&z.x<=m.exit.x+m.exit.w+.9&&z.y>=m.exit.y-.9&&z.y<=m.exit.y+m.exit.h+.9&&lineOfSight(s,z,at));
  const guarded=s.soldiers.some(u=>living(u)&&insideExit(m,u));
@@ -279,11 +311,12 @@ function extraction(s){
 }
 function outcome(s){
  const m=rescueMap(s.level,s.version);let reason='',winner=null;
- if(m.total-s.lost<m.quota){winner=false;reason='平民损失超过目标';}
+ if(s.version>=7&&s.objectives.some(o=>o.type==='convoy'&&o.hp<=0)){winner=false;reason='救援车被摧毁';}
+ else if(m.total-s.lost<m.quota){winner=false;reason='平民损失超过目标';}
  else if(!s.soldiers.some(living)){winner=false;reason='小队全部倒下';}
  else if(s.version>=3){
-  if(s.saved>=m.quota&&(m.mode==='hold'||s.spawned===s.schedule.length&&s.zombies.length===0)){winner=true;reason=m.mode==='clear'?'撤离与清剿完成':s.saved===m.total?'全员撤离':'撤离目标完成';}
-  else if(s.tick>=m.seconds*RESCUE_HZ){winner=false;reason=s.saved<m.quota?'撤离时间耗尽':'清剿时间耗尽';}
+  if(s.saved>=m.quota&&(s.version<7||s.objectives.every(o=>o.done))&&(m.mode==='hold'||s.spawned===s.schedule.length&&s.zombies.length===0)){winner=true;reason=m.mode==='clear'?'撤离与清剿完成':s.saved===m.total?'全员撤离':'撤离目标完成';}
+  else if(s.tick>=m.seconds*RESCUE_HZ){winner=false;reason=s.version>=7&&s.objectives.some(o=>!o.done)?'任务目标未完成':s.saved<m.quota?'撤离时间耗尽':'清剿时间耗尽';}
  }
  else if(s.version>=2&&m.mode==='hold'&&s.saved===m.total){winner=true;reason='全员撤离';}
  else if(s.spawned===s.schedule.length&&s.zombies.length===0){winner=true;reason='丧尸全部清除';}
@@ -292,13 +325,14 @@ function outcome(s){
 }
 export function stepRescue(s){
  if(s.phase!=='running')return s;
- const t=structuredClone(s);t.tick++;t.events=t.events.filter(e=>t.tick-e.tick<42);
+ const t=structuredClone(s);t.tick++;t.events=t.events.filter(e=>t.tick-e.tick<(t.version>=7?33:42));
  const m=rescueMap(t.level,t.version),mobility=1+.18*t.upgrades.filter(x=>x==='mobility').length;
  if(t.version>=4)t.decoys=t.decoys.filter(d=>d.expires>t.tick);
  for(let i=t.spawned;i<t.schedule.length&&t.schedule[i].tick<=t.tick;i++){
   const wave=t.schedule[i],entry=m.entrances[wave.entry];t.spawned++;if(wave.assault){if(wave.tick===t.evac.alertTick)note(t,'狂暴尸潮突入！守住撤离区','danger');}else if(wave.wave!==t.wave){t.wave=wave.wave;note(t,'第 '+wave.wave+' 波丧尸进入'+entry.name,'wave');}
-  const offset=(noise(t.seed,i,51)-.5)*.5;newZombie(t,{x:entry.x+offset,y:entry.y+Math.abs(offset)},wave.fast);
+  const offset=(noise(t.seed,i,51)-.5)*.5;newZombie(t,{x:entry.x+offset,y:entry.y+(t.version>=7&&entry.y>m.h/2?-1:1)*Math.abs(offset)},wave.fast,false,!!wave.brute);
  }
+ if(t.version>=7)siegeObjectives(t);
  if(t.version>=6)assistSoldiers(t);
  for(const u of t.soldiers.filter(living))move(t,u,2.7*mobility);
  if(t.version>=4)for(const crate of t.crates)if(!crate.claimed&&t.soldiers.some(u=>living(u)&&dist(u,crate)<.85&&lineOfSight(t,u,crate))){crate.claimed=true;t.supplies++;event(t,'supply',crate);note(t,'拾取补给箱，战术补给 +1','rescue');}
@@ -318,10 +352,10 @@ export function stepRescue(s){
   }
  }
  for(const z of t.zombies){
-  const target=[...t.soldiers,...t.civilians,...t.gates,...(t.decoys||[])].find(u=>u.id===z.target),invalid=!target||(target.kind==='civilian'?!civilian(target):target.hp<=0);
+  const target=[...t.soldiers,...t.civilians,...t.gates,...(t.decoys||[]),...(t.objectives||[])].find(u=>u.id===z.target),invalid=!target||(target.kind==='civilian'?!civilian(target):target.hp<=0);
   if(invalid||z.nav!==t.nav||t.tick%15===Number(z.id.slice(1))%15)zombieTargets(t,z);
   const contact=target&&(target.kind==='civilian'||target.kind==='soldier')&&dist(z,target)<z.r+target.r+.07;
-  if(!contact)move(t,z,(z.fast?1.65:1.03)*(rescueRaging(t)?1.3:1),'zombie');
+  if(!contact)move(t,z,(z.brute?.78:z.fast?1.65:1.03)*(rescueRaging(t)?1.3:1),'zombie');
  }
  spacing(t);shots(t);projectileHits(t);rescueContacts(t);extraction(t);outcome(t);return t;
 }
@@ -331,7 +365,7 @@ export function issueRescue(match,command){match.state=commandRescue(match.state
 export function advanceRescue(match){match.state=stepRescue(match.state);return match.state;}
 export function sealRescue(match){return {...structuredClone(match.record),end:{tick:match.state.tick,hash:fingerprint(match.state),winner:match.state.winner}};}
 export function* playbackRescue(record){
- if(!['rescue-1','rescue-2','rescue-3','rescue-4','rescue-5',RESCUE_FORMAT].includes(record?.format)||record.game!=='rescue'||!Array.isArray(record.commands)||record.commands.length>10000||!Number.isInteger(record.end?.tick)||record.end.tick<0||record.end.tick>3600)throw Error('救援回放无效');
+ if(!['rescue-1','rescue-2','rescue-3','rescue-4','rescue-5','rescue-6',RESCUE_FORMAT].includes(record?.format)||record.game!=='rescue'||!Array.isArray(record.commands)||record.commands.length>10000||!Number.isInteger(record.end?.tick)||record.end.tick<0||record.end.tick>(record?.format==='rescue-7'?6300:3600))throw Error('救援回放无效');
  let s=initRescue({...record.config,version:Number(record.format.slice(-1))}),index=0;
  for(let tick=0;tick<=record.end.tick;tick++){
   while(index<record.commands.length&&record.commands[index].tick===tick)s=commandRescue(s,record.commands[index++].command);
@@ -340,3 +374,49 @@ export function* playbackRescue(record){
  if(index!==record.commands.length||record.end.hash!==fingerprint(s)||record.end.winner!==s.winner)throw Error('救援回放校验失败');
 }
 export function replayRescue(record){let result;for(const state of playbackRescue(record))result=state;return result;}
+
+const flowCache=new WeakMap();
+function siegeTarget(s,z){
+ const m=rescueMap(s.level,s.version);let fields=flowCache.get(s);
+ if(!fields){
+  const flow=targets=>{const cost=Array(m.w*m.h).fill(-1),next=Array(m.w*m.h).fill(-1),owners=Array(m.w*m.h).fill(null),queue=[];
+   for(const target of targets){const c=cell(m,target);if(cost[c]<0&&walkable(s,target.x,target.y,'zombie')){cost[c]=0;owners[c]=target;queue.push(c);}}
+   for(let i=0;i<queue.length;i++)for(const c of neighbors(m,queue[i])){const p=center(m,c);if(cost[c]<0&&walkable(s,p.x,p.y,'zombie')){cost[c]=cost[queue[i]]+1;next[c]=queue[i];owners[c]=owners[queue[i]];queue.push(c);}}
+   return {cost,next,owners};};
+  const people=[...s.civilians.filter(civilian),...s.soldiers.filter(living),...s.objectives.filter(o=>o.type==='convoy'&&!o.done&&o.hp>0)];
+  const gates=s.gates.filter(g=>g.hp>0).flatMap(g=>neighbors(m,g.cell).map(c=>({...center(m,c),id:g.id})));
+  fields={people:flow(people),gates:flow(gates)};flowCache.set(s,fields);
+ }
+ const start=cell(m,z),f=fields.people.owners[start]?fields.people:fields.gates,target=f.owners[start];z.nav=s.nav;
+ if(!target){z.target=null;z.path=[];return;}z.target=target.id;z.goal={x:target.x,y:target.y};const route=[];let c=start;
+ for(let n=0;n<m.w*m.h&&f.next[c]>=0;n++){c=f.next[c];route.push(center(m,c));}if(route.length)route[route.length-1]={...z.goal};else route.push({...z.goal});z.path=route;
+}
+const WEAPONS={rifle:{damage:20,ammo:16,cooldown:6,reload:22,range:7},gunner:{damage:17,ammo:32,cooldown:3,reload:26,range:7.2,pierce:2},grenadier:{damage:52,ammo:5,cooldown:28,reload:32,range:6.5},shield:{damage:22,ammo:14,cooldown:7,reload:22,range:4}};
+const weapon=u=>WEAPONS[u.role]||WEAPONS.rifle;
+function siegeShots(s){
+ for(const u of s.soldiers.filter(living)){
+  const w=weapon(u);if(u.reload>0){u.reload--;if(!u.reload)u.ammo=w.ammo;continue;}if(u.cooldown>0){u.cooldown--;continue;}
+  const targets=[...s.zombies.filter(living),...s.objectives.filter(o=>o.type==='nest'&&!o.done&&o.hp>0)].filter(z=>dist(u,z)<=w.range&&lineOfSight(s,u,z));
+  const priority=z=>z.type==='nest'?4:s.civilians.some(c=>civilian(c)&&dist(c,z)<2)?-4:0;
+  targets.sort((a,b)=>dist(u,a)+priority(a)-dist(u,b)-priority(b)||a.id.localeCompare(b.id));const target=targets[0];if(!target)continue;
+  const d=dist(u,target)||1,dx=round((target.x-u.x)/d),dy=round((target.y-u.y)/d);u.angle=round(Math.atan2(dy,dx));
+  s.bullets.push({id:'b'+s.uid++,x:u.x,y:u.y,dx,dy,origin:u.id,left:w.range+.3,damage:w.damage*(1+.2*s.upgrades.filter(x=>x==='fire').length),kind:u.role==='grenadier'?'grenade':u.role,pierce:w.pierce||1,hitIds:[]});
+  s.stats.shots++;u.ammo--;u.cooldown=w.cooldown;event(s,'shot',u,{to:target.id,angle:u.angle,source:u.id,weapon:u.role});if(u.ammo<=0)u.reload=w.reload;
+ }
+}
+function siegeObjectives(s){
+ for(const o of s.objectives){
+  if(o.done)continue;
+  if(o.type==='power'){
+   o.blocked=s.zombies.some(z=>living(z)&&dist(z,o)<2&&lineOfSight(s,z,o));o.active=s.soldiers.some(u=>living(u)&&dist(u,o)<1.8&&lineOfSight(s,u,o))&&!o.blocked;
+   if(o.active)o.progress++;if(o.progress>=o.required){o.done=true;event(s,'objective',o);note(s,'供电恢复，撤离区可以接驳','rescue');s.gateCharges++;}
+  }else if(o.type==='nest'){
+   o.progress=o.maxHp-o.hp;if(o.hp<=0){o.done=true;event(s,'objective',o);note(s,o.name+'已摧毁，停止增援','rescue');s.supplies++;continue;}
+   if(s.tick>=o.nextSpawn){o.nextSpawn=s.tick+12*RESCUE_HZ;for(let i=0;i<8;i++){const a=i*Math.PI/4,p={x:round(o.x+Math.cos(a)*.7),y:round(o.y+Math.sin(a)*.7)};if(walkable(s,p.x,p.y,'zombie',.24))newZombie(s,p,i<2);}event(s,'nestWave',o);note(s,o.name+'涌出增援','wave');}
+  }else if(o.type==='convoy'){
+   const escort=s.soldiers.some(u=>living(u)&&dist(u,o)<3.6&&lineOfSight(s,u,o)),blocked=s.zombies.some(z=>living(z)&&dist(z,o)<.9&&lineOfSight(s,z,o));o.blocked=blocked;
+   o.active=escort&&!blocked&&o.hp>0;
+   if(o.active){const target=o.waypoints[o.checkpoint];if(!o.goal||o.nav!==s.nav)route(s,o,target);move(s,o,1.65);if(dist(o,target)<.25){o.checkpoint++;o.goal=null;o.path=[];o.progress=o.checkpoint;if(o.checkpoint===o.waypoints.length){o.done=true;event(s,'objective',o);note(s,'救援车已抵达接应区','rescue');s.supplies+=2;}}}
+  }
+ }
+}

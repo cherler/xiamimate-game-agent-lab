@@ -54,3 +54,5 @@ const keyMap={KeyD:0,KeyF:1,KeyJ:2,KeyK:3,ArrowLeft:0,ArrowUp:1,ArrowDown:2,Arro
 window.addEventListener('keydown',e=>{if(!active||e.ctrlKey||e.metaKey||e.altKey||e.target.closest('input,select,textarea'))return;if(e.code==='Escape'){if(!e.repeat){e.preventDefault();if(running)pause();else if(state.time)start();}return;}if(keyMap[e.code]!==undefined&&running){e.preventDefault();if(!e.repeat)down('key-'+e.code,keyMap[e.code]);}});
 window.addEventListener('keyup',e=>{if(active&&keyMap[e.code]!==undefined)up('key-'+e.code);});
 window.addEventListener('glimmer-sound',e=>music.mute(!e.detail));window.addEventListener('blur',()=>{if(active)pause();});document.addEventListener('visibilitychange',()=>{if(document.hidden&&active)pause();});
+
+window.addEventListener('glimmer-screen-pause',()=>{if(active){if(pending){generation++;pending=false;music.stop();}pause();sources.clear();paint();}});

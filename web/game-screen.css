@@ -1,0 +1,207 @@
+/* A phone is a game screen: navigation and setup leave the playfield. */
+#game-screen-ui{display:contents}
+.ac-screen-settings{display:none}
+#screen-bar{height:calc(48px + env(safe-area-inset-top,0px));padding:env(safe-area-inset-top,0px) max(6px,env(safe-area-inset-right,0px)) 0 max(6px,env(safe-area-inset-left,0px));display:flex;align-items:center;gap:5px;background:#183747;color:#eef7f3;flex:none;z-index:30}
+#screen-bar button{height:42px;min-width:44px;padding:0 9px;border:0;background:#2c4b59;color:inherit;border-radius:7px;font-size:12px;white-space:nowrap;touch-action:manipulation}
+#screen-bar b{flex:1;font-size:14px;white-space:nowrap;margin-left:3px}#screen-games-toggle{background:transparent!important}
+body.game-screen{height:100vh;height:100dvh;overflow:hidden;overscroll-behavior:none;display:flex;flex-direction:column;background:#183747}
+body.game-screen .site-head,body.game-screen main>.switcher{display:none!important}
+body.game-screen main{display:flex;flex-direction:column;flex:1;min-height:0;max-width:none!important;width:100%;margin:0;padding:0 env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)!important;gap:0!important;overflow:hidden}
+body.game-screen :is(#kart,#dance,#runner):not([hidden]){position:relative;gap:0;min-height:0}
+body.game-screen .motion-top,body.game-screen .rhythm-side,body.game-screen .motion-notice{display:none}
+body.game-screen :is(.kart-cabinet,.runner-cabinet,.rhythm-cabinet){border:0;border-radius:0;box-shadow:none;min-height:0;max-width:none}
+body.game-screen .rhythm-layout{gap:0;min-height:0}
+body.game-screen .rhythm-scoreboard{padding:7px 14px;grid-template-columns:1fr 1fr 1fr;gap:5px}
+body.game-screen .rhythm-scoreboard b{font-size:21px}body.game-screen .rhythm-scoreboard span{font-size:11px}
+body.game-screen .rhythm-field{min-height:0}body.game-screen .rhythm-feedback{top:17%}
+body.game-screen .rhythm-feedback strong{font-size:27px}body.game-screen .rhythm-feedback b{font-size:20px}
+body.game-screen .rhythm-cabinet .motion-overlay{gap:10px}
+body.game-screen .rhythm-cabinet .motion-overlay>b{font-size:30px}
+body.game-screen .runner-cabinet{width:100%;max-width:560px;align-self:center;flex:1}
+body.game-screen .runner-controls{position:absolute;right:12px;bottom:17px;z-index:2;display:flex;width:auto;pointer-events:none}
+body.game-screen .runner-controls>:not(#runner-board){display:none}
+body.game-screen .runner-controls #runner-board{min-width:82px;min-height:66px;border:2px solid #f6ecc7;background:#244957e8;color:#f8eac5;border-radius:20px;pointer-events:auto;font-size:14px;box-shadow:0 3px 0 #183641}
+body.game-screen .runner-controls kbd{display:none}
+body.game-screen .runner-powers{bottom:24px}body.game-screen .runner-hud{top:14px}
+body.game-screen .runner-route{top:62px}
+body.game-screen .runner-lane-dots{bottom:14px}
+body.game-screen .kart-controls{position:absolute;inset:0;pointer-events:none;z-index:2;display:block}
+body.game-screen .kart-controls button{pointer-events:auto;touch-action:none;background:#183b55d9;color:#f4f7ec;border:2px solid #bedbd9;border-bottom-width:4px;min-height:70px;font-size:16px;text-shadow:0 1px 1px #183747;user-select:none}
+body.game-screen .kart-controls kbd{display:none}
+body.game-screen .drive-pair{position:absolute;left:12px;bottom:17px;width:clamp(138px,24vw,178px);display:flex;gap:7px}
+body.game-screen .drive-pair button{font-size:27px;border-radius:20px}
+body.game-screen .kart-controls>button{position:absolute;width:70px;border-radius:20px;bottom:17px}
+body.game-screen .kart-controls .drift-key{right:89px;background:#766134e6;border-color:#ffe5aa}
+body.game-screen .kart-controls .boost-key{right:12px;background:#28577ee6;border-color:#b5e7f1}
+body.game-screen .kart-controls [data-drive=brake]{right:12px;bottom:96px;min-height:44px;font-size:12px;border-radius:14px}
+body.game-screen .kart-controls .accelerator{left:12px;bottom:96px;min-height:44px;font-size:12px}
+body.game-screen .kart-controls .charged{background:#257b9a;border-color:#e5ffff;box-shadow:0 0 0 2px #9eeaf466}
+body.game-screen .kart-speed{bottom:20px;right:50%;transform:translateX(50%);gap:3px}
+body.game-screen .kart-speed b{font-size:32px}body.game-screen .kart-speed span{font-size:10px}
+body.game-screen .kart-fuel{left:50%;transform:translateX(-50%);bottom:91px;width:118px;font-size:10px;gap:2px}
+body.game-screen .kart-fuel strong{font-size:12px}body.game-screen .kart-hud{top:12px;gap:15px}
+body.game-screen .kart-hud b{font-size:20px}body.game-screen .kart-hud>div:first-child b{font-size:31px}
+body.game-screen .kart-controls button.held{background:#51828c;border-color:#fff;transform:translateY(2px)}
+body.game-screen [data-screen-settings]{display:none!important}
+#screen-shade{position:fixed;inset:0;background:#0d2539b8;z-index:60;backdrop-filter:blur(2px)}
+#screen-settings-head{position:fixed;z-index:72;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));top:calc(58px + env(safe-area-inset-top,0px));display:flex;align-items:center;gap:7px;background:#edf4ef;padding:12px;border-radius:12px 12px 0 0;border:1px solid #bbcfca;color:#19374b}
+#screen-settings-head b{font-size:14px;flex:1}#screen-settings-head button{min-height:42px;padding:5px 9px;background:#fff;border:1px solid #b9cdc7;border-radius:7px;font-size:12px}
+body.game-screen.screen-settings-open [data-screen-settings]{display:flex!important;position:fixed;z-index:71;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));top:calc(124px + env(safe-area-inset-top,0px));bottom:max(12px,env(safe-area-inset-bottom,0px));padding:16px;margin:0;border:1px solid #bbcfca;border-top:0;background:#edf4ef;border-radius:0 0 12px 12px;color:#19374b;overflow:auto;overscroll-behavior:contain;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:16px;width:auto;max-height:none;max-width:none}
+body.game-screen.screen-settings-open [data-screen-settings]>label{flex:none;display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:44px;font-size:15px}
+body.game-screen.screen-settings-open [data-screen-settings] select{width:65%;max-width:none;min-height:44px;font-size:15px;padding:8px}
+body.game-screen.screen-settings-open [data-screen-settings]>span{flex:none}
+body.game-screen.screen-settings-open [data-screen-settings] button{min-height:44px;font-size:13px;margin:0}
+body.game-screen.screen-settings-open .dance-offset[open]{position:static;width:auto;max-width:none}
+body.game-screen.screen-settings-open [data-screen-settings] .setup{display:block}
+body.game-screen.screen-settings-open [data-screen-settings] .setup select{width:100%}
+#screen-games{position:fixed;inset:calc(58px + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) max(12px,env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));z-index:73;background:#edf4ef;color:#19374b;border-radius:14px;padding:16px;overflow:auto;overscroll-behavior:contain}
+#screen-games header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+#screen-games header b{font-size:20px}#screen-games button{min-height:44px;padding:8px 12px;border:1px solid #b8cec6;border-radius:9px;background:#fff}
+#screen-games>div{display:grid;grid-template-columns:1fr 1fr;gap:12px}#screen-games [data-screen-game]{min-height:80px;text-align:left;display:grid;gap:5px}
+#screen-games [aria-current=true]{background:#cce7dc;border-color:#428373}#screen-games small{color:#66817b;font-size:12px}#screen-windowed{margin-top:20px}
+#screen-identity{flex:1;min-width:0;display:grid;gap:2px;justify-items:start}
+#screen-identity b{margin:0}
+#screen-bar #screen-orientation{position:static;min-width:0;min-height:0;height:14px;padding:0;border:0;background:none;color:#f1d9a5;font-size:10px;line-height:14px;box-shadow:none;transform:none;border-radius:0}
+#screen-toast{position:fixed;z-index:100;bottom:calc(100px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);width:max-content;max-width:90%;background:#153b4bf2;color:white;border-radius:9px;padding:10px 14px;font-size:13px;text-align:center}
+/* Other games share the same uncluttered entry, keeping their own controls. */
+body.game-screen #arcade{flex:1;min-height:0;margin:0;display:flex;padding:6px;gap:0}
+body.game-screen .table-area{flex:1;min-height:0;display:flex;flex-direction:column;width:100%}
+body.game-screen #arcade .title-row,body.game-screen #arcade #rally,body.game-screen #arcade #how{display:none}
+body.game-screen #arcade .cabinet{flex:1;min-height:0;display:flex;flex-direction:column;border-radius:9px}
+body.game-screen #arcade .screen{flex:1;min-height:0}body.game-screen #arcade canvas{height:100%!important;position:absolute;inset:0}
+body.game-screen #arcade .start-row{margin-top:6px;min-height:42px}body.game-screen #arcade .controls-row{margin-top:5px;justify-content:center}
+body.game-screen #arcade .pad button{width:55px;height:44px;font-size:20px}
+body.game-screen #pong-view-controls{margin-top:5px;font-size:11px;min-height:40px}
+body.game-screen #pong-view-controls select{min-height:38px}body.game-screen #pong-view-controls button{min-height:40px}
+body.game-screen #strategy{flex:1;min-height:0}
+body.game-screen.chess-mode #strategy{padding:5px;gap:4px}body.game-screen .ac-top h1,body.game-screen .ac-top>div>span{display:none}
+body.game-screen:has(.visual-table) #strategy{display:flex;flex-direction:column;padding:4px}
+body.game-screen .card-topbar{flex:none;margin:0 0 4px;min-height:36px}body.game-screen .card-topbar h1{display:none}
+body.game-screen .visual-table{height:auto;min-height:0;flex:1}
+body.game-screen #rescue{margin:0;flex:1;min-height:0;padding:5px;display:flex;flex-direction:column}
+body.game-screen .rs-heading{display:none}body.game-screen .rs-layout{display:flex;flex:1;min-height:0;gap:0}
+body.game-screen .rs-center{display:flex;flex-direction:column;flex:1;min-height:0;position:relative}
+body.game-screen .rs-map-wrap{flex:1;min-height:0;display:grid;place-items:center}
+body.game-screen #rescue-board{height:auto;max-height:100%;width:100%;aspect-ratio:3/2;object-fit:contain}
+body.game-screen .rs-map-wrap.rs-zoomed{display:block;max-height:none;overflow:auto}
+body.game-screen .rs-map-wrap.rs-zoomed #rescue-board{max-height:none;width:200%}
+body.game-screen .rs-legend{padding:6px 0;gap:8px}body.game-screen #rs-hint{display:none}
+body.game-screen .rs-evac{padding:6px 8px}body.game-screen .rs-evac-dial{width:40px;height:40px}
+body.game-screen .rs-simple-commands{padding:7px;flex:none}body.game-screen #rs-notice{margin:0;min-height:18px;font-size:11px}
+body.game-screen #rs-result:not([hidden]){position:absolute;inset:12% 8px auto;max-height:80%;overflow:auto;z-index:10;box-shadow:0 0 0 100vmax #14334488}
+@media(orientation:landscape) and (max-height:550px){
+ #screen-bar{height:calc(44px + env(safe-area-inset-top,0px))}#screen-bar button{height:40px}
+ body.game-screen .rhythm-scoreboard{padding:4px 14px}body.game-screen .rhythm-scoreboard b{font-size:18px}body.game-screen .rhythm-scoreboard span{font-size:10px}
+ body.game-screen .rhythm-feedback{top:9%}body.game-screen .rhythm-feedback strong{font-size:22px}body.game-screen .rhythm-feedback span{font-size:11px}
+ body.game-screen .rhythm-intro-keys kbd{width:32px;height:30px;font-size:18px}body.game-screen .rhythm-cabinet .motion-overlay{gap:6px}
+ body.game-screen .motion-overlay{padding:10px;gap:7px}body.game-screen .motion-overlay>b{font-size:25px}body.game-screen .motion-overlay>span{font-size:12px}body.game-screen .motion-overlay .primary{padding:8px 20px;min-height:42px}
+ body.game-screen .runner-cabinet{max-width:340px}body.game-screen .runner-route{top:48px}
+ body.game-screen .runner-hud b,body.game-screen .runner-hud>div:first-child b{font-size:21px}
+ body.game-screen .kart-controls button{min-height:62px}body.game-screen .kart-controls>button{width:66px}body.game-screen .kart-controls .drift-key{right:85px}
+ body.game-screen .kart-controls [data-drive=brake],body.game-screen .kart-controls .accelerator{bottom:87px;min-height:40px}
+ body.game-screen .kart-fuel{bottom:78px}body.game-screen .kart-pop{top:24%}
+ #screen-games>div{grid-template-columns:repeat(4,1fr)}#screen-games [data-screen-game]{min-height:66px}
+ body.game-screen #arcade .controls-row{position:absolute;bottom:9px;right:10px}body.game-screen #arcade .start-row{padding-right:135px}
+ body.game-screen #arcade .pad button{width:38px;height:38px;min-width:0}
+}
+/* Keep setup out of the table, with enough room for every hand and both armies. */
+body.game-screen:not(.motion-mode){background:#edf3ef}
+body.game-screen .card-tactics-bar{flex:none;min-height:36px;margin:0 0 2px}
+body.game-screen .action-timeline{flex:none;height:34px;margin:0 0 4px}
+body.game-screen .visual-table{grid-template-rows:54px minmax(46px,1fr) 40px minmax(46px,1fr) 60px 150px;padding:6px 10px 3px;overflow:hidden;container-type:size}
+body.game-screen .visual-table .battle-row{margin:3px 0}
+body.game-screen .visual-table .unit-card{height:min(85px,100%);min-height:0;max-height:100%}
+body.game-screen .visual-table .unit-portrait{height:60%;min-height:0}
+body.game-screen .visual-table .board-slot{height:100%;min-height:0;max-height:85px}
+body.game-screen .visual-table .hand{margin:0 -7px;padding:10px 5px 4px}
+body.game-screen .hand-card{height:132px;min-height:132px;flex-basis:98px;width:98px}
+body.game-screen .hand-card>svg{height:36px;min-height:36px}
+body.game-screen .visual-table .hero-row{gap:4px;grid-template-columns:1fr 125px 1fr}
+body.game-screen .visual-table .hero{min-width:0;max-width:none;min-height:0;height:100%;padding:2px 6px 2px 0}
+body.game-screen .visual-table .hero-portrait>svg{height:42px;width:45px}
+body.game-screen .visual-table .hero-portrait{width:44px}
+body.game-screen .visual-table .unit-portrait>svg{height:100%}
+body.game-screen.screen-settings-open .card-topbar{align-items:stretch}
+body.game-screen.screen-settings-open .card-topbar .deck-selects{display:flex;flex-direction:column;width:100%;gap:12px}
+body.game-screen.screen-settings-open .card-topbar .deck-selects select{width:100%;max-width:none;background:white;color:#244654}
+body.game-screen.screen-settings-open .card-topbar .card-toolbar{display:flex;gap:12px}
+body.game-screen.screen-settings-open .card-topbar .card-toolbar button{min-width:62px}
+body.game-screen.screen-settings-open .card-topbar .card-toolbar #card-settings{width:auto;font-size:14px}
+body.game-screen.screen-settings-open .card-topbar #card-settings:after{content:'对战设置'}
+body.game-screen .rs-layout{align-items:stretch}
+body.game-screen .rs-map-wrap{container-type:size}
+body.game-screen #rescue-board{width:min(100cqw,150cqh);height:auto;max-height:none;object-fit:fill}
+body.game-screen .rs-map-wrap.rs-zoomed #rescue-board{width:200%;height:auto}
+body.game-screen.screen-settings-open .rs-heading{display:flex;flex-direction:column;gap:12px;align-items:stretch;margin:0}
+body.game-screen.screen-settings-open .rs-heading>div:first-child{display:none}
+body.game-screen.screen-settings-open .rs-missions{flex-wrap:wrap;gap:4px}
+body.game-screen.screen-settings-open .rs-heading #rs-export{margin:0}
+body.game-screen .pong-skills button{min-height:44px}
+body.game-screen .pong-skills small,body.game-screen .pong-skills kbd{display:none}
+@media(orientation:portrait) and (max-height:700px){
+ body.game-screen .visual-table{grid-template-rows:49px minmax(36px,1fr) 38px minmax(36px,1fr) 53px 140px;padding-top:3px}
+ body.game-screen .visual-table .hero{min-height:0;height:49px}
+ body.game-screen .hand-card{height:124px;min-height:124px}
+ body.game-screen .visual-table .power-button{height:47px}
+ body.game-screen .visual-table .unit-card .unit-name{font-size:8px}
+ body.game-screen .visual-table .unit-card .stat-badge{width:20px;height:20px}
+ body.game-screen .visual-table .unit-card .stat-badge>b{font-size:13px!important}
+}
+@media(orientation:landscape) and (max-height:550px){
+ body.game-screen #rescue .rs-center{display:grid;grid-template-columns:minmax(0,1fr) 180px;grid-template-rows:36px 32px auto 1fr auto;gap:5px}
+ body.game-screen .rs-center>*{grid-column:2;min-width:0}
+ body.game-screen .rs-center>.rs-map-wrap{grid-column:1;grid-row:1 / 6;height:100%;border:0;border-radius:7px}
+ body.game-screen .rs-map-head{padding:0 5px;border-radius:5px;gap:4px}
+ body.game-screen .rs-map-head>div,#rescue #rs-start{display:none}
+ body.game-screen .rs-live-bar{padding:2px;border:0;gap:3px}
+ body.game-screen .rs-live-bar #rs-zoom{min-height:30px;padding:3px}
+ body.game-screen .rs-live-bar>div{font-size:10px;gap:3px}
+ body.game-screen .rs-center>.rs-legend{display:none}
+ body.game-screen .rs-evac{padding:4px;gap:5px;min-height:50px}
+ body.game-screen .rs-evac-dial{width:30px;height:30px;min-width:30px}
+ body.game-screen .rs-evac strong{font-size:11px}
+ body.game-screen .rs-simple-commands{padding:4px;display:flex;flex-direction:column;justify-content:flex-end;gap:4px}
+ body.game-screen .rs-orders{gap:3px}
+ body.game-screen .rs-orders button{padding:4px 2px;min-height:44px;flex:1;font-size:10px}
+ body.game-screen #rs-notice{font-size:10px;min-height:15px}
+ body.game-screen .rs-team-state{display:flex;gap:5px;flex-wrap:wrap;font-size:10px}
+ body.game-screen .rs-team-state #rs-autonomy{display:none}
+ body.game-screen .card-tactics-bar{min-height:30px}body.game-screen .card-tactics-bar button{min-height:30px;padding:3px 8px}
+ body.game-screen .action-timeline{height:28px;min-height:28px;margin:0 0 2px}
+ body.game-screen .visual-table{grid-template-columns:minmax(0,1fr) 143px;grid-template-rows:40px minmax(25px,1fr) 38px minmax(25px,1fr) 45px;padding:3px 7px;gap:1px 10px}
+ body.game-screen .visual-table>.hand{grid-column:2;grid-row:1 / 6;flex-wrap:wrap;overflow:auto;align-content:flex-start;justify-content:center;margin:0;padding:8px 3px;gap:8px}
+ body.game-screen .visual-table>.hero-row,body.game-screen .visual-table>.battle-row,body.game-screen .visual-table>.table-divider{grid-column:1}
+ body.game-screen .visual-table .hero{min-height:0;height:40px;max-height:40px;padding:2px 6px}
+ body.game-screen .visual-table .hero-portrait{height:34px;width:35px}
+ body.game-screen .visual-table .hero-caption>span:first-child{font-size:9px}
+ body.game-screen .visual-table .power-button{height:42px;width:50px;padding:1px;font-size:8px}
+ body.game-screen .visual-table .power-button .table-icon{width:16px;height:16px}
+ body.game-screen .visual-table .unit-card{height:100%;border-radius:9px;padding:0 4px}
+ body.game-screen .visual-table .unit-portrait{height:100%;max-width:50%;margin:auto}
+ body.game-screen .visual-table .unit-card .unit-name{font-size:8px;position:absolute;top:2px;left:2px}
+ body.game-screen .visual-table .unit-card .stat-badge{width:18px;height:18px}
+ body.game-screen .visual-table .unit-card .stat-badge>b{font-size:12px!important}
+ body.game-screen #arcade #pong-view-controls{position:absolute;bottom:6px;left:8px;z-index:2;margin:0}
+ body.game-screen #arcade #pong-view-controls>span{display:none}
+ body.game-screen #arcade:has(#pong-view-controls:not([hidden])) .start-row{padding-left:210px}
+ body.game-screen .pong-skills{padding:3px;gap:5px}
+ body.game-screen .pong-skills button{display:flex;flex-direction:row;gap:5px;justify-content:center}
+}
+body.game-screen .visual-table{width:100%;align-self:stretch}
+body.game-screen .screen-motion-actions{display:flex;gap:12px}
+body.game-screen.screen-settings-open .screen-motion-actions button{flex:1}
+@media(orientation:landscape) and (max-height:550px){
+ body.game-screen .rs-simple-commands .rs-orders button{flex-direction:column;gap:3px;word-break:keep-all;white-space:nowrap}
+}
+
+@media(orientation:landscape) and (max-height:550px){
+ body.game-screen .visual-table .hero-portrait>svg{width:35px;height:32px}
+ body.game-screen .visual-table .hero-health b{font-size:21px}
+ body.game-screen .visual-table .hero-health>.table-icon{width:14px;height:14px}
+ body.game-screen .visual-table .hero-row.own:has(.power-alternative) .power-button,body.game-screen .visual-table .power-alternative{height:40px;width:52px;min-height:0}
+ body.game-screen .visual-table .hero-side{gap:5px}
+ body.game-screen .visual-table .power-alternative small{display:none}
+ body.game-screen .visual-table .hero-row .deck-stack{display:none}
+ body.game-screen .visual-table .power-alternative>.table-icon{width:15px;height:15px}
+}
+body.game-screen .screen-motion-actions>[id$="-pause"]{display:none}

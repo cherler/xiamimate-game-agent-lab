@@ -20,22 +20,26 @@ async function page(width,height,hz=60,touch=false){
   };
  },hz);return p;
 }
-async function record(p,name){const waiting=p.waitForEvent('download');await p.locator('#kart-export').click();const dest=path.join(out,name+'.json');await(await waiting).saveAs(dest);const data=JSON.parse(await fs.readFile(dest,'utf8'));replayKart(data);return data;}
+async function settings(p){if(await p.locator('#screen-bar').isVisible()&&!(await p.locator('#screen-settings-head').isVisible()))await p.locator('#screen-menu').click();}
+async function dismiss(p){if(await p.locator('#screen-settings-head').isVisible())await p.locator('#screen-settings-close').click();}
+async function goGame(p,game){if(await p.locator('#screen-bar').isVisible()){await p.locator('#screen-games-toggle').click();await p.locator('[data-screen-game='+game+']').click();}else await p.locator('[data-game='+game+']').click();}
+async function pause(p){await p.locator(await p.locator('#screen-bar').isVisible()?'#screen-pause':'#kart-pause').click();}
+async function record(p,name){await settings(p);const waiting=p.waitForEvent('download');await p.locator('#kart-export').click();const dest=path.join(out,name+'.json');await(await waiting).saveAs(dest);const data=JSON.parse(await fs.readFile(dest,'utf8'));replayKart(data);await dismiss(p);return data;}
 async function shot(p,name){await p.screenshot({path:path.join(out,name+'.png')});}
 try{
  for(const [w,h,hz,touch]of [[1366,768,60,false],[1366,768,120,false],[390,844,60,true]]){
-  const p=await page(w,h,hz,touch);await p.goto(url+'/#kart');await p.locator('#kart-auto').uncheck();await p.locator('#kart-go').click();await p.clock.runFor(9500);
+  const p=await page(w,h,hz,touch);await p.goto(url+'/#kart');await settings(p);await p.locator('#kart-auto').uncheck();await dismiss(p);await p.locator('#kart-go').click();await p.clock.runFor(9500);
   const frames=await p.evaluate(()=>[...new Map(window.kartMotionFrames.map(f=>[f.time,f])).values()]);assert.ok(frames.length>150);
   const dy=frames.slice(1).map((f,i)=>frames[i].y-f.y),height=await p.locator('#kart-canvas').evaluate(n=>n.height);
   const frozen=dy.filter(d=>Math.abs(d)<1e-7).length;assert.equal(frozen,0,'对手不应停在路面分段上');assert.ok(dy.every(d=>d>0));assert.ok(Math.max(...dy)<height*.02);
   metrics.push({width:w,height:h,hz,frames:frames.length,frozen,maxStep:Math.max(...dy)});await shot(p,'moving-'+w+'-'+hz);
-  await p.locator('#kart-pause').click();const paused=await record(p,'paused-'+w+'-'+hz);await p.clock.runFor(500);assert.deepEqual(await record(p,'still-paused-'+w+'-'+hz),paused);
-  await p.locator('[data-game=runner]').click();await p.locator('[data-game=kart]').click();assert.deepEqual(await record(p,'returned-'+w+'-'+hz),paused);
+  await pause(p);const paused=await record(p,'paused-'+w+'-'+hz);await p.clock.runFor(500);assert.deepEqual(await record(p,'still-paused-'+w+'-'+hz),paused);
+  await goGame(p,'runner');await goGame(p,'kart');assert.deepEqual(await record(p,'returned-'+w+'-'+hz),paused);
   if(touch){
-   await p.locator('#kart-auto').check();await p.locator('#kart-go').click();await p.clock.runFor(600);
+   await settings(p);await p.locator('#kart-auto').check();await dismiss(p);await p.locator('#kart-go').click();await p.clock.runFor(600);
    const cdp=await p.context().newCDPSession(p),right=await p.locator('[data-drive=right]').boundingBox(),drift=await p.locator('[data-drive=drift]').boundingBox();
    await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{id:1,x:right.x+right.width/2,y:right.y+right.height/2},{id:2,x:drift.x+drift.width/2,y:drift.y+drift.height/2}]});await p.clock.runFor(300);
-   await cdp.send('Input.dispatchTouchEvent',{type:'touchCancel',touchPoints:[]});await p.clock.runFor(100);await p.locator('#kart-pause').click();const touchRecord=await record(p,'touch-combination');
+   await cdp.send('Input.dispatchTouchEvent',{type:'touchCancel',touchPoints:[]});await p.clock.runFor(100);await pause(p);const touchRecord=await record(p,'touch-combination');
    assert.ok(touchRecord.inputs.some(i=>i.input.gas&&i.input.steer===1&&i.input.drift));assert.equal(touchRecord.inputs.at(-1).input.steer,0);assert.equal(touchRecord.inputs.at(-1).input.drift,false);
   }
   await p.close();console.log(w+' × '+h+', '+hz+' Hz: no frozen opponent frames');

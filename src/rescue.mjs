@@ -1,7 +1,7 @@
 import {noise,fingerprint} from './common.mjs';
 import {RESCUE_HZ,rescueMap,insideExit,UPGRADES} from './rescue-maps.mjs';
 export {RESCUE_HZ,rescueMap,insideExit,UPGRADES};
-export const RESCUE_FORMAT='rescue-5';
+export const RESCUE_FORMAT='rescue-6';
 const round=v=>Math.round(v*10000)/10000;
 const dist=(a,b)=>Math.round(Math.hypot(a.x-b.x,a.y-b.y)*1e6)/1e6;
 const cell=(m,u)=>Math.floor(u.y)*m.w+Math.floor(u.x);
@@ -55,15 +55,17 @@ function spacing(s){
   }
  }
 }
-export function initRescue({level=1,seed=41003,difficulty='normal',upgrades=[],version=5}={}){
+export function initRescue({level=1,seed=41003,difficulty='normal',upgrades=[],version=6}={}){
  const m=rescueMap(level,version);if(!Number.isInteger(seed)||seed<0||seed>0xffffffff||!['normal','challenge'].includes(difficulty)||!Array.isArray(upgrades)||upgrades.length>2||upgrades.some(x=>!UPGRADES[x]))throw Error('开局设置无效');
  const boost=id=>upgrades.filter(x=>x===id).length;
- if(![1,2,3,4,5].includes(version))throw Error('救援规则版本无效');
+ if(![1,2,3,4,5,6].includes(version))throw Error('救援规则版本无效');
  const s={game:'rescue',version,level,seed,difficulty,upgrades:[...upgrades],tick:0,phase:'deploy',winner:null,reason:'',nav:0,uid:0,eventId:0,events:[],log:[],gates:[],gateCharges:2+boost('gate'),saved:0,lost:0,kills:0,wave:0,spawned:0,schedule:[],zombies:[],bullets:[],soldiers:[],civilians:[],stats:{shots:0,hits:0,infected:0}};
  if(version>=3)s.evac={phase:'idle',progress:0,required:m.extraction.seconds*RESCUE_HZ,batches:0,alerts:0,alertTick:null,rageUntil:0};
  if(version>=4){s.evac.active=false;s.supplies=2;s.crates=m.supplies.map(c=>({...c,claimed:false}));s.decoys=[];s.supportUid=0;s.supportUsed={decoy:0,medic:0};}
  s.soldiers=m.spawn.map((p,i)=>({id:'s'+i,kind:'soldier',group:p.group,role:p.group===2?'shield':'rifle',x:p.x,y:p.y,r:p.group===2?.28:.23,hp:p.group===2?240:110,maxHp:p.group===2?240:110,angle:-Math.PI/2,path:[],goal:null,nav:0,cooldown:0,ammo:version>=5?10:p.group===2?8:6,reload:0,hitTick:-100}));
+ if(version>=6){s.autoMedicAt=0;for(const u of s.soldiers)Object.assign(u,{anchor:{x:u.x,y:u.y},intent:'guard',orderedAt:-30});}
  for(const group of m.groups)for(let i=0;i<group.n;i++){const x=group.x+(i%3)*.7,y=group.y+Math.floor(i/3)*.65;s.civilians.push({id:'c'+s.civilians.length,kind:'civilian',x,y,r:.18,status:'waiting',leader:null,path:[],goal:null,nav:0,infection:0,threat:null,hitTick:-100});}
+ if(version>=6)for(const c of s.civilians)c.shelter={x:c.x,y:c.y};
  m.waves.forEach((wave,index)=>{for(let i=0;i<wave.count;i++)s.schedule.push({tick:Math.round((wave.at+i*.5)*RESCUE_HZ),entry:wave.entry,fast:i<wave.fast,wave:index+1});});
  note(s,'小队已就位，等待行动');return s;
 }
@@ -100,7 +102,7 @@ function applyCommand(s,a){
  if(a.type==='move'||a.type==='hold'){
   if(!Array.isArray(a.ids)||!a.ids.length||new Set(a.ids).size!==a.ids.length||a.ids.some(id=>!s.soldiers.some(u=>u.id===id&&living(u))))throw Error('请选择可行动的小队');
   const chosen=s.soldiers.filter(u=>a.ids.includes(u.id));
-  if(a.type==='hold'){chosen.forEach(u=>{u.path=[];u.goal=null;});event(s,'hold',chosen[0]);return;}
+  if(a.type==='hold'){chosen.forEach(u=>{u.path=[];u.goal=null;if(s.version>=6){u.anchor={x:u.x,y:u.y};u.intent='guard';u.orderedAt=s.tick;}});event(s,'hold',chosen[0]);return;}
   if(!Number.isFinite(a.x)||!Number.isFinite(a.y)||!walkable(s,a.x,a.y,'human',.3))throw Error('墙体内不能落点');
   const deployment=s.version>=2&&s.phase==='deploy';
   if(deployment&&!insideExit(rescueMap(s.level,s.version),a))throw Error('在绿色接应区部署，开始行动后前往平民所在房间');
@@ -108,6 +110,7 @@ function applyCommand(s,a){
    const candidates=[{x:a.x,y:a.y},...[.65,1.3,1.95].flatMap(r=>Array.from({length:8},(_,i)=>({x:a.x+Math.cos(i*Math.PI/4)*r,y:a.y+Math.sin(i*Math.PI/4)*r})))];
    const target=candidates.find(p=>(!deployment||insideExit(rescueMap(s.level,s.version),p))&&walkable(s,p.x,p.y,'human',.3)&&spots.every(q=>dist(p,q)>.52)&&pathTo(s,u,p).length);
    if(!target)throw Error('无法到达这个位置');spots.push(target);route(s,u,target);
+   if(s.version>=6){u.anchor={...u.goal};u.intent='move';u.orderedAt=s.tick;}
    if(s.phase==='deploy'){u.x=round(target.x);u.y=round(target.y);u.path=[];}
   }
   event(s,'order',{x:a.x,y:a.y},{count:chosen.length});return;
@@ -118,6 +121,72 @@ function applyCommand(s,a){
   const hp=Math.round(150*(1+.6*s.upgrades.filter(x=>x==='gate').length));s.gates.push({...d,hp,maxHp:hp});s.gateCharges--;s.nav++;event(s,'build',d);note(s,'门障部署完成','gate');return;
  }
  throw Error('无法识别的指令');
+}
+
+// Local awareness only: walls block perception, and assistance stays near the
+// player's order. No autonomous missions or pursuit across the map.
+function visibleThreats(s,u,radius=5){return s.zombies.filter(z=>living(z)&&dist(u,z)<radius&&lineOfSight(s,u,z));}
+function safeStep(s,u,threats,toward,{radius=1.2,anchor=null,stayInExit=false}={}){
+ const m=rescueMap(s.level,s.version),candidates=[{x:u.x,y:u.y},...Array.from({length:12},(_,i)=>({x:round(u.x+Math.cos(i*Math.PI/6)*radius),y:round(u.y+Math.sin(i*Math.PI/6)*radius)}))];
+ const score=p=>Math.min(4,...threats.map(z=>dist(p,z)))*2.4-(toward?dist(p,toward)*.7:0)-(anchor?dist(p,anchor)*.3:0);
+ const valid=candidates.filter(p=>walkable(s,p.x,p.y,'human',u.r+.03)&&lineOfSight(s,u,p)&&(!anchor||dist(p,anchor)<=2.5)&&(!stayInExit||insideExit(m,p)));
+ valid.sort((a,b)=>score(b)-score(a));const best=valid[0];
+ return best&&dist(best,u)>.2&&score(best)>score(u)+.25?best:null;
+}
+function assistSoldiers(s){
+ const livingTroops=s.soldiers.filter(living),m=rescueMap(s.level,s.version);
+ if(s.tick>=s.autoMedicAt&&s.supplies>0){
+  const hurt=livingTroops.filter(u=>u.hp/u.maxHp<=.55&&walkable(s,u.x,u.y,'human',.25)).sort((a,b)=>a.hp/a.maxHp-b.hp/b.maxHp)[0];
+  const exposed=s.civilians.find(c=>civilian(c)&&c.infection>0&&walkable(s,c.x,c.y,'human',.25)&&livingTroops.some(u=>dist(c,u)<4&&lineOfSight(s,u,c)));
+  const patient=exposed||hurt;
+  if(patient){applyCommand(s,{type:'medic',x:patient.x,y:patient.y});s.autoMedicAt=s.tick+4*RESCUE_HZ;event(s,'autoAid',patient);}
+ }
+ if(s.tick%6)return;
+ for(const u of livingTroops){
+  if(s.tick-u.orderedAt<18)continue;
+  const threats=visibleThreats(s,u),close=threats.some(z=>dist(u,z)<2.3);
+  const vulnerable=u.hp/u.maxHp<.35||u.reload>0&&u.role!=='shield';
+  if(close&&vulnerable){
+   const cover=livingTroops.filter(v=>v!==u&&v.hp/v.maxHp>.45&&dist(u,v)<4&&lineOfSight(s,u,v)).sort((a,b)=>(a.role==='shield'?-3:0)+dist(u,a)-(b.role==='shield'?-3:0)-dist(u,b))[0];
+   const target=safeStep(s,u,threats,cover||u.anchor,{anchor:u.path.length&&u.intent==='move'?null:u.anchor,stayInExit:insideExit(m,u)&&insideExit(m,u.anchor)});
+   if(target){route(s,u,target);u.intent='cover';continue;}
+  }
+  if(u.intent==='move'&&u.path.length)continue;
+  if(u.role==='shield'&&u.hp/u.maxHp>.4){
+   const people=s.civilians.filter(c=>civilian(c)&&c.status!=='waiting'&&dist(c,u)<3&&lineOfSight(s,u,c));
+   const danger=threats.filter(z=>people.some(c=>dist(c,z)<3)).sort((a,b)=>dist(u,a)-dist(u,b))[0];
+   if(danger){
+    const c=people.sort((a,b)=>dist(a,danger)-dist(b,danger))[0],d=dist(c,danger)||1,reach=Math.min(.8,Math.max(0,d-.85));
+    const p={x:round(c.x+(danger.x-c.x)/d*reach),y:round(c.y+(danger.y-c.y)/d*reach)};
+    if(dist(p,u.anchor)<=2.5&&dist(p,danger)>.7&&walkable(s,p.x,p.y,'human',u.r+.03)&&lineOfSight(s,u,p)&&(!insideExit(m,u.anchor)||insideExit(m,p))){route(s,u,p);u.intent='protect';continue;}
+   }
+  }
+  if(u.intent==='cover'||u.intent==='protect'){route(s,u,u.anchor);u.intent='move';}
+  if(!u.path.length)u.intent='guard';
+ }
+}
+function assistCivilian(s,c,m,mobility){
+ const threats=visibleThreats(s,c,3.2),troops=s.soldiers.filter(u=>living(u)&&dist(c,u)<6&&lineOfSight(s,c,u));
+ const safety=u=>Math.min(4,...threats.map(z=>dist(u,z)))*1.2-dist(c,u)*.5;
+ troops.sort((a,b)=>safety(b)-safety(a)||a.id.localeCompare(b.id));
+ let leader=s.soldiers.find(u=>u.id===c.leader&&living(u));
+ if(c.status==='following'&&(!leader||threats.length&&troops[0]&&safety(troops[0])>safety(leader)+1)){leader=troops[0]||s.soldiers.filter(living).sort((a,b)=>dist(c,a)-dist(c,b))[0];c.leader=leader?.id;}
+ if(threats.length&&s.tick%6===0){
+  const target=safeStep(s,c,threats,leader||troops[0],{radius:.9,anchor:c.status==='waiting'?c.shelter:null,stayInExit:c.status==='boarding'});
+  if(target){route(s,c,target);c.avoidingUntil=s.tick+12;}
+ }
+ if(c.avoidingUntil>s.tick){move(s,c,2.8*mobility);return;}
+ if(c.status==='boarding'){
+  const n=Number(c.id.slice(1));if(!c.goal||c.avoidingUntil){route(s,c,{x:m.exit.x+.7+(n%4)*.65,y:m.exit.y+1.8+Math.floor(n%12/4)*.45});c.avoidingUntil=0;}
+  move(s,c,2.55*mobility);return;
+ }
+ if(c.status==='following'&&leader){
+  if(s.tick%9===0||c.nav!==s.nav||!c.goal||c.avoidingUntil){
+   const n=Number(c.id.slice(1)),nearExit=insideExit(m,leader),goal=nearExit?{x:m.exit.x+.7+(n%4)*.65,y:m.exit.y+.6+Math.floor(n%12/4)*.7}:leader;
+   if(nearExit||dist(c,leader)>1.1)route(s,c,goal);else c.path=[];c.avoidingUntil=0;
+  }
+  move(s,c,(dist(c,leader)>3?3.05:2.55)*mobility);
+ }else{c.path=[];c.goal=null;c.avoidingUntil=0;}
 }
 function zombieTargets(s,z){
  const m=rescueMap(s.level,s.version),f=field(s,cell(m,z),'zombie');
@@ -172,7 +241,7 @@ function rescueContacts(s){
    c.status='saved';c.path=[];s.saved++;event(s,'rescue',c);if(s.saved===m.quota||s.saved===m.total)note(s,'已撤离 '+s.saved+' 人','rescue');continue;
   }
   if(c.status==='waiting'){
-   const leaders=s.soldiers.filter(u=>living(u)&&dist(c,u)<2.6&&lineOfSight(s,c,u)).sort((a,b)=>dist(c,a)-dist(c,b));
+   const leaders=s.soldiers.filter(u=>living(u)&&dist(c,u)<(s.version>=6?3.4:2.6)&&lineOfSight(s,c,u)).sort((a,b)=>dist(c,a)-dist(c,b));
    if(leaders[0]){c.status='following';c.leader=leaders[0].id;event(s,'join',c);}
   }
  }
@@ -188,6 +257,7 @@ function extraction(s){
  if(s.version<3)return;
  const m=rescueMap(s.level,s.version),e=s.evac,queue=s.civilians.filter(c=>c.status==='boarding'&&insideExit(m,c)),at={x:m.exit.x+m.exit.w/2,y:m.exit.y+m.exit.h/2};
  if(!queue.length){if(e.phase!=='idle'&&e.phase!=='complete')e.phase=s.version>=4&&!e.active?'idle':'waiting';return;}
+ if(s.version>=6&&!e.active&&s.soldiers.some(u=>living(u)&&insideExit(m,u))){e.phase='called';note(s,'护送队自动呼叫接驳，守住撤离区','rescue');}
  if(s.version>=4&&!e.active&&e.phase!=='called'){e.phase='gathering';return;}
  if(e.phase==='idle'||e.phase==='complete'||e.phase==='called'){
   if(s.version>=4)e.active=true;
@@ -229,9 +299,11 @@ export function stepRescue(s){
   const wave=t.schedule[i],entry=m.entrances[wave.entry];t.spawned++;if(wave.assault){if(wave.tick===t.evac.alertTick)note(t,'狂暴尸潮突入！守住撤离区','danger');}else if(wave.wave!==t.wave){t.wave=wave.wave;note(t,'第 '+wave.wave+' 波丧尸进入'+entry.name,'wave');}
   const offset=(noise(t.seed,i,51)-.5)*.5;newZombie(t,{x:entry.x+offset,y:entry.y+Math.abs(offset)},wave.fast);
  }
+ if(t.version>=6)assistSoldiers(t);
  for(const u of t.soldiers.filter(living))move(t,u,2.7*mobility);
  if(t.version>=4)for(const crate of t.crates)if(!crate.claimed&&t.soldiers.some(u=>living(u)&&dist(u,crate)<.85&&lineOfSight(t,u,crate))){crate.claimed=true;t.supplies++;event(t,'supply',crate);note(t,'拾取补给箱，战术补给 +1','rescue');}
  for(const c of t.civilians.filter(civilian)){
+  if(t.version>=6){assistCivilian(t,c,m,mobility);continue;}
   if(c.status==='boarding'){
    if(!c.goal){const n=Number(c.id.slice(1));route(t,c,{x:m.exit.x+.7+(n%4)*.65,y:m.exit.y+1.8+Math.floor(n%12/4)*.45});}
    move(t,c,2.25*mobility);continue;
@@ -259,7 +331,7 @@ export function issueRescue(match,command){match.state=commandRescue(match.state
 export function advanceRescue(match){match.state=stepRescue(match.state);return match.state;}
 export function sealRescue(match){return {...structuredClone(match.record),end:{tick:match.state.tick,hash:fingerprint(match.state),winner:match.state.winner}};}
 export function* playbackRescue(record){
- if(!['rescue-1','rescue-2','rescue-3','rescue-4',RESCUE_FORMAT].includes(record?.format)||record.game!=='rescue'||!Array.isArray(record.commands)||record.commands.length>10000||!Number.isInteger(record.end?.tick)||record.end.tick<0||record.end.tick>3600)throw Error('救援回放无效');
+ if(!['rescue-1','rescue-2','rescue-3','rescue-4','rescue-5',RESCUE_FORMAT].includes(record?.format)||record.game!=='rescue'||!Array.isArray(record.commands)||record.commands.length>10000||!Number.isInteger(record.end?.tick)||record.end.tick<0||record.end.tick>3600)throw Error('救援回放无效');
  let s=initRescue({...record.config,version:Number(record.format.slice(-1))}),index=0;
  for(let tick=0;tick<=record.end.tick;tick++){
   while(index<record.commands.length&&record.commands[index].tick===tick)s=commandRescue(s,record.commands[index++].command);

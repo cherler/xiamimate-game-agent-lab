@@ -12,7 +12,7 @@ function cards(faction='W'){
  let s=initCards(123,[{faction},{faction:'F'}]);for(const actor of [0,1])s=stepCards(s,actor,{type:'mulligan',replace:[]});s.turn=0;s.players[0].mana=s.players[0].maxMana=5;return s;
 }
 function gathering(){
- let s=commandRescue(initRescue(),{type:'start'});s.civilians.forEach((c,i)=>Object.assign(c,{x:2.2+i%4*.65,y:12.2+Math.floor(i/4)*.45,status:'following',leader:'s0'}));return stepRescue(s);
+ let s=commandRescue(initRescue({version:4}),{type:'start'});s.civilians.forEach((c,i)=>Object.assign(c,{x:2.2+i%4*.65,y:12.2+Math.floor(i/4)*.45,status:'following',leader:'s0'}));return stepRescue(s);
 }
 test('分支升级保留牌局、八人棋阵和三关救援的旧完整回放',()=>{
  assert.equal(replayStrategy(fixture('cards-practice-complete.json')).version,3);

@@ -54,7 +54,7 @@ let epoch=0;const mounted=new Set();
 export function stopCardEffects(){epoch++;for(const n of mounted){n.getAnimations().forEach(a=>a.cancel());n.remove();}mounted.clear();}
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const reduce=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
-const box=el=>{if(!el)return null;const r=el.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,cx:r.x+r.width/2,cy:r.y+r.height/2};};
+const box=el=>{if(!el)return null;const r=el.getBoundingClientRect();if(!r.width||!r.height)return null;return {x:r.x,y:r.y,w:r.width,h:r.height,cx:r.x+r.width/2,cy:r.y+r.height/2};};
 function attach(node){document.body.append(node);mounted.add(node);return node;}
 function remove(node){node?.remove();mounted.delete(node);}
 function animate(node,frames,duration=400){if(reduce())return;node.animate(frames,{duration,easing:'cubic-bezier(.2,.75,.3,1)',fill:'forwards'}).finished.catch(()=>{});}
@@ -97,6 +97,17 @@ function flyCard(root,e,actor){
  const row=root.querySelector(e.actor===actor?'.hero-row.own':'.hero-row.enemy'),from=box(row?.querySelector('.deck-stack'))||box(row),to=box(root.querySelector(e.actor===actor?'.hand':'.enemy-hand'));if(!from||!to)return;
  const n=document.createElement('div');n.className='draw-flight';n.innerHTML=glyph('cards');n.style.cssText=`left:${from.cx}px;top:${from.cy}px`;attach(n);animate(n,[{transform:'translate(-50%,-50%) rotate(-8deg)',opacity:1},{transform:`translate(${to.cx-from.cx}px,${to.cy-from.cy}px) rotate(6deg)`,opacity:0}],360);setTimeout(()=>remove(n),400);sound('draw');
 }
+async function spendAndReturn(root,entry,actor,positions,pace){
+ const cost=entry.action.type==='cycle'?1:entry.action.type==='power'?2:0;if(!cost)return;
+ const row=root.querySelector(entry.actor===actor?'.hero-row.own':'.hero-row.enemy'),meter=box(row?.querySelector('.crystal-meter'));
+ if(meter){const label=document.createElement('span');label.className='card-energy-spent';label.innerHTML='−'+cost+glyph('gem');label.style.cssText=`left:${meter.cx}px;top:${meter.cy}px`;attach(label);animate(label,[{opacity:1,transform:'translate(-50%,-50%)'},{opacity:0,transform:'translate(-50%,-140%)'}],650);setTimeout(()=>remove(label),700);}
+ if(entry.action.type==='cycle'){
+  const from=positions.get(entry.action.uid),deck=box(row?.querySelector('.deck-stack')),to=deck||box(row?.querySelector('.hero-portrait'))||box(row);if(!from?.clone||!to)return;
+  let target;if(!deck){target=document.createElement('div');target.className='draw-flight card-return-target';target.innerHTML=glyph('cards');target.style.cssText=`left:${to.cx}px;top:${to.cy}px;transform:translate(-50%,-50%)`;attach(target);}
+  const node=from.clone.cloneNode(true);node.classList.add('card-return-flight');node.style.cssText=`left:${from.x}px;top:${from.y}px;width:${from.width}px;height:${from.height}px;margin:0`;attach(node);
+  animate(node,[{opacity:1,transform:'translate(0,0) scale(1)'},{opacity:.2,transform:`translate(${to.cx-from.cx}px,${to.cy-from.cy}px) scale(.18) rotate(-12deg)`}],360*pace);await sleep(360*pace);remove(node);remove(target);
+ }
+}
 export async function presentCardAction({root,before,after,entry,actor,paint,pace=1}){
  const token=epoch;if(!entry||before.version===1){const pos=captureTable(root);paint(after);await animateTable(root,before,after,pos,entry?.action);return;}
  if(root.querySelector('dialog[open]')||before.phase==='mulligan'){paint(after);return;}
@@ -106,7 +117,7 @@ export async function presentCardAction({root,before,after,entry,actor,paint,pac
  if(entry.action.type==='power'){p.mana=Math.max(0,p.mana-2);p.powerUsed=true;}
  if(entry.action.type==='cycle'){p.mana=Math.max(0,p.mana-1);p.cycled=true;const i=p.hand.findIndex(c=>c.uid===entry.action.uid);if(i>=0)p.hand.splice(i,1);else if(p.hand.every(c=>c.cardId===null))p.hand.pop();}
  if(entry.action.type==='attack'){const u=p.board.find(u=>u.uid===entry.source.uid);if(u)u.exhausted=true;}
- paint(shown);refreshPositions(root,positions);
+ paint(shown);await spendAndReturn(root,entry,actor,positions,pace);if(token!==epoch)return;refreshPositions(root,positions);
  let launch=null;
  if(['spell','unit','power','cycle'].includes(src.kind))launch=await reveal(root,src,actor,{pace,token});
  if(token!==epoch)return;

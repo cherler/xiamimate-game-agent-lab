@@ -32,6 +32,7 @@ let game='snake',mode='ready',match,opponent='planner',cap={laya:false,jev:false
 let humanDir='right',humanY=300,keyY=0,tactic='steady',tacticEpoch=-1,edge=-1;
 let prepared=null, gate=null, request=null, matchId='', nextAt=0, lastTime=0, remainder=0;
 let lastPaint=null,movedAt=0,reader=null,replayData=null,replayCursor=0,items=[],lastHud='',audio=null;
+let humanTrace=[],shotTrace=[];
 let difficulty='easy',botY=300,trail=[],foodBursts=[],snakeQueue=[],pongQueue=[],pongBrain=createPongOpponent();
 let pongView='bottom';try{const stored=localStorage.getItem('arena-pong-view');if(PONG_VIEWS.includes(stored))pongView=stored;}catch{}
 let sound=readAudioPreferences().enabled,runnerAudio=null,effectsBus=null,soundSystem=null;const history={};const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -77,7 +78,7 @@ function reset({stash=true}={}){
   if(!Number.isSafeInteger(seed)||seed<0||seed>0xffffffff)seed=41003;
   $('seed').value=seed;match=begin(game,seed);matchId=Array.from(crypto.getRandomValues(new Uint32Array(4)),n=>n.toString(16).padStart(8,'0')).join('');
   mode='ready';reader=null;replayData=null;items=[];lastPaint=null;humanDir='right';humanY=300;keyY=0;
-  edge=-1;botY=300;trail=[];foodBursts=[];snakeQueue=[];pongQueue=[];pongBrain=createPongOpponent();tactic='steady';tacticEpoch=-1;remainder=0;say('');
+  edge=-1;botY=300;trail=[];humanTrace=[];shotTrace=[];foodBursts=[];snakeQueue=[];pongQueue=[];pongBrain=createPongOpponent();tactic='steady';tacticEpoch=-1;remainder=0;say('');
   $('game-title').textContent=GAMES[game].name;$('objective').textContent=instructions[game][0];
   $('how').textContent=instructions[game][1];canvas.setAttribute('aria-label',GAMES[game].name+'棋盘');
   document.querySelectorAll('.game-tab').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.game===game)));
@@ -94,13 +95,18 @@ function setPongView(value){
   try{localStorage.setItem('arena-pong-view',pongView);}catch{}
 }
 function ate(before,after,now){
+  if(before?.game===after.game&&after.tick>before.tick){
+    if(after.game==='snake'){if(!humanTrace.length)humanTrace.push(before.bodies[0][0]);if(humanTrace.at(-1)!==after.bodies[0][0])humanTrace.push(after.bodies[0][0]);humanTrace=humanTrace.slice(-7);}
+    if(after.game==='pong'){if(after.serve||after.lastHit?.tick!==before.lastHit?.tick)shotTrace=[];if(!after.serve)shotTrace.push(after.ball.slice(0,2));shotTrace=shotTrace.slice(-38);}
+  }
+
   const events=foodEvents(before,after,now);foodBursts.push(...events);
   for(const e of events){const el=$('score'+e.actor);el.classList.remove('score-pop');void el.offsetWidth;el.classList.add('score-pop');el.title='吃到食物 +'+e.points;}
 }
 function paint(now=performance.now()){ 
   if(!canvas.clientWidth)return;
   foodBursts=foodBursts.filter(e=>now-e.at<800);canvas.dataset.foodBursts=foodBursts.length;
-  draw(canvas,snapshot(),{selected:edge,previous:lastPaint,progress:reduced?1:Math.min(1,(now-movedAt)/135),view:pongView,effects:foodBursts,now,reduced});
+  draw(canvas,snapshot(),{selected:edge,previous:lastPaint,progress:reduced?1:Math.min(1,(now-movedAt)/135),view:pongView,effects:foodBursts,headTrace:humanTrace,shotTrace,now,reduced});
   paintPongSkills();
 }
 function queuePongSkill(skill){
@@ -242,7 +248,7 @@ function frame(now){
   if(!playing()&&mode!=='replay'&&foodBursts.length)paint(now);
   lastTime=now;requestAnimationFrame(frame);
 }
-function watch(record){
+function watch(record){humanTrace=[];shotTrace=[];
   if(['kart-1','kart-2','dance-1','rhythm-1','rhythm-2','runner-1','runner-2','runner-3'].includes(record?.format)){
     const play={'kart-1':watchKart,'kart-2':watchKart,'dance-1':watchClassicDance,'rhythm-1':watchDance,'rhythm-2':watchDance,'runner-1':watchRunner,'runner-2':watchRunner,'runner-3':watchRunner}[record.format];play(record);
     if(!['kart-1','kart-2'].includes(record.format))closeKart();if(record.format!=='dance-1')closeClassicDance();if(!['rhythm-1','rhythm-2'].includes(record.format))closeDance();if(!['runner-1','runner-2','runner-3'].includes(record.format))closeRunner();document.body.classList.add('motion-mode');
@@ -251,7 +257,7 @@ function watch(record){
     document.querySelectorAll('[data-game]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.game===record.game)));window.history.replaceState(null,'','#'+record.game);return;
   }
   closeKart();closeDance();closeClassicDance();closeRunner();$('kart').hidden=true;$('dance').hidden=true;$('runner').hidden=true;
-  if(['rescue-1','rescue-2','rescue-3','rescue-4','rescue-5','rescue-6','rescue-7'].includes(record?.format)){watchRescue(record);saveCurrent();cancelDecision();mode='ready';closeChess();closeStrategy();$('arcade').hidden=true;$('strategy').hidden=true;$('rescue').hidden=false;document.querySelectorAll('[data-game]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.game==='rescue')));window.history.replaceState(null,'','#rescue');return;}
+  if(['rescue-1','rescue-2','rescue-3','rescue-4','rescue-5','rescue-6','rescue-7','rescue-8'].includes(record?.format)){watchRescue(record);saveCurrent();cancelDecision();mode='ready';closeChess();closeStrategy();$('arcade').hidden=true;$('strategy').hidden=true;$('rescue').hidden=false;document.querySelectorAll('[data-game]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.game==='rescue')));window.history.replaceState(null,'','#rescue');return;}
   closeRescue();$('rescue').hidden=true;
   if(['glimmer-1','glimmer-2','glimmer-3','glimmer-4'].includes(record?.format)){saveCurrent();cancelDecision();mode='ready';$('arcade').hidden=true;$('strategy').hidden=false;if(record.game==='chess'&&['glimmer-3','glimmer-4'].includes(record.format)){closeStrategy();watchChess(record);}else{closeChess();watchStrategy(record,cap);}document.querySelectorAll('[data-game]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.game===record.game)));window.history.replaceState(null,'','#'+record.game);return;}
   closeChess();closeStrategy();$('arcade').hidden=false;$('strategy').hidden=true;checkReplay(record);saveCurrent();cancelDecision();game=record.game;opponentMenu();reset({stash:false});

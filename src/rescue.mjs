@@ -1,7 +1,7 @@
 import {noise,fingerprint} from './common.mjs';
 import {RESCUE_HZ,rescueMap,insideExit,UPGRADES} from './rescue-maps.mjs';
 export {RESCUE_HZ,rescueMap,insideExit,UPGRADES};
-export const RESCUE_FORMAT='rescue-7';
+export const RESCUE_FORMAT='rescue-8';
 const round=v=>Math.round(v*10000)/10000;
 const dist=(a,b)=>Math.round(Math.hypot(a.x-b.x,a.y-b.y)*1e6)/1e6;
 const cell=(m,u)=>Math.floor(u.y)*m.w+Math.floor(u.x);
@@ -64,11 +64,12 @@ function spacing(s){
  }
  }
 }
-export function initRescue({level=1,seed=41003,difficulty='normal',upgrades=[],version=7}={}){
+export function initRescue({level=1,seed=41003,difficulty='normal',upgrades=[],version=8}={}){
  const m=rescueMap(level,version);if(!Number.isInteger(seed)||seed<0||seed>0xffffffff||!['normal','challenge'].includes(difficulty)||!Array.isArray(upgrades)||upgrades.length>(version>=7?5:2)||upgrades.some(x=>!UPGRADES[x]))throw Error('开局设置无效');
  const boost=id=>upgrades.filter(x=>x===id).length;
- if(![1,2,3,4,5,6,7].includes(version))throw Error('救援规则版本无效');
+ if(![1,2,3,4,5,6,7,8].includes(version))throw Error('救援规则版本无效');
  const s={game:'rescue',version,level,seed,difficulty,upgrades:[...upgrades],tick:0,phase:'deploy',winner:null,reason:'',nav:0,uid:0,eventId:0,events:[],log:[],gates:[],gateCharges:2+boost('gate'),saved:0,lost:0,kills:0,wave:0,spawned:0,schedule:[],zombies:[],bullets:[],soldiers:[],civilians:[],stats:{shots:0,hits:0,infected:0}};
+ if(version>=8)s.overdriveUntil=0;
  if(version>=3)s.evac={phase:'idle',progress:0,required:m.extraction.seconds*RESCUE_HZ,batches:0,alerts:0,alertTick:null,rageUntil:0};
  if(version>=4){s.evac.active=false;s.supplies=2;s.crates=m.supplies.map(c=>({...c,claimed:false}));s.decoys=[];s.supportUid=0;s.supportUsed={decoy:0,medic:0};}
  s.soldiers=m.spawn.map((p,i)=>({id:'s'+i,kind:'soldier',group:p.group,role:p.group===2?'shield':'rifle',x:p.x,y:p.y,r:p.group===2?.28:.23,hp:p.group===2?240:110,maxHp:p.group===2?240:110,angle:-Math.PI/2,path:[],goal:null,nav:0,cooldown:0,ammo:version>=5?10:p.group===2?8:6,reload:0,hitTick:-100}));
@@ -335,7 +336,7 @@ export function stepRescue(s){
  if(t.version>=7)siegeObjectives(t);
  if(t.version>=6)assistSoldiers(t);
  for(const u of t.soldiers.filter(living))move(t,u,2.7*mobility);
- if(t.version>=4)for(const crate of t.crates)if(!crate.claimed&&t.soldiers.some(u=>living(u)&&dist(u,crate)<.85&&lineOfSight(t,u,crate))){crate.claimed=true;t.supplies++;event(t,'supply',crate);note(t,'拾取补给箱，战术补给 +1','rescue');}
+ if(t.version>=4)for(const crate of t.crates)if(!crate.claimed&&t.soldiers.some(u=>living(u)&&dist(u,crate)<.85&&lineOfSight(t,u,crate))){crate.claimed=true;if(crate.reward==='overdrive'&&t.version>=8)claimOverdrive(t,crate);else{t.supplies++;event(t,'supply',crate);note(t,'拾取补给箱，战术补给 +1','rescue');}}
  for(const c of t.civilians.filter(civilian)){
   if(t.version>=6){assistCivilian(t,c,m,mobility);continue;}
   if(c.status==='boarding'){
@@ -365,7 +366,7 @@ export function issueRescue(match,command){match.state=commandRescue(match.state
 export function advanceRescue(match){match.state=stepRescue(match.state);return match.state;}
 export function sealRescue(match){return {...structuredClone(match.record),end:{tick:match.state.tick,hash:fingerprint(match.state),winner:match.state.winner}};}
 export function* playbackRescue(record){
- if(!['rescue-1','rescue-2','rescue-3','rescue-4','rescue-5','rescue-6',RESCUE_FORMAT].includes(record?.format)||record.game!=='rescue'||!Array.isArray(record.commands)||record.commands.length>10000||!Number.isInteger(record.end?.tick)||record.end.tick<0||record.end.tick>(record?.format==='rescue-7'?6300:3600))throw Error('救援回放无效');
+ if(!['rescue-1','rescue-2','rescue-3','rescue-4','rescue-5','rescue-6','rescue-7',RESCUE_FORMAT].includes(record?.format)||record.game!=='rescue'||!Array.isArray(record.commands)||record.commands.length>10000||!Number.isInteger(record.end?.tick)||record.end.tick<0||record.end.tick>(['rescue-7','rescue-8'].includes(record?.format)?6300:3600))throw Error('救援回放无效');
  let s=initRescue({...record.config,version:Number(record.format.slice(-1))}),index=0;
  for(let tick=0;tick<=record.end.tick;tick++){
   while(index<record.commands.length&&record.commands[index].tick===tick)s=commandRescue(s,record.commands[index++].command);
@@ -395,13 +396,13 @@ const WEAPONS={rifle:{damage:20,ammo:16,cooldown:6,reload:22,range:7},gunner:{da
 const weapon=u=>WEAPONS[u.role]||WEAPONS.rifle;
 function siegeShots(s){
  for(const u of s.soldiers.filter(living)){
-  const w=weapon(u);if(u.reload>0){u.reload--;if(!u.reload)u.ammo=w.ammo;continue;}if(u.cooldown>0){u.cooldown--;continue;}
+  const w=weapon(u),rapid=s.version>=8&&s.tick<s.overdriveUntil;if(u.reload>0){u.reload--;if(!u.reload)u.ammo=w.ammo;continue;}if(u.cooldown>0){u.cooldown--;continue;}
   const targets=[...s.zombies.filter(living),...s.objectives.filter(o=>o.type==='nest'&&!o.done&&o.hp>0)].filter(z=>dist(u,z)<=w.range&&lineOfSight(s,u,z));
   const priority=z=>z.type==='nest'?4:s.civilians.some(c=>civilian(c)&&dist(c,z)<2)?-4:0;
   targets.sort((a,b)=>dist(u,a)+priority(a)-dist(u,b)-priority(b)||a.id.localeCompare(b.id));const target=targets[0];if(!target)continue;
   const d=dist(u,target)||1,dx=round((target.x-u.x)/d),dy=round((target.y-u.y)/d);u.angle=round(Math.atan2(dy,dx));
   s.bullets.push({id:'b'+s.uid++,x:u.x,y:u.y,dx,dy,origin:u.id,left:w.range+.3,damage:w.damage*(1+.2*s.upgrades.filter(x=>x==='fire').length),kind:u.role==='grenadier'?'grenade':u.role,pierce:w.pierce||1,hitIds:[]});
-  s.stats.shots++;u.ammo--;u.cooldown=w.cooldown;event(s,'shot',u,{to:target.id,angle:u.angle,source:u.id,weapon:u.role});if(u.ammo<=0)u.reload=w.reload;
+  s.stats.shots++;u.ammo--;u.cooldown=rapid?Math.max(1,Math.floor(w.cooldown*.65)):w.cooldown;event(s,'shot',u,{to:target.id,angle:u.angle,source:u.id,weapon:u.role});if(u.ammo<=0)u.reload=rapid?Math.floor(w.reload*.65):w.reload;
  }
 }
 function siegeObjectives(s){
@@ -419,4 +420,14 @@ function siegeObjectives(s){
    if(o.active){const target=o.waypoints[o.checkpoint];if(!o.goal||o.nav!==s.nav)route(s,o,target);move(s,o,1.65);if(dist(o,target)<.25){o.checkpoint++;o.goal=null;o.path=[];o.progress=o.checkpoint;if(o.checkpoint===o.waypoints.length){o.done=true;event(s,'objective',o);note(s,'救援车已抵达接应区','rescue');s.supplies+=2;}}}
   }
  }
+}
+
+function claimOverdrive(s,crate){
+ s.overdriveUntil=s.tick+crate.seconds*RESCUE_HZ;crate.alertTick=s.tick+crate.warning*RESCUE_HZ;
+ for(const u of s.soldiers.filter(living)){u.ammo=weapon(u).ammo;u.reload=0;}
+ const m=rescueMap(s.level,s.version),entry=m.entrances.map((e,i)=>({e,i,d:dist(e,crate)})).filter(v=>!v.e.evacOnly).sort((a,b)=>a.d-b.d)[0].i;
+ const pending=s.schedule.slice(s.spawned),count=6+s.level*2;
+ for(let i=0;i<count;i++)pending.push({tick:crate.alertTick+i*6,entry,fast:i<3,wave:m.waves.length+20,cache:true});
+ s.schedule=[...s.schedule.slice(0,s.spawned),...pending.sort((a,b)=>a.tick-b.tick||a.wave-b.wave)];
+ event(s,'overdrive',crate);note(s,'速射 25 秒 · '+crate.warning+' 秒后惊动尸群','wave');
 }

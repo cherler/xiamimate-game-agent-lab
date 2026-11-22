@@ -43,7 +43,7 @@ function paint(){if(!active||!state)return;const $=id=>root().querySelector('#rh
  $('judgment').textContent=recent?(RHYTHM_JUDGMENTS[feedback.kind]?.name||feedback.reason):'';$('judgment').dataset.kind=feedback?.kind||'';$('timing').textContent=recent?(feedback.reason||feedback.delta!==null&&feedback.delta!==undefined?feedback.reason||(feedback.delta>0?'+':'')+feedback.delta+' ms':''):'';
  $('pause').textContent=pending?'准备音乐…':running?'暂停':'继续';$('pause').disabled=pending||!state.time||state.phase==='finished'||!!watch&&state.time>=watch.end.time;$('export').disabled=!state.time||pending;
  for(const id of ['song','level'])$(id).disabled=running||pending||!!watch;$('offset').disabled=state.time>0||pending;
- root().querySelectorAll('[data-rhythm-lane]').forEach((b,i)=>b.setAttribute('aria-pressed',String(state.held[i])));
+ root().querySelectorAll('[data-rhythm-lane]').forEach((b,i)=>{b.setAttribute('aria-pressed',String(state.held[i]));b.classList.toggle('holding-note',!!state.holds[i]);});
  const overlay=$('overlay'),intro=4*60000/SONGS[state.song].bpm;let content='';
  if(state.phase==='finished'){const accuracy=rhythmAccuracy(p),grade=accuracy>=95?'S':accuracy>=80?'A':accuracy>=60?'B':'C';content=`<b>${p.score===ai.score?'平分秋色':p.score>ai.score?'你赢了':'对手领先'} <em>${grade}</em></b><span>${p.score.toLocaleString()} 分 · 准确率 ${accuracy}%</span><div class="dance-results">${Object.entries(p.counts).map(([k,n])=>`<span>${RHYTHM_JUDGMENTS[k].name}<b>${n}</b></span>`).join('')}</div><span>最长连击 ${p.bestCombo}${p.counts.miss===0?' · 全连！':''}</span><button id="rhythm-go" class="primary">再奏一曲</button>`;}
  else if(watch&&!running&&state.time>=watch.end.time)content='<b>回放结束</b><button id="rhythm-replay-again" class="primary">再看一次</button>';

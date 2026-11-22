@@ -25,7 +25,7 @@ const staticDemo=globalThis.ARENA_STATIC===true;
 const sessions=new Map();
 const labels={planner:'程序寻路',forage:'争食',cautious:'保留退路',pressure:'抢占近路',rule:'规则',search:'搜索',random:'随机',fixed:'守中',laya:'Laya',jev:'Jev',fallback:'规则接手',forced:'唯一安全路'};
 const instructions={
-  snake:['与对手争同一颗食物，撞墙或撞蛇出局。','方向键、WASD 或滑动棋盘转向。'],
+  snake:['争食 · 避撞','方向键、WASD 或滑动棋盘转向。'],
   pong:['移动左拍回球，先得 7 分或限时内领先获胜。','拖动球拍、按住 ↑ ↓ 或 W S 移动。']
 };
 let game='snake',mode='ready',match,opponent='planner',cap={laya:false,jev:false,rooms:location.protocol.startsWith('http')&&!staticDemo},loaded=false;
@@ -137,7 +137,7 @@ function refresh(force=false){
   $('timer').textContent=String(Math.floor(remaining/60)).padStart(2,'0')+':'+String(remaining%60).padStart(2,'0');
   $('status').textContent=({ready:'待开局',paused:'已暂停',finished:'已结束',replay:'回放中','replay-paused':'回放暂停','replay-ended':'回放结束'})[mode]||
      '对局中';
-  $('start').textContent=({ready:'开始对局',playing:'暂停',paused:'继续对局',finished:'再来一局',replay:'暂停回放','replay-paused':'继续回放','replay-ended':'开始对局'})[mode];
+  $('start').textContent=({ready:'开始',playing:'暂停',paused:'继续',finished:'再来一局',replay:'暂停回放','replay-paused':'继续回放','replay-ended':'开始'})[mode];
   $('restart').hidden=mode==='ready';$('seed').disabled=$('new-seed').disabled=$('opponent').disabled=mode!=='ready'&&!finished;
   $('restart').textContent=game==='pong'&&!(s.version>=3)?'技巧版 · 新开局':'重开';
   $('last').disabled=!history[game]&&!lastRecord();$('export').disabled=!(isReplay?replayData:match.record.frames.length);
@@ -146,7 +146,7 @@ function refresh(force=false){
   if(!$('result').hidden){
     const partial=finished&&s.winner===null;
     $('result-title').textContent=finished?(partial?'片段结束':s.winner===-1?'平局':$('name'+s.winner).textContent+'获胜'):'已暂停';
-    $('result-reason').textContent=finished?(s.reason||'回放已播放完毕'):'点继续返回棋盘';
+    $('result-reason').textContent=finished?(s.reason||'回放已播放完毕'):'';
   }
   $('rally').textContent=game==='pong'?'本次连击 '+s.rally+' · 最高 '+s.bestRally:'食物 '+s.score[0]+' : '+s.score[1];
   $('difficulty').disabled=mode==='playing';

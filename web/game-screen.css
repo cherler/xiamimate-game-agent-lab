@@ -46,14 +46,14 @@ body.game-screen [data-screen-settings]{display:none!important}
 #screen-shade{position:fixed;inset:0;background:#0d2539b8;z-index:60;backdrop-filter:blur(2px)}
 #screen-settings-head{position:fixed;z-index:72;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));top:calc(58px + env(safe-area-inset-top,0px));display:flex;align-items:center;gap:7px;background:#edf4ef;padding:12px;border-radius:12px 12px 0 0;border:1px solid #bbcfca;color:#19374b}
 #screen-settings-head b{font-size:14px;flex:1}#screen-settings-head button{min-height:42px;padding:5px 9px;background:#fff;border:1px solid #b9cdc7;border-radius:7px;font-size:12px}
-body.game-screen.screen-settings-open [data-screen-settings]{display:flex!important;position:fixed;z-index:71;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));top:calc(124px + env(safe-area-inset-top,0px));bottom:max(12px,env(safe-area-inset-bottom,0px));padding:16px;margin:0;border:1px solid #bbcfca;border-top:0;background:#edf4ef;border-radius:0 0 12px 12px;color:#19374b;overflow:auto;overscroll-behavior:contain;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:16px;width:auto;max-height:none;max-width:none}
-body.game-screen.screen-settings-open [data-screen-settings]>label{flex:none;display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:44px;font-size:15px}
-body.game-screen.screen-settings-open [data-screen-settings] select{width:65%;max-width:none;min-height:44px;font-size:15px;padding:8px}
-body.game-screen.screen-settings-open [data-screen-settings]>span{flex:none}
-body.game-screen.screen-settings-open [data-screen-settings] button{min-height:44px;font-size:13px;margin:0}
-body.game-screen.screen-settings-open .dance-offset[open]{position:static;width:auto;max-width:none}
-body.game-screen.screen-settings-open [data-screen-settings] .setup{display:block}
-body.game-screen.screen-settings-open [data-screen-settings] .setup select{width:100%}
+body:is(.game-screen,.play-first).screen-settings-open [data-screen-settings]{display:flex!important;position:fixed;z-index:71;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));top:calc(124px + env(safe-area-inset-top,0px));bottom:max(12px,env(safe-area-inset-bottom,0px));padding:16px;margin:0;border:1px solid #bbcfca;border-top:0;background:#edf4ef;border-radius:0 0 12px 12px;color:#19374b;overflow:auto;overscroll-behavior:contain;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:16px;width:auto;max-height:none;max-width:none}
+body:is(.game-screen,.play-first).screen-settings-open [data-screen-settings]>label{flex:none;display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:44px;font-size:15px}
+body:is(.game-screen,.play-first).screen-settings-open [data-screen-settings] select{width:65%;max-width:none;min-height:44px;font-size:15px;padding:8px}
+body:is(.game-screen,.play-first).screen-settings-open [data-screen-settings]>span{flex:none}
+body:is(.game-screen,.play-first).screen-settings-open [data-screen-settings] button{min-height:44px;font-size:13px;margin:0}
+body:is(.game-screen,.play-first).screen-settings-open .dance-offset[open]{position:static;width:auto;max-width:none}
+body:is(.game-screen,.play-first).screen-settings-open [data-screen-settings] .setup{display:block}
+body:is(.game-screen,.play-first).screen-settings-open [data-screen-settings] .setup select{width:100%}
 #screen-games{position:fixed;inset:calc(58px + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) max(12px,env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));z-index:73;background:#edf4ef;color:#19374b;border-radius:14px;padding:16px;overflow:auto;overscroll-behavior:contain}
 #screen-games header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
 #screen-games header b{font-size:20px}#screen-games button{min-height:44px;padding:8px 12px;border:1px solid #b8cec6;border-radius:9px;background:#fff}
@@ -121,21 +121,21 @@ body.game-screen .visual-table .hero{min-width:0;max-width:none;min-height:0;hei
 body.game-screen .visual-table .hero-portrait>svg{height:42px;width:45px}
 body.game-screen .visual-table .hero-portrait{width:44px}
 body.game-screen .visual-table .unit-portrait>svg{height:100%}
-body.game-screen.screen-settings-open .card-topbar{align-items:stretch}
-body.game-screen.screen-settings-open .card-topbar .deck-selects{display:flex;flex-direction:column;width:100%;gap:12px}
-body.game-screen.screen-settings-open .card-topbar .deck-selects select{width:100%;max-width:none;background:white;color:#244654}
-body.game-screen.screen-settings-open .card-topbar .card-toolbar{display:flex;gap:12px}
-body.game-screen.screen-settings-open .card-topbar .card-toolbar button{min-width:62px}
-body.game-screen.screen-settings-open .card-topbar .card-toolbar #card-settings{width:auto;font-size:14px}
-body.game-screen.screen-settings-open .card-topbar #card-settings:after{content:'对战设置'}
+body:is(.game-screen,.play-first).screen-settings-open .card-topbar{align-items:stretch}
+body:is(.game-screen,.play-first).screen-settings-open .card-topbar .deck-selects{display:flex;flex-direction:column;width:100%;gap:12px}
+body:is(.game-screen,.play-first).screen-settings-open .card-topbar .deck-selects select{width:100%;max-width:none;background:white;color:#244654}
+body:is(.game-screen,.play-first).screen-settings-open .card-topbar .card-toolbar{display:flex;gap:12px}
+body:is(.game-screen,.play-first).screen-settings-open .card-topbar .card-toolbar button{min-width:62px}
+body:is(.game-screen,.play-first).screen-settings-open .card-topbar .card-toolbar #card-settings{width:auto;font-size:14px}
+body:is(.game-screen,.play-first).screen-settings-open .card-topbar #card-settings:after{content:'对战设置'}
 body.game-screen .rs-layout{align-items:stretch}
 body.game-screen .rs-map-wrap{container-type:size}
 body.game-screen #rescue-board{width:min(100cqw,150cqh);height:auto;max-height:none;object-fit:fill}
 body.game-screen .rs-map-wrap.rs-zoomed #rescue-board{width:200%;height:auto}
-body.game-screen.screen-settings-open .rs-heading{display:flex;flex-direction:column;gap:12px;align-items:stretch;margin:0}
-body.game-screen.screen-settings-open .rs-heading>div:first-child{display:none}
-body.game-screen.screen-settings-open .rs-missions{flex-wrap:wrap;gap:4px}
-body.game-screen.screen-settings-open .rs-heading #rs-export{margin:0}
+body:is(.game-screen,.play-first).screen-settings-open .rs-heading{display:flex;flex-direction:column;gap:12px;align-items:stretch;margin:0}
+body:is(.game-screen,.play-first).screen-settings-open .rs-heading>div:first-child{display:none}
+body:is(.game-screen,.play-first).screen-settings-open .rs-missions{flex-wrap:wrap;gap:4px}
+body:is(.game-screen,.play-first).screen-settings-open .rs-heading #rs-export{margin:0}
 body.game-screen .pong-skills button{min-height:44px}
 body.game-screen .pong-skills small,body.game-screen .pong-skills kbd{display:none}
 @media(orientation:portrait) and (max-height:700px){
@@ -189,7 +189,7 @@ body.game-screen .pong-skills small,body.game-screen .pong-skills kbd{display:no
 }
 body.game-screen .visual-table{width:100%;align-self:stretch}
 body.game-screen .screen-motion-actions{display:flex;gap:12px}
-body.game-screen.screen-settings-open .screen-motion-actions button{flex:1}
+body:is(.game-screen,.play-first).screen-settings-open .screen-motion-actions button{flex:1}
 @media(orientation:landscape) and (max-height:550px){
  body.game-screen .rs-simple-commands .rs-orders button{flex-direction:column;gap:3px;word-break:keep-all;white-space:nowrap}
 }

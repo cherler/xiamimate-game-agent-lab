@@ -1,0 +1,135 @@
+/* Keep decisions on the field; put configuration and diagnostics in one drawer. */
+body.play-first [data-screen-settings]{display:none!important}
+body.play-first.screen-settings-open [data-audio-settings]{display:block}
+body.play-first .head-actions :is(#sound,#import,#audio-open){display:none}
+body.play-first :is(#how,#rally,.pong-skills small,.rhythm-side,.motion-top,.rs-legend,.rs-team-state,.rs-evac){display:none}
+body.play-first :is(#notice,#rs-notice,#rhythm-notice):empty{display:none}
+body.play-first .action-timeline[hidden]{display:none}
+body.play-first .card-cycle{display:flex;align-items:center;gap:4px;font-size:12px;padding:4px 7px;width:auto;min-width:84px;flex:none;border-radius:7px;white-space:nowrap}
+body.play-first .card-cycle b{display:flex;align-items:center;gap:2px}
+body.play-first .card-cycle svg{width:15px;height:15px}
+body.play-first .rhythm-layout{grid-template-columns:minmax(0,1fr);justify-items:center}
+body.play-first .rhythm-cabinet{width:100%;max-width:760px}
+body.play-first .rhythm-note-demo{display:flex;gap:24px;height:90px;margin:0 0 7px}
+.rhythm-note-demo>div{width:64px;height:70px;position:relative;border:1px solid #7ba1bb55;border-radius:6px;background:#163951}
+.rhythm-note-demo .demo-note{display:block;position:absolute;left:10px;right:10px;top:8px;height:10px;background:#efcd7e;border:2px solid #fff0ba;border-radius:4px;animation:note-demo 2.4s ease-in-out infinite}
+.rhythm-note-demo .demo-note.long{--travel:16px;top:4px;height:38px;background:#57b6a9;border-color:#b2f6d8}
+.rhythm-note-demo em{position:absolute;left:0;right:0;bottom:10px;height:3px;background:#fff6cc;box-shadow:0 0 8px #f7e9ac77}
+.rhythm-note-demo span{position:absolute;top:73px;left:0;right:0;font-size:12px;color:#e6efea}
+@keyframes note-demo{0%,15%{transform:translateY(0);opacity:.6}55%,80%{transform:translateY(var(--travel,40px));opacity:1}100%{transform:translateY(0);opacity:.6}}
+body.play-first .ac-top h1,body.play-first .ac-top>div:first-child>span,body.play-first .ac-standings h2,body.play-first .ac-player small,body.play-first .ac-scout-bar small,body.play-first .ac-shop-heading>span{display:none}
+body.play-first .ac-player{grid-template-columns:28px 1fr;padding:9px 3px;gap:3px}
+body.play-first .ac-player>span:nth-child(2){display:none}
+body.play-first .ac-player-avatar svg{width:28px}
+body.play-first .ac-player strong{font-size:16px}
+body.play-first .ac-layout{grid-template-columns:70px minmax(0,1fr);gap:12px}
+body.play-first .ac-sidebar{display:none}
+body.play-first #ac-info-toggle{display:flex}
+body.play-first .ac-sidebar.is-open{display:block;position:absolute;z-index:20;right:0;top:0;bottom:0;width:min(280px,85%);padding:12px;background:#f1f5eb;border:1px solid #91ad89;border-radius:9px;box-shadow:0 5px 20px #214c3e45}
+body.play-first .ac-sidebar-heading{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+body.play-first .ac-center:has(.ac-phase[data-phase=prep]) .ac-combat-bar>span{display:none}
+body.play-first .ac-combat-bar>div{margin-left:auto}
+body.play-first .ac-preview-button{font-size:16px;min-width:30px}
+.ac-deploy-cue{position:absolute;inset:0;width:100%;height:100%;z-index:5;pointer-events:none;overflow:visible}
+.ac-deploy-cue path{fill:none;stroke:#fff3ad;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 1px #294d36);animation:deploy-cue 1.6s ease-in-out infinite}
+.ac-deploy-cue rect{fill:#f2efa733;stroke:#fff3ad;stroke-width:.7;stroke-dasharray:2 1}
+@keyframes deploy-cue{50%{opacity:.45;transform:translateY(-2px)}}
+body.play-first .rs-layout{grid-template-columns:minmax(0,1fr)}
+body.play-first .rs-center{position:relative;min-height:0}
+body.play-first .rs-simple-commands{justify-content:center;background:transparent;border:0;padding:4px 0}
+body.play-first .rs-orders{justify-content:center;gap:8px}
+body.play-first .rs-orders button{min-width:78px;min-height:44px;flex-direction:row;gap:5px;padding:6px 15px;font-size:12px}
+body.play-first .rs-map-head #rs-phase{display:none}
+body.play-first .rs-map-head{min-height:40px;padding:4px 12px}
+body.play-first .rs-live-bar{padding:4px 10px;min-height:32px}
+body.play-first #rs-field-goals{font-size:12px;gap:8px 14px}
+body.play-first #rs-result:not([hidden]){position:absolute;inset:15% 8% auto;max-height:75%;overflow:auto;z-index:12;box-shadow:0 0 0 100vmax #14334488}
+body.play-first.screen-settings-open .rs-heading{display:flex;flex-wrap:wrap}
+body.play-first.screen-settings-open .rs-heading h1,body.play-first.screen-settings-open .rs-eyebrow{display:none}
+body.play-first.screen-settings-open .rs-missions{display:grid;grid-template-columns:repeat(2,1fr);width:100%}
+body.play-first.screen-settings-open .rs-missions button span{display:block}
+body.play-first.screen-settings-open .screen-motion-actions{display:flex;gap:8px}
+body.play-first.screen-settings-open .rs-rail section{margin-bottom:0;padding-bottom:14px}
+body.play-first.screen-settings-open .card-topbar{min-height:0}
+body.play-first.screen-settings-open .card-topbar h1{display:none}
+body.play-first.screen-settings-open .deck-selects{display:grid;gap:12px;margin:0}
+body.play-first.screen-settings-open .deck-selects select{width:100%}
+@media(min-width:701px){
+ body.play-first:not(.game-screen) .head-inner{min-height:48px}
+ body.play-first:not(.game-screen) .brand{font-size:18px}
+ body.play-first:not(.game-screen) .head-actions button{font-size:12px;padding:5px 12px}
+ body.play-first:not(.game-screen) main{padding:10px 24px 16px}
+ body.play-first:not(.game-screen) .game-tab{padding:5px 13px;font-size:13px}
+ body.play-first:not(.game-screen) .arena{grid-template-columns:minmax(0,1fr);margin-top:12px}
+ body.play-first:not(.game-screen) .table-area{max-width:1000px;width:100%;margin:0 auto}
+ body.play-first:not(.game-screen) .title-row{align-items:center;margin-bottom:8px}
+ body.play-first:not(.game-screen) .title-row>div{display:flex;align-items:center;gap:12px}
+ body.play-first:not(.game-screen) .title-row h1{font-size:22px}
+ body.play-first:not(.game-screen) #objective{font-size:12px;margin:0}
+ body.play-first:not(.game-screen) #board{height:clamp(270px,calc(100dvh - 330px),620px)}
+ body.play-first:not(.game-screen)[data-arcade=pong] .table-area{display:grid;grid-template-columns:minmax(0,1fr) 180px;grid-template-rows:auto auto auto 1fr;gap:10px 18px}
+ body.play-first:not(.game-screen)[data-arcade=pong] .title-row{grid-column:1 / -1}
+ body.play-first:not(.game-screen)[data-arcade=pong] .cabinet{grid-column:1;grid-row:2 / 5}
+ body.play-first:not(.game-screen)[data-arcade=pong] #board{height:clamp(270px,calc(100dvh - 310px),690px)}
+ body.play-first:not(.game-screen)[data-arcade=pong] .start-row{grid-column:2;grid-row:2;align-self:start;margin:0;flex-wrap:wrap}
+ body.play-first:not(.game-screen)[data-arcade=pong] #pong-view-controls{grid-column:2;grid-row:3;align-self:start;flex-wrap:wrap;margin:0}
+ body.play-first:not(.game-screen)[data-arcade=pong] #pong-view{width:100%}
+ body.play-first:not(.game-screen)[data-arcade=pong] .controls-row{grid-column:2;grid-row:4;align-self:start}
+ body.play-first:not(.game-screen)[data-arcade=pong] #notice{grid-column:1 / -1}
+ body.play-first:not(.game-screen) .controls-row{margin-top:8px;justify-content:center}
+ body.play-first:not(.game-screen):has(.visual-table) #strategy{margin-top:10px}
+ body.play-first:not(.game-screen) .visual-table{height:calc(100dvh - 184px);min-height:580px;max-height:900px}
+ body.play-first:not(.game-screen) .action-timeline{min-height:32px;height:32px;margin:3px 0 7px;padding:0 8px}
+ body.play-first:not(.game-screen) .action-chip{height:30px}
+ body.play-first:not(.game-screen) .action-thumb{width:26px;height:26px}
+ body.play-first:not(.game-screen) .rs-center{height:calc(100dvh - 128px);display:flex;flex-direction:column}
+ body.play-first:not(.game-screen) .rs-map-wrap{flex:1;min-height:0;container-type:size;display:grid;place-items:center;background:#183747}
+ body.play-first:not(.game-screen) #rescue-board{width:min(100cqw,150cqh);height:auto;max-height:100%;object-fit:fill}
+ body.play-first:not(.game-screen) .rs-map-wrap.rs-zoomed{display:block;overflow:auto}
+ body.play-first:not(.game-screen) .rs-zoomed #rescue-board{width:175%;max-height:none;max-width:none}
+ body.play-first:not(.game-screen) #rescue{margin-top:10px}
+ body.play-first:not(.game-screen).screen-settings-open [data-screen-settings],body.play-first:not(.game-screen) #screen-settings-head{left:auto;right:16px;width:min(520px,calc(100vw - 32px))}
+}
+@media(max-width:650px){
+ body.play-first .ac-layout{display:flex;gap:4px}
+ body.play-first .ac-standings{grid-template-columns:repeat(8,minmax(0,1fr));gap:3px}
+ body.play-first .ac-player{padding:2px;min-height:30px;display:flex;flex-direction:row;justify-content:center}
+ body.play-first .ac-player-avatar{display:none}
+ body.play-first .ac-player strong{font-size:12px}
+ body.play-first .ac-preview-button{font-size:14px;min-width:26px}
+ body.play-first .rs-orders button{min-width:70px}
+ body.play-first .card-cycle{font-size:10px;gap:2px}
+}
+@media(max-width:370px){body.play-first .card-cycle{min-width:0;padding:4px}body.play-first .card-cycle>span{display:none}}
+@media(orientation:landscape) and (max-height:550px){
+ body.play-first.game-screen #rescue .rs-center{display:block}
+ body.play-first.game-screen .rs-map-wrap{position:absolute;inset:0;min-height:0;height:100%;container-type:size;display:grid;place-items:center;border:0;background:#183747}
+ body.play-first.game-screen #rescue-board{width:min(100cqw,150cqh);height:auto;max-height:100%;object-fit:fill}
+ body.play-first.game-screen .rs-map-head{position:absolute;z-index:2;left:5px;top:5px;width:clamp(80px,calc((100vw - (100dvh - 54px)*1.5)/2 - 10px),140px);min-height:32px;padding:4px 8px;border:0;border-radius:6px}
+ body.play-first.game-screen .rs-map-head>div{display:none}
+ body.play-first.game-screen .rs-map-head #rs-start{display:none}
+ body.play-first.game-screen .rs-live-bar{position:absolute;z-index:2;left:5px;top:44px;width:clamp(80px,calc((100vw - (100dvh - 54px)*1.5)/2 - 10px),140px);display:flex;flex-direction:column;align-items:stretch;border:0;padding:8px;background:#e0ede9e8;border-radius:6px}
+ body.play-first.game-screen #rs-field-goals{display:flex;flex-direction:column;gap:6px;font-size:11px}
+ body.play-first.game-screen #rs-zoom{min-height:36px}
+ body.play-first.game-screen .rs-simple-commands{position:absolute;z-index:2;right:5px;bottom:5px;width:clamp(80px,calc((100vw - (100dvh - 54px)*1.5)/2 - 10px),140px);margin:0;padding:0}
+ body.play-first.game-screen .rs-simple-commands .rs-orders{width:100%;display:flex;flex-direction:column;gap:6px}
+ body.play-first.game-screen .rs-simple-commands .rs-orders button{min-height:44px;min-width:0;flex-direction:row;padding:6px 4px}
+ body.play-first.game-screen #rs-notice:not(:empty){position:absolute;z-index:3;bottom:0;left:5px;max-width:clamp(80px,calc((100vw - (100dvh - 54px)*1.5)/2 - 10px),140px);background:#edf4ef;padding:6px}
+ body.play-first.game-screen .rhythm-note-demo{height:68px;margin-bottom:5px;gap:18px}
+ body.play-first.game-screen .rhythm-note-demo>div{height:48px;width:56px}
+ body.play-first.game-screen .rhythm-note-demo span{top:49px}
+ body.play-first.game-screen .rhythm-note-demo .demo-note{top:1px;--travel:25px}
+ body.play-first.game-screen .rhythm-note-demo .demo-note.long{height:22px;--travel:15px}
+}
+@media(prefers-reduced-motion:reduce){.ac-deploy-cue path,.rhythm-note-demo .demo-note{animation:none}}
+
+body.play-first.game-screen .rhythm-cabinet{max-width:none}
+
+@media(orientation:landscape) and (max-height:550px){
+ body.play-first.game-screen .ac-top{display:none}
+ body.play-first.game-screen .rs-map-wrap.rs-zoomed{display:block;overflow:auto}
+ body.play-first.game-screen .rs-map-wrap.rs-zoomed #rescue-board{width:200%;max-height:none}
+}
+
+body.touch-screen .kart-drift-demo kbd{display:none}
+body.touch-screen .motion-key-demo{display:none}

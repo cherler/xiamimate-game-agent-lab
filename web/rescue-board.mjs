@@ -110,7 +110,13 @@ export function drawRescue(canvas,s,{selected='all',selectedIds=null,building=fa
   if(e.kind==='medic'||e.kind==='supply'){circle(e.x,e.y,.4+p*.6,null,'#29946b',.06);text(e.kind==='supply'?'补给 +1':e.amount?'+'+e.amount:'抢救',e.x,e.y-.4-p*.4,.38,'#217b56');}
   ctx.globalAlpha=1;
  }
- if(s.phase==='deploy'){text('接应部署',1.1,.55,.22,'#a7c7cf','left');text('部署',22.9,.55,.26,'#a7c7cf','right');}
+ if(s.level===1&&(s.phase==='deploy'||s.phase==='running'&&s.tick<300)&&!orderMarker&&!s.soldiers.some(u=>u.path.length)){
+  const civilians=s.civilians.filter(c=>c.status==='waiting'),u=chosen[0];
+  if(civilians.length){const x=civilians.reduce((n,c)=>n+c.x,0)/civilians.length,y=Math.min(...civilians.map(c=>c.y))-1;
+   circle(x,y,.45,'#fff1caaa','#a77935',.045);text('↓',x,y,.6,'#896329');text('接应',x,y-.8,.42,'#896329');
+   if(u)text('你',u.x,u.y-.85,.4,'#17698a');
+  }
+ }
  if(selectionBox){const b=selectionBox,x=Math.min(b.x,b.x2),y=Math.min(b.y,b.y2),w=Math.abs(b.x2-b.x),h=Math.abs(b.y2-b.y);ctx.fillStyle='#278db52a';ctx.fillRect(x,y,w,h);ctx.strokeStyle='#eaffff';ctx.lineWidth=.12;ctx.strokeRect(x,y,w,h);ctx.strokeStyle='#157797';ctx.lineWidth=.05;ctx.strokeRect(x,y,w,h);}
  if(movePreview){ctx.setLineDash([.16,.16]);for(const u of chosen)line(u,movePreview,'#2187ad99',.045);ctx.setLineDash([]);circle(movePreview.x,movePreview.y,.36,null,'#187c9f',.07);}
  if(orderMarker){const p=orderMarker,color=p.ok?'#167c9e':'#b63d53';circle(p.x,p.y,.5,'#f5ffffb0',color,.07);text(p.ok?'↓':'×',p.x,p.y,.55,color);text(p.ok?p.count+' 人 →': '不可到达',p.x,Math.max(.6,p.y-.8),.4,color);}

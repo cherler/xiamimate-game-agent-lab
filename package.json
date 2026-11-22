@@ -45,7 +45,9 @@
     "check:runner-stride": "node scripts/check-runner-stride-browser.mjs",
     "check:runner-depth": "node scripts/check-runner-depth-browser.mjs",
     "check:rescue-siege": "node scripts/check-rescue-siege-browser.mjs",
-    "check:runner-music": "node scripts/check-runner-music-browser.mjs"
+    "check:runner-music": "node scripts/check-runner-music-browser.mjs",
+    "check:play-first": "node scripts/check-play-first-browser.mjs",
+    "check:play-access": "node scripts/check-play-first-access.mjs"
   },
   "devDependencies": {
     "esbuild": "0.28.2"

@@ -11,14 +11,14 @@ const fullscreen=()=>document.fullscreenElement||document.webkitFullscreenElemen
 const gameRoot=()=>$(roots[current]);
 function pauseGame(){window.dispatchEvent(new Event('glimmer-screen-pause'));if(current==='chess'){const b=$('ac-phase-pause');if(b&&!b.disabled&&b.getAttribute('aria-pressed')!=='true')b.click();}}
 function panel(){return gameRoot()?.querySelector(panelSelectors[current]||'not-an-element');}
-function closePanels(){menu=false;lobby=false;document.body.classList.remove('screen-settings-open');$('screen-games').hidden=true;$('screen-shade').hidden=true;$('screen-settings-head').hidden=true;document.querySelectorAll('[data-screen-settings]').forEach(n=>{n.removeAttribute('role');n.removeAttribute('aria-modal');});$('screen-menu').setAttribute('aria-expanded','false');$('screen-games-toggle').setAttribute('aria-expanded','false');if(focusReturn?.isConnected)focusReturn.focus({preventScroll:true});}
-function settings(){
- if(menu){closePanels();return;}closePanels();pauseGame();focusReturn=$('screen-menu');
- menu=true;document.body.classList.add('screen-settings-open');$('screen-settings-head').hidden=false;$('screen-shade').hidden=false;$('screen-menu').setAttribute('aria-expanded','true');tagPanel();$('screen-settings-close').focus();
+function closePanels(){menu=false;lobby=false;document.body.classList.remove('screen-settings-open');$('screen-games').hidden=true;$('screen-shade').hidden=true;$('screen-settings-head').hidden=true;document.querySelectorAll('[data-screen-settings]').forEach(n=>{n.removeAttribute('role');n.removeAttribute('aria-modal');});$('screen-menu').setAttribute('aria-expanded','false');$('play-settings').setAttribute('aria-expanded','false');$('screen-games-toggle').setAttribute('aria-expanded','false');if(focusReturn?.isConnected)focusReturn.focus({preventScroll:true});}
+function settings(e){
+ if(menu){closePanels();return;}closePanels();pauseGame();focusReturn=e?.currentTarget||$('screen-menu');
+ menu=true;document.body.classList.add('screen-settings-open');$('screen-settings-head').hidden=false;$('screen-shade').hidden=false;$('screen-menu').setAttribute('aria-expanded','true');$('play-settings').setAttribute('aria-expanded','true');tagPanel();$('screen-settings-close').focus();
 }
 function games(){if(lobby){closePanels();return;}closePanels();pauseGame();focusReturn=$('screen-games-toggle');lobby=true;$('screen-games').hidden=false;$('screen-shade').hidden=false;$('screen-games-toggle').setAttribute('aria-expanded','true');$('screen-games-close').focus();}
 function arrangePanels(){
- const p=panel(),root=gameRoot(),enabled=document.body.classList.contains('game-screen');if(!p||!root)return;
+ const p=panel(),root=gameRoot(),enabled=document.body.classList.contains('game-screen')||document.body.classList.contains('play-first');if(!p||!root)return;
  if(current==='rescue'){const heading=root.querySelector('.rs-heading');if(heading){if(enabled&&!p.contains(heading))p.prepend(heading);else if(!enabled&&p.contains(heading))root.prepend(heading);}}
  const top=root.querySelector('.motion-top');if(top){const actions=top.children[1]||p.querySelector('.screen-motion-actions');if(actions){if(enabled&&!p.contains(actions)){actions.classList.add('screen-motion-actions');p.append(actions);}else if(!enabled&&p.contains(actions)){actions.classList.remove('screen-motion-actions');top.append(actions);}}}
 }
@@ -29,7 +29,7 @@ function tagPanel(){
 }
 function bindPause(){
  buttonObserver?.disconnect();const original=$(pauseIds[current])||(current==='dance'?$('dance-pause'):null);
- const sync=()=>{const b=$('screen-pause');b.hidden=!original||original.disabled||original.hidden;const text=(original?.textContent||'')+' '+(original?.getAttribute('aria-label')||''),label=/暂停/.test(text)?'暂停':/开始|开局/.test(text)?'开始':'继续';if(b.textContent!==label)b.textContent=label;b.disabled=!original||original.disabled;};
+ const sync=()=>{const text=(original?.textContent||'')+' '+(original?.getAttribute('aria-label')||''),label=/暂停/.test(text)?'暂停':/开始|开局/.test(text)?'开始':'继续';for(const id of ['screen-pause','play-pause']){const b=$(id);b.hidden=!original||original.disabled||original.hidden||(id==='play-pause'&&!['kart','dance','runner'].includes(current));if(b.textContent!==label)b.textContent=label;b.disabled=!original||original.disabled;}};
  sync();if(original){buttonObserver=new MutationObserver(sync);buttonObserver.observe(original,{childList:true,attributes:true,attributeFilter:['disabled','aria-pressed','aria-label','hidden']});}
 }
 function orientationHint(){
@@ -59,10 +59,14 @@ function updateGame(){
  document.body.dataset.screenGame=current;$('screen-title').textContent=names[current];$('screen-settings-title').textContent=names[current]+'设置';document.querySelectorAll('[data-screen-game]').forEach(b=>b.setAttribute('aria-current',b.dataset.screenGame===current?'true':'false'));tagPanel();syncMode();
 }
 export function initGameScreen(){
+ document.body.classList.add('play-first');
+ document.querySelector('.table-area').append($('notice'));
+ for(const [id,label] of [['play-settings','设置'],['play-pause','暂停']]){const b=document.createElement('button');b.id=id;b.className='quiet';b.textContent=label;if(id==='play-settings'){b.setAttribute('aria-label','游戏设置');b.setAttribute('aria-expanded','false');}document.querySelector('.head-actions').prepend(b);}
  const enterButton=document.createElement('button');enterButton.id='screen-enter';enterButton.className='quiet';enterButton.textContent='全屏玩';document.querySelector('.head-actions').prepend(enterButton);
  const screen=document.createElement('div');screen.id='game-screen-ui';screen.innerHTML=`<div id="screen-bar" hidden><button id="screen-games-toggle" aria-expanded="false" aria-label="选择游戏">‹ 游戏</button><div id="screen-identity"><b id="screen-title"></b><button id="screen-orientation" hidden aria-label="横竖屏建议"></button></div><button id="screen-pause">暂停</button><button id="screen-fullscreen" aria-pressed="false">全屏</button><button id="screen-menu" aria-expanded="false" aria-label="游戏设置">设置</button></div><p id="screen-toast" role="status" hidden></p><div id="screen-shade" hidden></div><section id="screen-games" hidden role="dialog" aria-modal="true" aria-label="选择游戏"><header><b>虾米对练场</b><button id="screen-games-close">返回游戏</button></header><div>${Object.entries(names).map(([id,name])=>`<button data-screen-game="${id}"><b>${name}</b><small>${preferred[id]==='landscape'?'横屏':'竖屏'}</small></button>`).join('')}</div><button id="screen-windowed">返回网页布局</button></section><header id="screen-settings-head" hidden><b id="screen-settings-title"></b><button id="screen-sound">声音</button><button id="screen-import">载入回放</button><button id="screen-settings-close">完成</button></header>`;
  document.body.prepend(screen);
  $('screen-enter').onclick=()=>forced||fullscreen()?leave():enter();$('screen-fullscreen').onclick=()=>fullscreen()?leave():enter();$('screen-games-toggle').onclick=games;$('screen-menu').onclick=settings;$('screen-games-close').onclick=closePanels;$('screen-settings-close').onclick=closePanels;$('screen-shade').onclick=closePanels;
+ $('play-settings').onclick=settings;$('play-pause').onclick=()=>($(pauseIds[current])||(current==='dance'?$('dance-pause'):null))?.click();
  $('screen-windowed').onclick=()=>{windowed=true;closePanels();leave();};
  $('screen-orientation').onclick=()=>{$('screen-orientation').hidden=true;};$('screen-pause').onclick=()=>($(pauseIds[current])||(current==='dance'?$('dance-pause'):null))?.click();
  const sound=()=>{$('screen-sound').textContent=$('sound').textContent;};sound();new MutationObserver(sound).observe($('sound'),{childList:true});$('screen-sound').onclick=()=>$('sound').click();$('screen-import').onclick=()=>{closePanels();$('import').click();};

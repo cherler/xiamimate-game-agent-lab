@@ -1,4 +1,5 @@
 import {rescuePoint} from './rescue-board.mjs';
+import {screenDelta,rotatedScreen} from './screen-coordinates.mjs';
 
 // Every tap orders the whole team. Drags only pan a zoomed map; cancelled
 // gestures never become an order, even when they started on a soldier.
@@ -15,7 +16,7 @@ export function bindRescueInput(canvas,{state,move,place,placing,visual,cancelPl
  canvas.onpointermove=e=>{
   const p=rescuePoint(canvas,e);if(!gesture){visual({hover:p});return;}if(e.pointerId!==gesture.id)return;
   const g=gesture,dx=e.clientX-g.x,dy=e.clientY-g.y;if(Math.hypot(dx,dy)>8)g.moved=true;
-  if(g.moved){if(g.zoom){wrap.scrollLeft=g.left-dx;wrap.scrollTop=g.top-dy;}visual(null);}else visual({hover:p});
+  if(g.moved){if(g.zoom){const delta=screenDelta(dx,dy,rotatedScreen(canvas));wrap.scrollLeft=g.left-delta.x;wrap.scrollTop=g.top-delta.y;}visual(null);}else visual({hover:p});
  };
  canvas.onpointerup=e=>{
   if(!gesture||e.pointerId!==gesture.id)return;const g=gesture,p=rescuePoint(canvas,e);finish();

@@ -5,6 +5,8 @@ const preferred={snake:'portrait',pong:'portrait',cards:'portrait',chess:'landsc
 const roots={snake:'arcade',pong:'arcade',cards:'strategy',chess:'strategy',rescue:'rescue',kart:'kart',dance:'dance',runner:'runner'};
 const pauseIds={snake:'start',pong:'start',kart:'kart-pause',dance:'rhythm-pause',runner:'runner-pause',rescue:'rs-start',chess:'ac-phase-pause'};
 const panelSelectors={snake:'.rail',pong:'.rail',kart:'.motion-options',dance:'.motion-options',runner:'.motion-options',rescue:'.rs-rail',cards:'.card-topbar',chess:'.ac-screen-settings'};
+// These games handle rotated canvas sizing and pointer coordinates explicitly.
+const turnable=new Set(['rescue','dance']),landscapeGames=new Set();
 let current='snake',windowed=false,forced=false,menu=false,lobby=false,owner=false,requesting=false,rootObserver,buttonObserver,lastOrientation='',focusReturn=null;
 const $=id=>document.getElementById(id),small=()=>matchMedia('(max-width: 700px), (pointer: coarse) and (max-width: 1200px)').matches;
 const fullscreen=()=>document.fullscreenElement||document.webkitFullscreenElement;
@@ -33,25 +35,29 @@ function bindPause(){
  sync();if(original){buttonObserver=new MutationObserver(sync);buttonObserver.observe(original,{childList:true,attributes:true,attributeFilter:['disabled','aria-pressed','aria-label','hidden']});}
 }
 function orientationHint(){
- const horizontal=innerWidth>innerHeight,wanted=preferred[current],mismatch=(wanted==='landscape')!==horizontal;
- $('screen-orientation').hidden=!document.body.classList.contains('game-screen')||!small()||!mismatch;
+ const horizontal=document.body.classList.contains('screen-wide'),wanted=preferred[current],mismatch=(wanted==='landscape')!==horizontal;
+ $('screen-orientation').hidden=turnable.has(current)||!document.body.classList.contains('game-screen')||!small()||!mismatch;
  $('screen-orientation').textContent=wanted==='landscape'?'↻ 横屏更好玩':'↻ 竖屏更好玩';
- const now=horizontal?'landscape':'portrait';if(lastOrientation&&lastOrientation!==now&&document.body.classList.contains('game-screen'))pauseGame();lastOrientation=now;
+ const now=[innerWidth>innerHeight,horizontal,document.body.classList.contains('screen-rotated')].join(':');if(lastOrientation&&lastOrientation!==now&&document.body.classList.contains('game-screen'))pauseGame();lastOrientation=now;
 }
 function syncMode(){
  const enabled=(!windowed&&small())||forced||!!fullscreen();document.body.classList.toggle('game-screen',enabled);document.body.classList.toggle('touch-screen',small());$('screen-bar').hidden=!enabled;
+ const turned=enabled&&landscapeGames.has(current)&&innerHeight>innerWidth;
+ const changed=document.body.classList.contains('screen-rotated')!==turned||document.body.classList.contains('screen-wide')!==(turned||innerWidth>innerHeight);
+ document.body.classList.toggle('screen-rotated',turned);document.body.classList.toggle('screen-wide',turned||innerWidth>innerHeight);
+ if(changed)window.dispatchEvent(new Event('glimmer-screen-layout'));
  arrangePanels();
- const button=$('screen-fullscreen');button.textContent=fullscreen()?'退出全屏':'全屏';button.setAttribute('aria-pressed',String(!!fullscreen()));$('screen-enter').textContent=forced||fullscreen()?'退出游戏屏':'全屏玩';
+ const button=$('screen-fullscreen');button.textContent=landscapeGames.has(current)?'返回竖屏':turnable.has(current)&&innerHeight>innerWidth?'横屏玩':fullscreen()?'退出全屏':'全屏';button.setAttribute('aria-pressed',String(landscapeGames.has(current)||!!fullscreen()));$('screen-enter').textContent=forced||fullscreen()?'退出游戏屏':'全屏玩';
  if(!enabled)closePanels();orientationHint();
 }
 async function lockOrientation(){try{if(fullscreen())await screen.orientation?.lock?.(preferred[current]);}catch{/* Manual rotation remains available. */}}
 async function enter(){
- if(requesting)return;requesting=true;windowed=false;forced=true;syncMode();
- try{const request=document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen;if(request){await request.call(document.documentElement,{navigationUI:'hide'});owner=true;await lockOrientation();}else toast('已铺满页面，可旋转手机选择横竖屏');}
- catch{toast('已铺满页面，可旋转手机选择横竖屏');}
+ if(requesting)return;requesting=true;pauseGame();windowed=false;forced=true;if(turnable.has(current)&&innerHeight>innerWidth)landscapeGames.add(current);syncMode();
+ try{const request=document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen;if(fullscreen())await lockOrientation();else if(request){await request.call(document.documentElement,{navigationUI:'hide'});owner=true;await lockOrientation();}else if(!landscapeGames.has(current))toast('已铺满页面');}
+ catch{if(!landscapeGames.has(current))toast('已铺满页面');}
  finally{requesting=false;syncMode();}
 }
-async function leave(){pauseGame();closePanels();forced=false;try{screen.orientation?.unlock?.();const exit=document.exitFullscreen||document.webkitExitFullscreen;if(fullscreen()&&exit)await exit.call(document);}catch{}owner=false;syncMode();}
+async function leave(){pauseGame();closePanels();forced=false;landscapeGames.delete(current);syncMode();try{screen.orientation?.unlock?.();const exit=document.exitFullscreen||document.webkitExitFullscreen;if(fullscreen()&&exit)await exit.call(document);}catch{}owner=false;syncMode();}
 function toast(text){const n=$('screen-toast');n.textContent=text;n.hidden=false;clearTimeout(toast.timer);toast.timer=setTimeout(()=>n.hidden=true,3800);}
 function updateGame(){
  const next=document.querySelector('.switcher [aria-pressed=true]')?.dataset.game||'snake';
@@ -65,7 +71,7 @@ export function initGameScreen(){
  const enterButton=document.createElement('button');enterButton.id='screen-enter';enterButton.className='quiet';enterButton.textContent='全屏玩';document.querySelector('.head-actions').prepend(enterButton);
  const screen=document.createElement('div');screen.id='game-screen-ui';screen.innerHTML=`<div id="screen-bar" hidden><button id="screen-games-toggle" aria-expanded="false" aria-label="选择游戏">‹ 游戏</button><div id="screen-identity"><b id="screen-title"></b><button id="screen-orientation" hidden aria-label="横竖屏建议"></button></div><button id="screen-pause">暂停</button><button id="screen-fullscreen" aria-pressed="false">全屏</button><button id="screen-menu" aria-expanded="false" aria-label="游戏设置">设置</button></div><p id="screen-toast" role="status" hidden></p><div id="screen-shade" hidden></div><section id="screen-games" hidden role="dialog" aria-modal="true" aria-label="选择游戏"><header><b>虾米对练场</b><button id="screen-games-close">返回游戏</button></header><div>${Object.entries(names).map(([id,name])=>`<button data-screen-game="${id}"><b>${name}</b><small>${preferred[id]==='landscape'?'横屏':'竖屏'}</small></button>`).join('')}</div><button id="screen-windowed">返回网页布局</button></section><header id="screen-settings-head" hidden><b id="screen-settings-title"></b><button id="screen-sound">声音</button><button id="screen-import">载入回放</button><button id="screen-settings-close">完成</button></header>`;
  document.body.prepend(screen);
- $('screen-enter').onclick=()=>forced||fullscreen()?leave():enter();$('screen-fullscreen').onclick=()=>fullscreen()?leave():enter();$('screen-games-toggle').onclick=games;$('screen-menu').onclick=settings;$('screen-games-close').onclick=closePanels;$('screen-settings-close').onclick=closePanels;$('screen-shade').onclick=closePanels;
+ $('screen-enter').onclick=()=>forced||fullscreen()?leave():enter();$('screen-fullscreen').onclick=()=>turnable.has(current)&&innerHeight>innerWidth&&!landscapeGames.has(current)?enter():landscapeGames.has(current)||fullscreen()?leave():enter();$('screen-games-toggle').onclick=games;$('screen-menu').onclick=settings;$('screen-games-close').onclick=closePanels;$('screen-settings-close').onclick=closePanels;$('screen-shade').onclick=closePanels;
  $('play-settings').onclick=settings;$('play-pause').onclick=()=>($(pauseIds[current])||(current==='dance'?$('dance-pause'):null))?.click();
  $('screen-windowed').onclick=()=>{windowed=true;closePanels();leave();};
  $('screen-orientation').onclick=()=>{$('screen-orientation').hidden=true;};$('screen-pause').onclick=()=>($(pauseIds[current])||(current==='dance'?$('dance-pause'):null))?.click();
@@ -73,8 +79,8 @@ export function initGameScreen(){
  document.querySelectorAll('[data-screen-game]').forEach(b=>b.onclick=()=>{closePanels();document.querySelector('.switcher [data-game="'+b.dataset.screenGame+'"]').click();});
  new MutationObserver(updateGame).observe(document.querySelector('.switcher'),{subtree:true,attributes:true,attributeFilter:['aria-pressed']});
  rootObserver=new MutationObserver(tagPanel);rootObserver.observe(gameRoot(),{childList:true});
- for(const event of ['fullscreenchange','webkitfullscreenchange'])document.addEventListener(event,()=>{if(owner&&!fullscreen()){owner=false;forced=false;pauseGame();}syncMode();});
- window.addEventListener('resize',orientationHint);matchMedia('(max-width: 700px), (pointer: coarse) and (max-width: 1200px)').addEventListener('change',syncMode);
+ for(const event of ['fullscreenchange','webkitfullscreenchange'])document.addEventListener(event,()=>{if(owner&&!fullscreen()){owner=false;forced=false;landscapeGames.delete(current);pauseGame();}syncMode();});
+ window.addEventListener('resize',syncMode);matchMedia('(max-width: 700px), (pointer: coarse) and (max-width: 1200px)').addEventListener('change',syncMode);
  window.addEventListener('keydown',e=>{if((!menu&&!lobby)||document.querySelector('dialog[open]'))return;if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();closePanels();}else if(e.key==='Tab'){const selectors=lobby?'#screen-games button':'#screen-settings-head button,[data-screen-settings] button,[data-screen-settings] select,[data-screen-settings] input,[data-screen-settings] summary',nodes=[...document.querySelectorAll(selectors)].filter(n=>!n.disabled&&n.getClientRects().length);const index=nodes.indexOf(document.activeElement),next=e.shiftKey?(index-1+nodes.length)%nodes.length:(index+1)%nodes.length;e.preventDefault();nodes[next]?.focus();}else e.stopPropagation();},true);
  updateGame();
 }

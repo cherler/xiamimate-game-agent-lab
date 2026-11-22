@@ -1,15 +1,19 @@
 import {rescueMap,lineOfSight,walkable,RESCUE_HZ,rescueRaging} from '../src/rescue.mjs';
+import {screenFraction,rotatedScreen} from './screen-coordinates.mjs';
+import {rescueToCanvas,rescueFromCanvas,rescueTransform} from './rescue-view.mjs';
 const C={floor:'#dce5e8',wall:'#294957',wallTop:'#395d6a',ink:'#254755',soldier:'#61c2f2',civilian:'#ffd16e',zombie:'#dc7089',exit:'#7bdec0'};
-export function rescuePoint(canvas,e){const r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left)/r.width*24,y:(e.clientY-r.top)/r.height*16};}
+export function rescuePoint(canvas,e){return rescueFromCanvas(screenFraction(canvas.getBoundingClientRect(),e,rotatedScreen(canvas)),canvas.clientWidth,canvas.clientHeight);}
 export function drawRescue(canvas,s,{selected='all',selectedIds=null,building=false,support=null,hover=null,reduced=false,selectionBox=null,movePreview=null,orderMarker=null}={}){
- const box=canvas.getBoundingClientRect();if(!box.width)return;
- const dpr=Math.min(devicePixelRatio||1,2),width=Math.round(box.width*dpr),height=Math.round(box.height*dpr);
+ if(!canvas.clientWidth)return;
+ const dpr=Math.min(devicePixelRatio||1,2),width=Math.round(canvas.clientWidth*dpr),height=Math.round(canvas.clientHeight*dpr),portrait=height>width;
  if(canvas.width!==width||canvas.height!==height){canvas.width=width;canvas.height=height;}
- const ctx=canvas.getContext('2d'),m=rescueMap(s.level,s.version),unit=width/m.w,raging=rescueRaging(s),evac=s.evac;
- ctx.setTransform(unit,0,0,height/m.h,0,0);ctx.clearRect(0,0,m.w,m.h);ctx.lineCap='round';ctx.lineJoin='round';
+ const ctx=canvas.getContext('2d'),m=rescueMap(s.level,s.version),unit=width/(portrait?m.h:m.w),raging=rescueRaging(s),evac=s.evac;
+ ctx.setTransform(...rescueTransform(width,height));ctx.clearRect(0,0,m.w,m.h);ctx.lineCap='round';ctx.lineJoin='round';
  const circle=(x,y,r,fill,stroke,lw=.05)=>{ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);if(fill){ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw;ctx.stroke();}};
  const line=(a,b,color,lw=.05)=>{ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.strokeStyle=color;ctx.lineWidth=lw;ctx.stroke();};
- const text=(str,x,y,size=.28,color=C.ink,align='center')=>{ctx.font=`600 ${size}px system-ui,"PingFang SC",sans-serif`;ctx.fillStyle=color;ctx.textAlign=align;ctx.textBaseline='middle';ctx.fillText(str,x,y);};
+ const text=(str,x,y,size=.28,color=C.ink,align='center',offsetY=0)=>{const p=rescueToCanvas({x,y},width,height),font=size*unit;p.y+=offsetY*unit;ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.font=`600 ${font}px system-ui,"PingFang SC",sans-serif`;ctx.fillStyle=color;ctx.textAlign=align;ctx.textBaseline='middle';const length=ctx.measureText(str).width,left=align==='center'?length/2:align==='right'?length:0,right=align==='center'?length/2:align==='left'?length:0;ctx.fillText(str,Math.min(width-right-2,Math.max(left+2,p.x)),Math.min(height-font/2,Math.max(font/2,p.y)));ctx.restore();};
+ // Unit labels stay above/below their subject when the map turns upright.
+ const label=(str,x,y,offset,size,color)=>text(str,x,y,size,color,'center',offset);
  const chevron=(x,y,color,rotation=0)=>{ctx.save();ctx.translate(x,y);ctx.rotate(rotation);ctx.strokeStyle=color;ctx.lineWidth=.09;ctx.beginPath();ctx.moveTo(-.14,-.16);ctx.lineTo(.08,0);ctx.lineTo(-.14,.16);ctx.stroke();ctx.restore();};
  ctx.fillStyle=m.theme?.floor||C.floor;ctx.fillRect(0,0,24,16);
  for(let y=0;y<m.h;y++)for(let x=0;x<m.w;x++){
@@ -26,11 +30,11 @@ export function drawRescue(canvas,s,{selected='all',selectedIds=null,building=fa
   const blocked=['contested','unguarded'].includes(evac.phase),color=blocked?'#ad3a52':'#267d66';
   text(evac.phase==='complete'?'✓ 已撤离':evac.phase==='unpowered'?'ϟ 等待供电':evac.phase==='gathering'?(s.version>=6?'等待护卫返回':'等待呼叫接驳'):evac.phase==='called'?'准备接驳':blocked?'Ⅱ 读秒暂停':'守住 '+Math.ceil((evac.required-evac.progress)/30)+' 秒',ex.x+ex.w/2,ex.y+.65,.38,color);
   ctx.fillStyle='#518b7833';ctx.fillRect(ex.x+.35,ex.y+1.14,ex.w-.7,.15);ctx.fillStyle=color;ctx.fillRect(ex.x+.35,ex.y+1.14,(ex.w-.7)*evac.progress/evac.required,.15);
- }else{text('＋',ex.x+ex.w/2,ex.y+1,.8,'#348773');text(s.phase==='deploy'&&s.version>=2?'接 应 区':'撤 离 区',ex.x+ex.w/2,ex.y+1.75,.36,'#296e5f');}
+ }else{if(!portrait)text('＋',ex.x+ex.w/2,ex.y+1,.8,'#348773');text(s.phase==='deploy'&&s.version>=2?'接 应 区':'撤 离 区',portrait?ex.x+.35:ex.x+ex.w/2,portrait?ex.y+ex.h/2:ex.y+1.75,.36,'#296e5f');}
  for(let i=0;i<3;i++)chevron(ex.x+ex.w+.25+i*.3,ex.y+ex.h/2,'#38977d',Math.PI);
  for(const crate of s.crates||[]){
-  if(crate.claimed){if(crate.alertTick>s.tick){circle(crate.x,crate.y,.8,null,'#bf4c5c',.08);text('⚠ '+Math.ceil((crate.alertTick-s.tick)/30)+'s',crate.x,crate.y-.9,.36,'#a9364e');}continue;}
-  const rapid=crate.reward==='overdrive';ctx.fillStyle=rapid?'#f1b861':'#f6dc96';ctx.fillRect(crate.x-.33,crate.y-.28,.66,.56);ctx.strokeStyle='#a77935';ctx.lineWidth=.06;ctx.strokeRect(crate.x-.33,crate.y-.28,.66,.56);text(rapid?'ϟ':'+',crate.x,crate.y,.5,'#95692e');text(rapid?'速射 25s · ⚠':'补给 +1',crate.x,crate.y+.65,.28,'#916832');
+  if(crate.claimed){if(crate.alertTick>s.tick){circle(crate.x,crate.y,.8,null,'#bf4c5c',.08);label('⚠ '+Math.ceil((crate.alertTick-s.tick)/30)+'s',crate.x,crate.y,-.9,.36,'#a9364e');}continue;}
+  const rapid=crate.reward==='overdrive';ctx.fillStyle=rapid?'#f1b861':'#f6dc96';ctx.fillRect(crate.x-.33,crate.y-.28,.66,.56);ctx.strokeStyle='#a77935';ctx.lineWidth=.06;ctx.strokeRect(crate.x-.33,crate.y-.28,.66,.56);text(rapid?'ϟ':'+',crate.x,crate.y,.5,'#95692e');label(rapid?'速射 25s · ⚠':'补给 +1',crate.x,crate.y,.65,.28,'#916832');
  }
  if(s.overdriveUntil>s.tick){const u=s.soldiers.find(u=>u.hp>0&&u.role==='shield');if(u){circle(u.x,u.y,.48,null,'#edaf4b',.08);text('ϟ '+Math.ceil((s.overdriveUntil-s.tick)/30)+'s',u.x,u.y-.8,.32,'#9b630f');}}
  for(const o of s.objectives||[]){
@@ -38,16 +42,16 @@ export function drawRescue(canvas,s,{selected='all',selectedIds=null,building=fa
   if(o.type==='power'){
    circle(o.x,o.y,1.8,o.active?'#fbe5a33b':'#ecdc9720',color+'88',.035);ctx.fillStyle=o.done?'#bde8d2':'#f2d893';ctx.fillRect(o.x-.38,o.y-.45,.76,.9);text('ϟ',o.x,o.y,.8,color);
    ctx.beginPath();ctx.arc(o.x,o.y,.65,-Math.PI/2,-Math.PI/2+Math.PI*2*o.progress/o.required);ctx.strokeStyle=color;ctx.lineWidth=.13;ctx.stroke();
-   text(o.done?'✓ 供电恢复':o.blocked?'ϟ 清除周围丧尸':'ϟ 靠近守住 '+Math.ceil((o.required-o.progress)/30)+' 秒',o.x,o.y-1,.34,color);
+   label(o.done?'✓ 供电恢复':o.blocked?'ϟ 清除周围丧尸':'ϟ 靠近守住 '+Math.ceil((o.required-o.progress)/30)+' 秒',o.x,o.y,-1,.34,color);
   }else if(o.type==='nest'){
-   if(o.done){circle(o.x,o.y,.4,'#797d6e55');text('✓ 已摧毁',o.x,o.y-.7,.3,'#45826b');continue;}
+   if(o.done){circle(o.x,o.y,.4,'#797d6e55');label('✓ 已摧毁',o.x,o.y,-.7,.3,'#45826b');continue;}
    circle(o.x,o.y,.7,'#b68cbd44',color,.06);for(let i=0;i<5;i++){const a=i*Math.PI*2/5;circle(o.x+Math.cos(a)*.3,o.y+Math.sin(a)*.3,.24,'#ad76a9',color,.04);}circle(o.x,o.y,.25,'#e1b573');
-   text(o.name,o.x,o.y-1,.33,color);text(Math.max(0,Math.ceil((o.nextSpawn-s.tick)/30))+' 秒增援',o.x,o.y+.95,.29,color);
+   label(o.name,o.x,o.y,-1,.33,color);label(Math.max(0,Math.ceil((o.nextSpawn-s.tick)/30))+' 秒增援',o.x,o.y,.95,.29,color);
    ctx.fillStyle='#62345e';ctx.fillRect(o.x-.5,o.y+.65,1,.1);ctx.fillStyle='#e49ab5';ctx.fillRect(o.x-.5,o.y+.65,o.hp/o.maxHp,.1);
   }else if(o.type==='convoy'){
    if(!o.done){ctx.save();ctx.setLineDash([.18,.2]);let last=o;for(const target of o.waypoints.slice(o.checkpoint)){line(last,target,'#538f9a77',.055);last=target;}ctx.restore();circle(o.x,o.y,3.6,null,'#36819e55',.035);}
    ctx.save();ctx.translate(o.x,o.y);ctx.rotate(o.angle||Math.PI);ctx.fillStyle='#34566a';for(const y of [-.44,.32]){ctx.fillRect(-.38,y,.25,.12);ctx.fillRect(.2,y,.25,.12);}ctx.fillStyle=o.done?'#82c5a5':'#ddbd77';ctx.fillRect(-.6,-.33,1.2,.66);ctx.fillStyle='#5891a3';ctx.fillRect(.15,-.26,.25,.52);ctx.restore();
-   text(o.done?'✓ 车队已抵达':o.blocked?'救援车 · 清除堵路敌人':o.active?'救援车 · 行进中':'救援车 · 靠近护送',o.x,o.y-.95,.33,color);
+   label(o.done?'✓ 车队已抵达':o.blocked?'救援车 · 清除堵路敌人':o.active?'救援车 · 行进中':'救援车 · 靠近护送',o.x,o.y,-.95,.33,color);
    ctx.fillStyle='#526d72';ctx.fillRect(o.x-.6,o.y+.55,1.2,.1);ctx.fillStyle='#64bf9b';ctx.fillRect(o.x-.6,o.y+.55,1.2*o.hp/o.maxHp,.1);
   }
  }
@@ -67,7 +71,7 @@ export function drawRescue(canvas,s,{selected='all',selectedIds=null,building=fa
  for(const [i,e]of m.entrances.entries()){
   const next=s.schedule.slice(s.spawned).find(w=>w.entry===i),wait=next?(next.tick-s.tick)/RESCUE_HZ:null,imminent=wait!==null&&wait<5;
   const alpha=imminent&&!reduced?.65+.35*Math.sin(s.tick*.25):1;ctx.globalAlpha=alpha;
-  const bottom=e.y>m.h/2,edgeY=bottom?m.h-.96:.2,labelY=e.y+(bottom?-.8:.7);ctx.fillStyle=imminent?'#b94762':'#704d60';ctx.fillRect(e.x-.75,edgeY,1.5,.76);text(bottom?'▲':'▼',e.x,edgeY+.36,.45,'#fff');
+  const bottom=e.y>m.h/2,edgeY=bottom?m.h-.96:.2,labelY=e.y+(bottom?-.8:.7);ctx.fillStyle=imminent?'#b94762':'#704d60';ctx.fillRect(e.x-.75,edgeY,1.5,.76);text(portrait?(bottom?'▶':'◀'):(bottom?'▲':'▼'),e.x,edgeY+.36,.45,'#fff');
   if(next){text(`${next.assault?'⚠ ':''}${Math.max(0,Math.ceil(wait))}s`,e.x,labelY,.38,imminent?'#a2314e':'#89566a');}else if(e.evacOnly&&!s.evac?.alerts)text('撤离信号',e.x,labelY,.27,'#89566a');ctx.globalAlpha=1;
  }
  for(const c of s.civilians.filter(c=>['waiting','following','boarding'].includes(c.status))){
@@ -118,14 +122,15 @@ export function drawRescue(canvas,s,{selected='all',selectedIds=null,building=fa
  if(s.level===1&&(s.phase==='deploy'||s.phase==='running'&&s.tick<300)&&!orderMarker&&!s.soldiers.some(u=>u.path.length)){
   const civilians=s.civilians.filter(c=>c.status==='waiting'),u=chosen[0];
   if(civilians.length){const x=civilians.reduce((n,c)=>n+c.x,0)/civilians.length,y=Math.min(...civilians.map(c=>c.y))-1;
-   circle(x,y,.45,'#fff1caaa','#a77935',.045);text('↓',x,y,.6,'#896329');text('接应',x,y-.8,.42,'#896329');
-   if(u)text('你',u.x,u.y-.85,.4,'#17698a');
+   circle(x,y,.45,'#fff1caaa','#a77935',.045);text(portrait?'←':'↓',x,y,.6,'#896329');label('接应',x,y,-.8,.42,'#896329');
+   if(u)label('你',u.x,u.y,-.85,.4,'#17698a');
   }
  }
  if(selectionBox){const b=selectionBox,x=Math.min(b.x,b.x2),y=Math.min(b.y,b.y2),w=Math.abs(b.x2-b.x),h=Math.abs(b.y2-b.y);ctx.fillStyle='#278db52a';ctx.fillRect(x,y,w,h);ctx.strokeStyle='#eaffff';ctx.lineWidth=.12;ctx.strokeRect(x,y,w,h);ctx.strokeStyle='#157797';ctx.lineWidth=.05;ctx.strokeRect(x,y,w,h);}
  if(movePreview){ctx.setLineDash([.16,.16]);for(const u of chosen)line(u,movePreview,'#2187ad99',.045);ctx.setLineDash([]);circle(movePreview.x,movePreview.y,.36,null,'#187c9f',.07);}
  if(orderMarker){const p=orderMarker,color=p.ok?'#167c9e':'#b63d53';circle(p.x,p.y,.5,'#f5ffffb0',color,.07);text(p.ok?'↓':'×',p.x,p.y,.55,color);text(p.ok?p.count+' 人 →': '不可到达',p.x,Math.max(.6,p.y-.8),.4,color);}
  canvas.dataset.phase=s.phase;canvas.dataset.tick=String(s.tick);canvas.dataset.saved=String(s.saved);canvas.dataset.lost=String(s.lost);canvas.dataset.kills=String(s.kills);
+ canvas.dataset.mapOrientation=portrait?'portrait':'landscape';
  canvas.dataset.evac=evac?.phase||'legacy';canvas.dataset.evacProgress=String(evac?.progress||0);canvas.dataset.raging=String(raging);canvas.dataset.boarding=String(s.civilians.filter(c=>c.status==='boarding').length);
  canvas.dataset.supplies=String(s.supplies??0);canvas.dataset.decoys=String(s.decoys?.length||0);
  canvas.dataset.overdrive=String(Math.max(0,(s.overdriveUntil||0)-s.tick));canvas.dataset.version=String(s.version);canvas.dataset.level=String(s.level);canvas.dataset.enemies=String(s.zombies.length);canvas.dataset.objectives=JSON.stringify((s.objectives||[]).map(({id,done,active,progress,hp})=>({id,done,active,progress,hp})));

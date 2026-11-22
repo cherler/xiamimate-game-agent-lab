@@ -48,7 +48,8 @@
     "check:runner-music": "node scripts/check-runner-music-browser.mjs",
     "check:play-first": "node scripts/check-play-first-browser.mjs",
     "check:play-access": "node scripts/check-play-first-access.mjs",
-    "check:novice": "node scripts/check-novice-feedback-browser.mjs"
+    "check:novice": "node scripts/check-novice-feedback-browser.mjs",
+    "check:playfield": "node scripts/check-mobile-playfield-browser.mjs"
   },
   "devDependencies": {
     "esbuild": "0.28.2"

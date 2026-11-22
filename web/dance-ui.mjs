@@ -8,7 +8,7 @@ let musicError='';
 let active=false,running=false,pending=false,generation=0,raf=0,state=null,options={song:'bay',difficulty:'practice',offset:0},recordOptions=null,inputs=[],watch=null,cursor=0,saved=false,lead=2100,resumeReleaseAt=null;
 const sources=new Map();
 try{options.offset=Math.max(-150,Math.min(150,Number(storage.getItem('rhythm-offset'))||0));}catch{}
-const observer=new ResizeObserver(()=>{const canvas=root().querySelector('canvas');if(!canvas)return;const r=canvas.getBoundingClientRect(),d=Math.min(2,devicePixelRatio||1);canvas.width=Math.round(r.width*d);canvas.height=Math.round(r.height*d);paint();});
+const observer=new ResizeObserver(()=>{const canvas=root().querySelector('canvas');if(!canvas)return;const d=Math.min(2,devicePixelRatio||1);canvas.width=Math.round(canvas.clientWidth*d);canvas.height=Math.round(canvas.clientHeight*d);paint();});
 function best(){try{return JSON.parse(storage.getItem((state?.version===1?'rhythm-best-':'rhythm2-best-')+options.song+'-'+options.difficulty));}catch{return null;}}
 function fresh(){music.stop();running=false;pending=false;generation++;sources.clear();watch=null;inputs=[];cursor=0;saved=false;recordOptions={...options,seed:41003};state=createRhythm(recordOptions);render();}
 export function openDance(){active=true;document.body.classList.add('motion-mode','rhythm-mode');window.scrollTo(0,0);if(!state)fresh();else render();cancelAnimationFrame(raf);raf=requestAnimationFrame(frame);}

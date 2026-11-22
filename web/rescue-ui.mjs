@@ -2,6 +2,7 @@ import {localGameStorage as localStorage,sessionGameStorage as sessionStorage} f
 import {beginRescue,issueRescue,advanceRescue,sealRescue,replayRescue,playbackRescue,rescueStats,rescueMap,UPGRADES,RESCUE_HZ,insideExit} from '../src/rescue.mjs';
 import {RESCUE_LEVELS} from '../src/rescue-maps.mjs';
 import {drawRescue} from './rescue-board.mjs';
+import {rescueToCanvas} from './rescue-view.mjs';
 import {bindRescueInput} from './rescue-input.mjs';
 const $=id=>document.getElementById(id),root=()=>$('rescue'),SAVE='glimmer-rescue-save',CAMPAIGN='glimmer-rescue-campaign';
 const esc=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('"','&quot;');
@@ -54,10 +55,10 @@ function mount(){
  $('rs-export').onclick=exportReplay;$('rs-restart').textContent=watch?'回到行动':'重新部署本关';$('rs-restart').onclick=()=>{if(watch){watch=null;reader=null;replayPlaying=false;replayDone=false;match=null;restore();if(!match)newMission(1);else mount();}else newMission();};$('rs-new-campaign').onclick=()=>{campaign={unlocked:1,choices:[],medals:{}};saveCampaign();newMission(1);};
  $('rs-difficulty').value=s.difficulty;$('rs-difficulty').onchange=e=>newMission(s.level,e.target.value);$('rs-speed').value=String(speed);$('rs-speed').onchange=e=>{speed=Number(e.target.value);};
  const canvas=$('rescue-board'),wrap=canvas.parentElement;
- $('rs-zoom').onclick=()=>{cancelInput();const zoomed=wrap.classList.toggle('rs-zoomed');$('rs-zoom').setAttribute('aria-pressed',String(zoomed));$('rs-zoom').textContent=zoomed?'缩小':'放大';if(zoomed){const units=match.state.soldiers.filter(u=>ids().includes(u.id));const x=units.reduce((n,u)=>n+u.x,0)/Math.max(1,units.length),y=units.reduce((n,u)=>n+u.y,0)/Math.max(1,units.length);wrap.scrollLeft=canvas.clientWidth*x/24-wrap.clientWidth/2;wrap.scrollTop=canvas.clientHeight*y/16-wrap.clientHeight/2;}paint();};
+ $('rs-zoom').onclick=()=>{cancelInput();const zoomed=wrap.classList.toggle('rs-zoomed');$('rs-zoom').setAttribute('aria-pressed',String(zoomed));$('rs-zoom').textContent=zoomed?'缩小':'放大';if(zoomed){const units=match.state.soldiers.filter(u=>ids().includes(u.id));const x=units.reduce((n,u)=>n+u.x,0)/Math.max(1,units.length),y=units.reduce((n,u)=>n+u.y,0)/Math.max(1,units.length),p=rescueToCanvas({x,y},canvas.clientWidth,canvas.clientHeight);wrap.scrollLeft=p.x-wrap.clientWidth/2;wrap.scrollTop=p.y-wrap.clientHeight/2;}paint();};
  function placeAt(p){
   if(watch||match.state.phase==='ended')return;
-  if(building){const radius=Math.max(.85,22*24/canvas.getBoundingClientRect().width),door=[...m.doors].sort((a,b)=>Math.hypot(a.x-p.x,a.y-p.y)-Math.hypot(b.x-p.x,b.y-p.y))[0];if(door&&Math.hypot(door.x-p.x,door.y-p.y)<radius)command({type:'gate',door:door.id});else rescueNotice('点亮起的门口部署门障');return;}
+  if(building){const radius=Math.max(.85,22*(canvas.clientHeight>canvas.clientWidth?16:24)/canvas.clientWidth),door=[...m.doors].sort((a,b)=>Math.hypot(a.x-p.x,a.y-p.y)-Math.hypot(b.x-p.x,b.y-p.y))[0];if(door&&Math.hypot(door.x-p.x,door.y-p.y)<radius)command({type:'gate',door:door.id});else rescueNotice('点亮起的门口部署门障');return;}
   if(support){command({type:support,x:p.x,y:p.y});return;}
  }
  cancelInput=bindRescueInput(canvas,{state:()=>({...match.state,interactive:!watch&&match.state.phase!=='ended'}),move:moveTo,place:placeAt,placing:()=>building||support,cancelPlacement:()=>{building=false;support=null;hud(true);paint();},visual:v=>{hover=v?.hover||null;paint();}});
@@ -126,5 +127,6 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden&&active){ca
 window.addEventListener('pagehide',()=>{if(active){if(!watch&&match.state.phase==='running')issueRescue(match,{type:'pause'});save();}});
 
 window.addEventListener('glimmer-screen-pause',()=>{if(active){cancelInput();if(watch)replayPlaying=false;else if(match.state.phase==='running')command({type:'pause'});hud(true);paint();}});
+window.addEventListener('glimmer-screen-layout',()=>{if(active){cancelInput();const wrap=$('rescue-board')?.parentElement;if(wrap){wrap.classList.remove('rs-zoomed');wrap.scrollLeft=wrap.scrollTop=0;$('rs-zoom').setAttribute('aria-pressed','false');$('rs-zoom').textContent='放大';}}});
 
 export const rescueMusicActive=()=>active&&(watch?replayPlaying&&!replayDone:match?.state.phase==='running');

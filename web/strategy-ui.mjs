@@ -70,7 +70,7 @@ function unitCard(u,side){
  const attackable=ours&&canAct()&&cardActions(state(),me()).some(a=>a.type==='attack'&&a.uid===u.uid),target=canAct()&&actionForSelection(state()).some(a=>a.target===u.uid);
  const icons=[u.guard?['shield','守护']:null,u.shield?['spark','护盾']:null,u.drain?['heart','汲取']:null,u.silenced?['cross','沉默']:null].filter(Boolean);
  const resting=u.frozen?'snow':u.fresh&&!u.rush?'moon':u.exhausted?'check':null;
- return `<button class="unit-card ${palette(c.id)} ${u.guard?'guarded':''} ${u.shield?'shielded':''} ${u.frozen?'frozen':''} ${selectedHere?'chosen':''} ${target?'targetable':''} ${attackable?'can-attack':''} ${resting?'resting':''}" data-unit="${u.uid}" data-piece="${u.uid}" data-source="${u.uid}" data-attack="${u.attack}" data-hp="${u.hp}" data-shield="${!!u.shield}" aria-label="${c.name}，攻击 ${u.attack}，生命 ${u.hp}${attackable?'，可攻击':''}${u.fresh?', 新入场':''}${u.frozen?'，冰封':''}${u.guard?'，守护':''}">
+ return `<button class="unit-card ${c.token?'token-unit':c.cost>=5?'core-unit':''} ${palette(c.id)} ${u.guard?'guarded':''} ${u.shield?'shielded':''} ${u.frozen?'frozen':''} ${selectedHere?'chosen':''} ${target?'targetable':''} ${attackable?'can-attack':''} ${resting?'resting':''}" data-unit="${u.uid}" data-piece="${u.uid}" data-source="${u.uid}" data-attack="${u.attack}" data-hp="${u.hp}" data-shield="${!!u.shield}" aria-label="${c.name}，攻击 ${u.attack}，生命 ${u.hp}${attackable?'，可攻击':''}${u.fresh?', 新入场':''}${u.frozen?'，冰封':''}${u.guard?'，守护':''}">
  <span class="unit-portrait">${portrait(c.id)}</span><span class="unit-name">${c.name}</span><span class="unit-stats">${statIcons(u.attack,u.hp,u.hp<u.maxHp?'wounded':'')}</span>
  <span class="unit-tokens">${icons.map(([icon,name])=>`<i title="${name}" aria-label="${name}">${glyph(icon)}</i>`).join('')}</span>${resting?`<span class="rest-marker" aria-label="${u.frozen?'冰封':u.exhausted?'已行动':'新入场'}">${glyph(resting)}</span>`:attackable?`<span class="attack-ready" aria-hidden="true">${glyph('up')}</span>`:''}</button>`;
 }
@@ -123,6 +123,7 @@ function renderCards(){
  bind('card-library',()=>editDeck(false));bind('card-draft',startDraft);bind('card-settings',cardSettings);
  root().querySelectorAll('[data-action-history]').forEach(b=>b.onclick=()=>showActionHistory(Number(b.dataset.actionHistory)));
  bindTableGestures(root(),{select:id=>{selected=id;render();},actions:()=>actionForSelection(state()),act:apply});
+ const hand=root().querySelector('.hand'),picked=hand?.querySelector('.chosen:not(.opening-card)');if(picked){const a=hand.getBoundingClientRect(),b=picked.getBoundingClientRect();if(b.left<a.left)hand.scrollLeft-=a.left-b.left+5;else if(b.right>a.right)hand.scrollLeft+=b.right-a.right+5;}
 }
 function inspectCard(value){
  const c=cardInfo(value?.cardId);if(!c)return;const dialog=root().querySelector('#deck-dialog');dialog.className='inspect-dialog';

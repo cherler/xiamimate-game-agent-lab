@@ -28,7 +28,11 @@ export function drawRescue(canvas,s,{selected='all',selectedIds=null,building=fa
   ctx.fillStyle='#518b7833';ctx.fillRect(ex.x+.35,ex.y+1.14,ex.w-.7,.15);ctx.fillStyle=color;ctx.fillRect(ex.x+.35,ex.y+1.14,(ex.w-.7)*evac.progress/evac.required,.15);
  }else{text('＋',ex.x+ex.w/2,ex.y+1,.8,'#348773');text(s.phase==='deploy'&&s.version>=2?'接 应 区':'撤 离 区',ex.x+ex.w/2,ex.y+1.75,.36,'#296e5f');}
  for(let i=0;i<3;i++)chevron(ex.x+ex.w+.25+i*.3,ex.y+ex.h/2,'#38977d',Math.PI);
- for(const crate of s.crates||[])if(!crate.claimed){ctx.fillStyle='#f6dc96';ctx.fillRect(crate.x-.33,crate.y-.28,.66,.56);ctx.strokeStyle='#a77935';ctx.lineWidth=.06;ctx.strokeRect(crate.x-.33,crate.y-.28,.66,.56);text('+',crate.x,crate.y,.5,'#95692e');text('补给 +1',crate.x,crate.y+.65,.28,'#916832');}
+ for(const crate of s.crates||[]){
+  if(crate.claimed){if(crate.alertTick>s.tick){circle(crate.x,crate.y,.8,null,'#bf4c5c',.08);text('⚠ '+Math.ceil((crate.alertTick-s.tick)/30)+'s',crate.x,crate.y-.9,.36,'#a9364e');}continue;}
+  const rapid=crate.reward==='overdrive';ctx.fillStyle=rapid?'#f1b861':'#f6dc96';ctx.fillRect(crate.x-.33,crate.y-.28,.66,.56);ctx.strokeStyle='#a77935';ctx.lineWidth=.06;ctx.strokeRect(crate.x-.33,crate.y-.28,.66,.56);text(rapid?'ϟ':'+',crate.x,crate.y,.5,'#95692e');text(rapid?'速射 25s · ⚠':'补给 +1',crate.x,crate.y+.65,.28,'#916832');
+ }
+ if(s.overdriveUntil>s.tick){const u=s.soldiers.find(u=>u.hp>0&&u.role==='shield');if(u){circle(u.x,u.y,.48,null,'#edaf4b',.08);text('ϟ '+Math.ceil((s.overdriveUntil-s.tick)/30)+'s',u.x,u.y-.8,.32,'#9b630f');}}
  for(const o of s.objectives||[]){
   const color=o.done?'#2b9876':o.type==='nest'?'#9252a2':o.type==='power'?'#887030':'#346e8a';
   if(o.type==='power'){
@@ -107,6 +111,7 @@ export function drawRescue(canvas,s,{selected='all',selectedIds=null,building=fa
    if(e.kind==='infection')text('感染',e.x,e.y-.5-p*.5,.32,'#aa2d4c');
    if(e.kind==='death'&&!reduced)for(let i=0;i<4;i++){const a=i*Math.PI/2+.3;circle(e.x+Math.cos(a)*p*.8,e.y+Math.sin(a)*p*.8,.055,'#b5526c');}
   }
+  if(e.kind==='overdrive'){circle(e.x,e.y,.4+p*.7,null,'#e9b34c',.08);text('速射 25s',e.x,e.y-.5-p*.4,.4,'#a56712');}
   if(e.kind==='medic'||e.kind==='supply'){circle(e.x,e.y,.4+p*.6,null,'#29946b',.06);text(e.kind==='supply'?'补给 +1':e.amount?'+'+e.amount:'抢救',e.x,e.y-.4-p*.4,.38,'#217b56');}
   ctx.globalAlpha=1;
  }
@@ -123,6 +128,6 @@ export function drawRescue(canvas,s,{selected='all',selectedIds=null,building=fa
  canvas.dataset.phase=s.phase;canvas.dataset.tick=String(s.tick);canvas.dataset.saved=String(s.saved);canvas.dataset.lost=String(s.lost);canvas.dataset.kills=String(s.kills);
  canvas.dataset.evac=evac?.phase||'legacy';canvas.dataset.evacProgress=String(evac?.progress||0);canvas.dataset.raging=String(raging);canvas.dataset.boarding=String(s.civilians.filter(c=>c.status==='boarding').length);
  canvas.dataset.supplies=String(s.supplies??0);canvas.dataset.decoys=String(s.decoys?.length||0);
- canvas.dataset.version=String(s.version);canvas.dataset.level=String(s.level);canvas.dataset.enemies=String(s.zombies.length);canvas.dataset.objectives=JSON.stringify((s.objectives||[]).map(({id,done,active,progress,hp})=>({id,done,active,progress,hp})));
+ canvas.dataset.overdrive=String(Math.max(0,(s.overdriveUntil||0)-s.tick));canvas.dataset.version=String(s.version);canvas.dataset.level=String(s.level);canvas.dataset.enemies=String(s.zombies.length);canvas.dataset.objectives=JSON.stringify((s.objectives||[]).map(({id,done,active,progress,hp})=>({id,done,active,progress,hp})));
  canvas.dataset.selected=chosen.map(u=>u.id).join(',');canvas.dataset.selecting=String(!!selectionBox);canvas.dataset.order=orderMarker?(orderMarker.ok?'accepted':'rejected'):'';
 }

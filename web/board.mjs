@@ -14,7 +14,7 @@ export function geometry(canvas,game,view='left'){
   const edge=Math.min(w-23,h-23),scale=game==='snake'?edge/SIDE:edge/3.75;
   return {x:(w-(game==='snake'?SIDE:3)*scale)/2,y:(h-(game==='snake'?SIDE:3)*scale)/2,scale,w,h};
 }
-export function draw(canvas,s,{selected=-1,previous=null,progress=1,view='left',effects=[],now=0,reduced=false}={}){
+export function draw(canvas,s,{selected=-1,previous=null,progress=1,view='left',effects=[],headTrace=[],shotTrace=[],now=0,reduced=false}={}){
   const g=geometry(canvas,s.game,view),dpr=Math.min(2,window.devicePixelRatio||1);
   const pw=Math.round(g.w*dpr),ph=Math.round(g.h*dpr);
   if(pw!==canvas.width||ph!==canvas.height){canvas.width=pw;canvas.height=ph;}
@@ -48,6 +48,14 @@ export function draw(canvas,s,{selected=-1,previous=null,progress=1,view='left',
         }
       }
     });
+    if(s.tick<4&&s.alive[0]){
+      const [x,y]=xy(s.bodies[0][0]),dir=s.dirs[0],dx=dir==='right'?1:dir==='left'?-1:0,dy=dir==='down'?1:dir==='up'?-1:0,cx=g.x+(x+.5)*a,cy=g.y+(y+.5)*a;
+      c.save();c.strokeStyle='#fff0ad';c.lineWidth=Math.max(2,a*.08);c.beginPath();c.moveTo(cx+dx*a*.6,cy+dy*a*.6);c.lineTo(cx+dx*a*1.35,cy+dy*a*1.35);c.moveTo(cx+dx*a*1.05+dy*a*.2,cy+dy*a*1.05-dx*a*.2);c.lineTo(cx+dx*a*1.35,cy+dy*a*1.35);c.lineTo(cx+dx*a*1.05-dy*a*.2,cy+dy*a*1.05+dx*a*.2);c.stroke();c.restore();
+    }
+    if(!s.alive[0]){
+      const path=headTrace.length>1?headTrace:s.bodies[0].slice(0,7).reverse();c.save();c.setLineDash([a*.15,a*.15]);c.strokeStyle='#fff0bb';c.lineWidth=Math.max(2,a*.08);c.beginPath();path.forEach((cell,i)=>{const [x,y]=xy(cell);if(i)c.lineTo(g.x+(x+.5)*a,g.y+(y+.5)*a);else c.moveTo(g.x+(x+.5)*a,g.y+(y+.5)*a);});c.stroke();c.setLineDash([]);for(const [i,cell]of path.entries()){const [x,y]=xy(cell);circle(c,g.x+(x+.5)*a,g.y+(y+.5)*a,a*(i===path.length-1?.13:.065),'#fff0bb');}c.restore();
+    }
+    canvas.dataset.snakeTrace=String(!s.alive[0]?headTrace.length:0);
     for(const crash of s.collisions||[]){
       const cx=g.x+(crash.x+.5)*a,cy=g.y+(crash.y+.5)*a;
       rounded(c,cx-a*.48,cy-a*.48,a*.96,a*.96,5,'#b94e51aa');
@@ -74,8 +82,9 @@ export function draw(canvas,s,{selected=-1,previous=null,progress=1,view='left',
       rounded(c,x,s.paddles[i]-HALF,16,HALF*2,8,armed?ink[armed]:color[i]);
     }
     if(s.flight){
-      const points=reduced?s.flight.slice(-3):s.flight;for(let i=1;i<points.length;i++){c.globalAlpha=i/points.length*.7;line(c,...points[i-1],...points[i],3+i/points.length*5,ink[shot]);}c.globalAlpha=1;
+      const actual=shotTrace.length?shotTrace:s.flight,points=reduced?actual.slice(-3):actual;for(let i=1;i<points.length;i++){c.globalAlpha=i/points.length*.7;line(c,...points[i-1],...points[i],(shot==='normal'?3:5)+i/points.length*(shot==='power'?8:5),ink[shot]);}c.globalAlpha=1;
     }else for(let k=4;k>0;k--)circle(c,s.ball[0]-s.ball[2]*k*.7,s.ball[1]-s.ball[3]*k*.7,Math.max(2,9-k*1.5),'#ffdc80'+['','99','66','44','22'][k]);
+    if(!s.serve&&shot==='power'){const [x,y,vx,vy]=s.ball,angle=Math.atan2(vy,vx);c.save();c.translate(x,y);c.rotate(angle);c.fillStyle='#ffe8b4';c.beginPath();c.moveTo(15,0);c.lineTo(-16,-7);c.lineTo(-10,0);c.lineTo(-16,7);c.closePath();c.fill();c.restore();}
     circle(c,s.ball[0],s.ball[1],10,ink[shot]);
     if(shot==='spin'){
       const angle=reduced?0:s.tick*.28*Math.sign(s.curve||1);line(c,s.ball[0]+Math.cos(angle)*7,s.ball[1]+Math.sin(angle)*7,s.ball[0]-Math.cos(angle)*7,s.ball[1]-Math.sin(angle)*7,3,'#fff3ff');
@@ -86,7 +95,7 @@ export function draw(canvas,s,{selected=-1,previous=null,progress=1,view='left',
     if(s.serve){const [x,y]=pongPoint(view,500,300);c.fillStyle='#e4f2ef';c.font='600 17px system-ui';c.textAlign='center';c.fillText('准备接球',g.x+x*g.scale,g.y+y*g.scale-28);}
     const [px,py]=pongPoint(view,88,s.paddles[0]);c.fillStyle=color[0];c.font='700 12px system-ui';c.textAlign='center';c.fillText('你',g.x+px*g.scale,g.y+py*g.scale+4);
     if(s.version>=3){
-      for(const i of [0,1]){const hit=s.lastHit?.side===i&&s.tick-s.lastHit.tick<48&&s.lastHit.kind!=='normal'?s.lastHit.kind:null,kind=hit||s.armed[i];if(!kind)continue;const [x,y]=pongPoint(view,i===0?145:855,s.paddles[i]);c.fillStyle=ink[kind];c.font='700 12px system-ui';c.textAlign='center';c.fillText((hit?'':'待击 · ')+(kind==='power'?'快球':'旋球'),g.x+x*g.scale,g.y+y*g.scale-12);}
+      for(const i of [0,1]){const hit=s.lastHit?.side===i&&s.tick-s.lastHit.tick<48&&s.lastHit.kind!=='normal'?s.lastHit.kind:null,kind=hit||s.armed[i];if(!kind)continue;const [x,y]=pongPoint(view,i===0?145:855,s.paddles[i]);c.fillStyle=ink[kind];c.font='700 12px system-ui';c.textAlign='center';c.fillText((hit?(i===0?'你 · ':'对手 · '):'待击 · ')+(kind==='power'?'快球':'旋球'),g.x+x*g.scale,g.y+y*g.scale-12);}
     }
   }
 }

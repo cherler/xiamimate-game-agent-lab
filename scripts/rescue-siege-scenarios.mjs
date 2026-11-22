@@ -2,18 +2,19 @@ import {beginRescue,issueRescue,advanceRescue,sealRescue,rescueMap} from '../src
 // Only commands available to a player: click a destination for the whole team,
 // wait by the objective, and retreat. No direct state changes or extra powers.
 export function siegeScenario({level=1,seed=41003,plan='escort',decisionEvery=1,upgrades=level===1?[]:['fire','mobility','fire','gate','mobility'].slice(0,level-1)}={}){
+ const escort=['escort','supply'].includes(plan);
  const match=beginRescue({level,seed,upgrades}),ids=()=>match.state.soldiers.filter(u=>u.hp>0).map(u=>u.id);
  let stage=0,peak=0,lastMove=-999,moves=0;const milestones=[];
  const order=(x,y)=>{issueRescue(match,{type:'move',ids:ids(),x,y});lastMove=match.state.tick;moves++;};
  const next=(x,y)=>{stage++;milestones.push({stage,t:match.state.tick/30,saved:match.state.saved,kills:match.state.kills});if(x!==undefined)order(x,y);};
  const waiting=(s,test=()=>true)=>s.civilians.some(c=>test(c)&&c.status==='waiting');
  issueRescue(match,{type:'start'});
- if(plan==='escort'){
-  if(level===4)order(12.5,5.5);else if(level===5)order(11.5,4.5);else order(19.5,level===1?8.5:level===2||level===6?4.5:12);
- }
+ const startRoute=()=>{if(level===4)order(12.5,5.5);else if(level===5)order(11.5,4.5);else order(19.5,level===1?8.5:level===2||level===6?4.5:12);};
+ if(escort){const crate=plan==='supply'&&match.state.crates.find(c=>c.reward==='overdrive');if(crate){stage=-1;order(crate.x,crate.y);}else startRoute();}
  while(match.state.winner===null){
   const s=match.state;
-  if(plan==='escort'&&s.tick%decisionEvery===0){
+  if(escort&&s.tick%decisionEvery===0){
+   if(stage===-1){if(s.crates.some(c=>c.reward==='overdrive'&&c.claimed)){stage=0;startRoute();}else{advanceRescue(match);peak=Math.max(peak,match.state.zombies.length);continue;}}
    if(level<=3){
     if(level>1&&stage===0&&!waiting(s,c=>level===2?c.y<8:c.y>8))next(19.5,level===2?12:4.5);
     if(stage<2&&!waiting(s)){stage=1;next(3.5,12.5);}

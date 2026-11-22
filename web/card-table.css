@@ -28,3 +28,13 @@ body:has(.visual-table) main{max-width:1180px;padding:14px 24px 22px}
 .table-result{inset:50% auto auto 50%;transform:translate(-50%,-50%);width:min(560px,82%);max-height:90%;overflow:auto;padding:24px 18px;gap:12px}
 .table-result>*{flex-shrink:0}
 @media(max-width:650px){.table-result{width:88%;padding:18px 12px;gap:9px}}
+
+.unit-card.token-unit .unit-portrait>svg{transform:scale(.82);transform-origin:bottom center}.unit-card.core-unit{border-top:4px double #f5dc91}.unit-card.core-unit .unit-portrait{background:radial-gradient(ellipse,#f3d78835,transparent 70%)}
+@media(max-width:760px){.visual-table .hand-card.chosen:not(.opening-card){flex:0 0 205px;width:205px;display:grid;grid-template-columns:62px minmax(0,1fr);grid-template-rows:23px minmax(0,1fr) 26px;gap:2px 5px;transform:none;height:126px;min-height:126px;padding:6px}.hand-card.chosen:not(.opening-card)>svg{grid-column:1;grid-row:1/4;width:62px;height:90px;align-self:center;min-height:0}.hand-card.chosen:not(.opening-card) .card-name{grid-column:2;grid-row:1;font-size:13px;margin:0;align-self:center}.hand-card.chosen:not(.opening-card) .card-text{grid-column:2;grid-row:2;font-size:12px;line-height:1.35;display:block;overflow:auto;text-align:left;padding:0}.hand-card.chosen:not(.opening-card) .card-bottom{grid-column:2;grid-row:3}.hand-card.chosen:not(.opening-card) .play-ready{right:3px;top:3px;opacity:.7}}
+@media(orientation:landscape) and (max-height:550px){
+ body.game-screen .visual-table .hand-card.chosen:not(.opening-card){display:grid;width:128px;min-width:0;max-width:100%;flex:0 0 128px;grid-template-columns:minmax(0,1fr);grid-template-rows:36px 20px minmax(0,1fr) 24px;gap:2px;height:166px;min-height:166px;padding:6px;transform:none}
+ body.game-screen .hand-card.chosen:not(.opening-card)>svg{grid-column:1;grid-row:1;width:100%;height:36px;min-height:0}
+ body.game-screen .hand-card.chosen:not(.opening-card) .card-name{grid-column:1;grid-row:2;font-size:13px;margin:0}
+ body.game-screen .hand-card.chosen:not(.opening-card) .card-text{grid-column:1;grid-row:3;display:block;overflow:auto;font-size:12px;line-height:1.35;text-align:left;padding:0}
+ body.game-screen .hand-card.chosen:not(.opening-card) .card-bottom{grid-column:1;grid-row:4}
+}

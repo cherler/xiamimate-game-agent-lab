@@ -10,7 +10,7 @@ function place(u,x,y){Object.assign(u,{x,y,anchor:{x,y},path:[],goal:null,ordere
 function advance(s,n){for(let i=0;i<n;i++)s=stepRescue(s);return s;}
 test('六关入口、补给、平民与目标均可达；多入口尸潮和五人武器分工',()=>{
  assert.equal(RESCUE_LEVELS.length,6);
- for(const level of RESCUE_LEVELS){const s=initRescue({level}),m=rescueMap(level);assert.equal(s.version,7);assert.deepEqual(s.soldiers.map(u=>u.role),['rifle','rifle','gunner','grenadier','shield']);
+ for(const level of RESCUE_LEVELS){const s=initRescue({level}),m=rescueMap(level);assert.equal(s.version,8);assert.deepEqual(s.soldiers.map(u=>u.role),['rifle','rifle','gunner','grenadier','shield']);
   for(const p of [...s.soldiers,...s.civilians,...s.objectives,...s.crates,...m.entrances]){assert.ok(walkable(s,p.x,p.y),level+': '+p.id);assert.ok(pathTo(s,p,s.soldiers[0]).length,level+': unreachable '+p.id);}
   assert.ok(new Set(s.schedule.filter(w=>w.wave===1).map(w=>w.entry)).size>=2);
   if(level<=3){const old=initRescue({level,version:6});assert.ok(s.schedule.length>old.schedule.length*2);assert.equal(m.extraction.count,rescueMap(level,6).extraction.count*3);}

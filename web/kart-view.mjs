@@ -1,4 +1,11 @@
-import {TRACKS,SEGMENT,curveAt} from '../src/kart.mjs';
+import {TRACKS,SEGMENT,curveAt,DRIFT_READY} from '../src/kart.mjs';
+export function driftFeedback(state){
+ const c=state.cars[0],curve=curveAt(TRACKS[state.track],c.z),onRoad=Math.abs(c.x)<=1;
+ if(c.mini>0)return {stage:'boost',label:'小喷！',progress:1};
+ if(c.drifting&&c.drift>=DRIFT_READY&&onRoad)return {stage:'ready',label:'松开小喷',progress:1};
+ if(c.drifting)return {stage:'charging',label:!onRoad?'回到路面':Math.abs(curve)<=.25?'弯道集气':Math.sign(curve)!==Math.sign(c.slip)?'顺弯转向':'集气',progress:Math.min(1,c.drift/DRIFT_READY)};
+ return {stage:'idle',label:c.speed<=95?'加速入弯':'转向 + 漂移',progress:0};
+}
 const colors=['#f4b953','#ee846f','#85bdd9','#90c9aa'];
 // Only interpolate what is drawn. Physics, collisions and recordings keep their fixed steps.
 export function kartRenderState(previous,current,alpha=1){
@@ -58,6 +65,10 @@ export function drawKart(canvas,state,{idle=false,reduced=false}={}){
   polygon(c,alt?'#667783':'#687b87',[[a.x-a.width,a.y],[a.x+a.width,a.y],[b.x+b.width,b.y],[b.x-b.width,b.y]]);
   for(const side of [-1,1])polygon(c,'#f3ead5',[[a.x+side*a.width*.92-a.width*.015,a.y],[a.x+side*a.width*.92+a.width*.015,a.y],[b.x+side*b.width*.92+b.width*.015,b.y],[b.x+side*b.width*.92-b.width*.015,b.y]]);
   if(alt)polygon(c,'#dbe6df80',[[a.x-a.width*.008,a.y],[a.x+a.width*.008,a.y],[b.x+b.width*.008,b.y],[b.x-b.width*.008,b.y]]);
+  if(Math.abs(a.curve)>.22&&a.index%4===0&&n>1&&n<24){
+   const dir=Math.sign(a.curve),cx=a.x,cy=(a.y+b.y)/2,sz=Math.min(a.width*.17,34),depth=Math.max(3,(a.y-b.y)*.45);
+   c.save();c.strokeStyle=player.drifts?'#f5dfab88':'#ffe6a9';c.lineWidth=Math.max(2,sz*.16);c.lineCap='round';c.beginPath();c.moveTo(cx-dir*sz,cy-depth);c.lineTo(cx+dir*sz,cy);c.lineTo(cx-dir*sz,cy+depth);c.stroke();c.restore();
+  }
   if(a.index<2){for(let k=0;k<10;k++)polygon(c,(a.index+k)%2?'#264355':'#f8f8e7',[[a.x-a.width+k*a.width*.2,a.y],[a.x-a.width+(k+1)*a.width*.2,a.y],[b.x-b.width+(k+1)*b.width*.2,b.y],[b.x-b.width+k*b.width*.2,b.y]]);}
   if(a.index%11===0&&a.y<h+100){const side=a.index%22?1:-1,x=a.x+side*a.width*1.6,size=a.scale*12;c.fillStyle='#788c79';c.fillRect(x-size*.09,a.y-size*.7,size*.18,size*.7);polygon(c,ridge?'#638c84':'#6aa394',[[x-size*.65,a.y-size*.5],[x,a.y-size*1.8],[x+size*.65,a.y-size*.5]]);}
  }
@@ -68,8 +79,9 @@ export function drawKart(canvas,state,{idle=false,reduced=false}={}){
   if(p.dz<600){c.font=`600 ${Math.max(10,Math.min(16,w*.016))}px system-ui`;c.textAlign='center';c.fillStyle='#244351';c.fillText(other.car.name,x,p.y-p.scale*6);}
  }
  const kartSize=Math.min(w*.2,h*.3,150),px=w*.5+player.slip*w*.025,py=h*.89;
- if(player.drifting&&!reduced){for(let i=0;i<8;i++){const t=(state.time*4+i*.17)%1;c.fillStyle=i%2?'#ffd681':'#ff9f76';c.fillRect(px+Math.sign(player.slip)*(kartSize*.4+t*kartSize*.3),py-8+t*kartSize*.17,4*(1-t)+1,4*(1-t)+1);}}
+ if(player.drifting){c.save();c.strokeStyle='#26394388';c.lineWidth=kartSize*.06;for(const side of [-1,1]){c.beginPath();c.moveTo(px+side*kartSize*.3,py-5);c.lineTo(px+side*kartSize*.3-player.slip*kartSize*.3,py+kartSize*.35);c.stroke();}c.restore();}
+ if(player.drifting&&!reduced){for(let i=0;i<8;i++){const t=(state.time*4+i*.17)%1;c.fillStyle=player.drift>=DRIFT_READY?(i%2?'#b2fff1':'#ffffff'):(i%2?'#ffd681':'#ff9f76');c.fillRect(px+Math.sign(player.slip)*(kartSize*.4+t*kartSize*.3),py-8+t*kartSize*.17,4*(1-t)+1,4*(1-t)+1);}}
  kartSprite(c,px,py,kartSize,colors[0],player.slip,player.boost>0||player.mini>0,state.time);
- if(player.boost>0&&!reduced){c.strokeStyle='#edfaff70';c.lineWidth=2;for(let i=0;i<12;i++){const a=i/12*Math.PI*2;c.beginPath();c.moveTo(w/2+Math.cos(a)*w*.38,h/2+Math.sin(a)*h*.38);c.lineTo(w/2+Math.cos(a)*w*.6,h/2+Math.sin(a)*h*.6);c.stroke();}}
+ if((player.boost>0||player.mini>0)&&!reduced){c.strokeStyle='#edfaff70';c.lineWidth=2;for(let i=0;i<12;i++){const a=i/12*Math.PI*2;c.beginPath();c.moveTo(w/2+Math.cos(a)*w*.38,h/2+Math.sin(a)*h*.38);c.lineTo(w/2+Math.cos(a)*w*.6,h/2+Math.sin(a)*h*.6);c.stroke();}}
  if(!idle){const next=curveAt(track,player.z+220);if(Math.abs(next)>.35){c.save();c.translate(w/2,h*.14);c.fillStyle='#f9f8e9';c.fillRect(-34,-24,68,48);c.font='bold 34px system-ui';c.textAlign='center';c.fillStyle='#31566a';c.fillText(next>0?'↱':'↰',0,13);c.restore();}}
 }

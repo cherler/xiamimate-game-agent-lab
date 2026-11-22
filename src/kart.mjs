@@ -1,6 +1,7 @@
 import {clamp,noise,fingerprint} from './common.mjs';
 
 export const KART_DT=1/60, SEGMENT=24;
+export const DRIFT_READY=.18;
 const sections={harbor:[[36,0],[28,.85],[24,0],[32,-.7],[20,0],[30,-1],[24,.65],[24,0]],ridge:[[24,0],[30,1.1],[16,-.9],[30,1.25],[24,0],[32,-1.15],[24,.8],[30,0]]};
 export const TRACKS=Object.freeze(Object.fromEntries(Object.entries(sections).map(([id,parts])=>{
  const segments=[];
@@ -62,7 +63,7 @@ export function stepKart(state,input={}){
   // Charge requires an actual corner, speed and staying on the road. Straight weaving is not fuel.
   if(c.drifting&&!offroad&&Math.abs(curve)>.25&&Math.sign(curve)===Math.sign(action.steer))c.drift+=KART_DT*(.28+Math.abs(curve)*.18);
   if(wasDrifting&&!c.drifting){
-   if(c.drift>=.18&&!offroad){c.mini=.65;c.drifts++;c.meter+=Math.min(.8,c.drift);while(c.meter>=1&&c.nitro<2){c.meter--;c.nitro++;}c.meter=Math.min(.99,c.meter);if(!c.id)s.events.push('drift');}
+   if(c.drift>=DRIFT_READY&&!offroad){c.mini=.65;c.drifts++;c.meter+=Math.min(.8,c.drift);while(c.meter>=1&&c.nitro<2){c.meter--;c.nitro++;}c.meter=Math.min(.99,c.meter);if(!c.id)s.events.push('drift');}
    c.drift=0;
   }
   c.z+=Math.max(0,(oldSpeed+c.speed)/2)*KART_DT;

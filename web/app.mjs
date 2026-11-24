@@ -5,7 +5,7 @@ import { begin, advance, seal, checkReplay, playback, GAMES, describeAction, pic
 import { snakeMoves, safeOptions } from '../src/snake.mjs';
 import { planSnake, snakePlans } from '../src/snake-planner.mjs';
 import { motor, HEIGHT, DIFFICULTIES, PONG_SKILLS } from '../src/pong.mjs';
-import {createPongOpponent,pongOpponentInput} from '../src/pong-opponent.mjs';
+import {createPongOpponent,pongOpponentAction} from '../src/pong-opponent.mjs';
 import { openWindow } from '../src/decisions.mjs';
 import { draw, geometry } from './board.mjs';
 import {PONG_VIEWS,pongAxis,pongTarget,foodEvents} from './arcade-view.mjs';
@@ -33,6 +33,8 @@ let humanDir='right',humanY=300,keyY=0,tactic='steady',tacticEpoch=-1,edge=-1;
 let prepared=null, gate=null, request=null, matchId='', nextAt=0, lastTime=0, remainder=0;
 let lastPaint=null,movedAt=0,reader=null,replayData=null,replayCursor=0,items=[],lastHud='',audio=null;
 let humanTrace=[],shotTrace=[];
+let snakePace=500;try{snakePace=localStorage.getItem('snake-pace')==='650'?650:500;}catch{}
+const interval=()=>game==='snake'?([500,650].includes((replaying()?replayData:match?.record)?.pace)?(replaying()?replayData:match.record).pace:500):GAMES[game].interval;
 let difficulty='easy',botY=300,trail=[],foodBursts=[],snakeQueue=[],pongQueue=[],pongBrain=createPongOpponent();
 let pongView='bottom';try{const stored=localStorage.getItem('arena-pong-view');if(PONG_VIEWS.includes(stored))pongView=stored;}catch{}
 let sound=readAudioPreferences().enabled,runnerAudio=null,effectsBus=null,soundSystem=null;const history={};const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -46,7 +48,7 @@ function beep(freq=480){
   osc.type='sine';osc.frequency.value=freq;vol.gain.setValueAtTime(.048,start);
   vol.gain.exponentialRampToValueAtTime(.001,start+.075);osc.connect(vol);vol.connect(effectsBus||audio.destination);osc.onended=()=>{osc.disconnect();vol.disconnect();};osc.start(start);osc.stop(start+.08);
 }
-window.addEventListener('glimmer-effect',e=>{if(e.detail.startsWith('runner-')){if(sound&&audio)(runnerAudio??=createRunnerAudio(audio,effectsBus)).cue(e.detail);return;}if(e.detail==='blast'){if(sound&&audio){const t=audio.currentTime,o=audio.createOscillator(),g=audio.createGain();o.type='triangle';o.frequency.setValueAtTime(145,t);o.frequency.exponentialRampToValueAtTime(38,t+.16);g.gain.setValueAtTime(.16,t);g.gain.exponentialRampToValueAtTime(.001,t+.2);o.connect(g);g.connect(effectsBus);o.start(t);o.stop(t+.21);o.onended=()=>{o.disconnect();g.disconnect();};}return;}const frequencies={coin:820,cast:520,power:430,damage:170,heal:660,shield:780,block:260,freeze:880,buff:590,draw:360,silence:240,shot:125,rescue:720,infection:145,gate:320,victory:850};beep(frequencies[e.detail]||440);if(['heal','buff','cast','victory','rescue'].includes(e.detail))setTimeout(()=>beep((frequencies[e.detail]||440)*1.25),65);});
+window.addEventListener('glimmer-effect',e=>{if(e.detail.startsWith('runner-')){if(sound&&audio)(runnerAudio??=createRunnerAudio(audio,effectsBus)).cue(e.detail);return;}if(e.detail==='blast'){if(sound&&audio){const t=audio.currentTime,o=audio.createOscillator(),g=audio.createGain();o.type='triangle';o.frequency.setValueAtTime(145,t);o.frequency.exponentialRampToValueAtTime(38,t+.16);g.gain.setValueAtTime(.16,t);g.gain.exponentialRampToValueAtTime(.001,t+.2);o.connect(g);g.connect(effectsBus);o.start(t);o.stop(t+.21);o.onended=()=>{o.disconnect();g.disconnect();};}return;}const frequencies={'rhythm-hit':650,'rhythm-hold':880,'rhythm-break':160,coin:820,cast:520,power:430,damage:170,heal:660,shield:780,block:260,freeze:880,buff:590,draw:360,silence:240,shot:125,rescue:720,infection:145,gate:320,victory:850};beep(frequencies[e.detail]||440);if(['heal','buff','cast','victory','rescue'].includes(e.detail))setTimeout(()=>beep((frequencies[e.detail]||440)*1.25),65);});
 window.addEventListener('glimmer-runner-motion',e=>{if(sound&&audio)(runnerAudio??=createRunnerAudio(audio,effectsBus)).update(e.detail);else runnerAudio?.stop();});
 function cancelDecision(){gate?.cancel();gate=null;prepared=null;request?.abort();request=null;}
 function saveCurrent(){
@@ -76,13 +78,13 @@ function reset({stash=true}={}){
   if(stash&&game==='pong'&&match?.state.game==='pong'&&!(match.state.version>=3)){difficulty='easy';$('difficulty').value=difficulty;}
   let seed=Number($('seed').value);
   if(!Number.isSafeInteger(seed)||seed<0||seed>0xffffffff)seed=41003;
-  $('seed').value=seed;match=begin(game,seed);matchId=Array.from(crypto.getRandomValues(new Uint32Array(4)),n=>n.toString(16).padStart(8,'0')).join('');
+  $('seed').value=seed;match=begin(game,seed);if(game==='snake')match.record.pace=snakePace;matchId=Array.from(crypto.getRandomValues(new Uint32Array(4)),n=>n.toString(16).padStart(8,'0')).join('');
   mode='ready';reader=null;replayData=null;items=[];lastPaint=null;humanDir='right';humanY=300;keyY=0;
   edge=-1;botY=300;trail=[];humanTrace=[];shotTrace=[];foodBursts=[];snakeQueue=[];pongQueue=[];pongBrain=createPongOpponent();tactic='steady';tacticEpoch=-1;remainder=0;say('');
   $('game-title').textContent=GAMES[game].name;$('objective').textContent=instructions[game][0];
   $('how').textContent=instructions[game][1];canvas.setAttribute('aria-label',GAMES[game].name+'棋盘');
   document.querySelectorAll('.game-tab').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.game===game)));
-  $('pad').hidden=false;$('pong-level').hidden=game!=='pong';document.body.dataset.arcade=game;setPongView(pongView);
+  $('snake-pace-wrap').hidden=game!=='snake';$('snake-pace').value=String(snakePace);$('pad').hidden=false;$('pong-level').hidden=game!=='pong';document.body.dataset.arcade=game;setPongView(pongView);
   $('sample').textContent=game==='snake'&&samples.laya?'观看 Laya 实测':'观看实测';
   refresh(true);paint();
 }
@@ -132,13 +134,13 @@ function showEvents(){
 }
 function refresh(force=false){
   const s=snapshot(), isReplay=replaying(), finished=mode==='finished'||mode==='replay-ended';
-  const remaining=Math.max(0,Math.ceil((GAMES[game].max-s.tick)*GAMES[game].interval/1000-1e-8));
+  const remaining=Math.max(0,Math.ceil((GAMES[game].max-s.tick)*interval()/1000-1e-8));
   const tag=[mode,game,...s.score,s.turn,remaining,items.length,opponent,difficulty].join('/');
   if(!force&&tag===lastHud)return;lastHud=tag;
   if(isReplay){
     const agent=replayData?.decisions.find(e=>e.source==='laya'||e.source==='jev');
     for(const i of [0,1])$('name'+i).textContent=agent?(agent.actor===i?labels[agent.source]:'规则'):(i===0?'青方':'橙方');
-  }else{$('name0').textContent='你';$('name1').textContent=game==='pong'&&opponent==='rule'?({easy:'练习对手',normal:'标准对手',hard:'进阶对手'})[difficulty]:opponent==='laya-plan'?'混合对手':opponent.startsWith('laya')?'Laya':labels[opponent]||'对手';}
+  }else{$('name0').textContent='你';$('name1').textContent=game==='pong'&&opponent==='rule'?({easy:'练习对手',normal:'标准对手',hard:'进阶对手'})[difficulty]:opponent==='planner'?'争食对手':opponent==='laya-plan'?'混合对手':opponent.startsWith('laya')?'Laya':labels[opponent]||'对手';}
   $('score0').textContent=s.score[0];$('score1').textContent=s.score[1];
   $('timer').textContent=String(Math.floor(remaining/60)).padStart(2,'0')+':'+String(remaining%60).padStart(2,'0');
   $('status').textContent=({ready:'待开局',paused:'已暂停',finished:'已结束',replay:'回放中','replay-paused':'回放暂停','replay-ended':'回放结束'})[mode]||
@@ -152,8 +154,9 @@ function refresh(force=false){
   if(!$('result').hidden){
     const partial=finished&&s.winner===null;
     $('result-title').textContent=finished?(partial?'片段结束':s.winner===-1?'平局':$('name'+s.winner).textContent+'获胜'):'已暂停';
-    $('result-reason').textContent=finished?(s.reason||'回放已播放完毕'):'';
+    $('result-reason').textContent=finished?((s.reason||'回放已播放完毕')+(game==='pong'?' · 最长回合 '+s.bestRally+' 拍':s.collisions?.length?' · 碰撞直接出局':' · 比食物数量')):'';
   }
+  $('snake-rule').hidden=game!=='snake'||mode!=='ready';$('result-retry').hidden=$('result-fresh').hidden=!finished||isReplay||game!=='snake';$('snake-pace').disabled=mode!=='ready'&&!finished;
   $('rally').textContent=game==='pong'?'本次连击 '+s.rally+' · 最高 '+s.bestRally:'食物 '+s.score[0]+' : '+s.score[1];
   $('difficulty').disabled=mode==='playing';
   showEvents();
@@ -187,7 +190,7 @@ function prepareSnake(now){
 }
 function setTiming(){
   const now=performance.now();lastTime=now;remainder=0;
-  nextAt=now+GAMES[game].interval;
+  nextAt=now+interval();
   if(playing()&&game==='snake')prepareSnake(now);
 }
 function start(){
@@ -214,7 +217,7 @@ function frame(now){
       if(choice.source==='fallback')say(choice.reason==='timeout'?'模型本步超时，规则接手。':'模型本步未返回有效选择，规则接手。');
       else if(choice.source==='laya'||choice.source==='jev')say('');
       trail.push(s.bodies[1][0]);trail=trail.slice(-12);humanDir=snakeQueue.shift()||humanDir;after([humanDir,choice.id],now);
-      if(playing()){nextAt=now+500;prepareSnake(now);}
+      if(playing()){nextAt=now+interval();prepareSnake(now);}
     }else if(game==='pong'){
       remainder+=Math.min(now-lastTime,120);
       while(remainder>=1000/60&&playing()){
@@ -225,7 +228,7 @@ function frame(now){
         }
         if(keyY)humanY=Math.max(0,Math.min(600,s.paddles[0]+keyY*60));
         if(s.version>=3){
-          botY=pongOpponentInput(s,pongBrain,{difficulty,policy:opponent});const observed=pongBrain.observedEpoch+'/'+pongBrain.phase;
+          botY=pongOpponentAction(s,pongBrain,{difficulty,policy:opponent});const observed=pongBrain.observedEpoch+'/'+pongBrain.phase;
           if(observed!==tacticEpoch){tacticEpoch=observed;note({tick:s.tick,actor:1,id:pongBrain.phase,source:opponent,ms:0});}
         }
         else if(s.tick%DIFFICULTIES[difficulty].reaction===0)botY=motor(s,1,tactic,difficulty);
@@ -236,9 +239,9 @@ function frame(now){
     paint(now);refresh();
   }else if(mode==='replay'){
     remainder+=Math.min(now-lastTime,160);
-    const interval=GAMES[game].interval;
-    while(remainder>=interval&&mode==='replay'){
-      const step=reader.next();remainder-=interval;
+    const replayInterval=interval();
+    while(remainder>=replayInterval&&mode==='replay'){
+      const step=reader.next();remainder-=replayInterval;
       if(step.done){mode='replay-ended';refresh(true);break;}
       lastPaint=snapshot();movedAt=now;match.state=step.value;ate(lastPaint,step.value,now);
       while(replayCursor<replayData.decisions.length&&replayData.decisions[replayCursor].tick<match.state.tick)items.push(replayData.decisions[replayCursor++]);
@@ -249,9 +252,9 @@ function frame(now){
   lastTime=now;requestAnimationFrame(frame);
 }
 function watch(record){humanTrace=[];shotTrace=[];
-  if(['kart-1','kart-2','dance-1','rhythm-1','rhythm-2','runner-1','runner-2','runner-3'].includes(record?.format)){
-    const play={'kart-1':watchKart,'kart-2':watchKart,'dance-1':watchClassicDance,'rhythm-1':watchDance,'rhythm-2':watchDance,'runner-1':watchRunner,'runner-2':watchRunner,'runner-3':watchRunner}[record.format];play(record);
-    if(!['kart-1','kart-2'].includes(record.format))closeKart();if(record.format!=='dance-1')closeClassicDance();if(!['rhythm-1','rhythm-2'].includes(record.format))closeDance();if(!['runner-1','runner-2','runner-3'].includes(record.format))closeRunner();document.body.classList.add('motion-mode');
+  if(['kart-1','kart-2','kart-3','dance-1','rhythm-1','rhythm-2','runner-1','runner-2','runner-3'].includes(record?.format)){
+    const play={'kart-1':watchKart,'kart-2':watchKart,'kart-3':watchKart,'dance-1':watchClassicDance,'rhythm-1':watchDance,'rhythm-2':watchDance,'runner-1':watchRunner,'runner-2':watchRunner,'runner-3':watchRunner}[record.format];play(record);
+    if(!['kart-1','kart-2','kart-3'].includes(record.format))closeKart();if(record.format!=='dance-1')closeClassicDance();if(!['rhythm-1','rhythm-2'].includes(record.format))closeDance();if(!['runner-1','runner-2','runner-3'].includes(record.format))closeRunner();document.body.classList.add('motion-mode');
     stashArcade();cancelDecision();mode='paused';closeChess();closeStrategy();closeRescue();
     $('arcade').hidden=true;$('strategy').hidden=true;$('rescue').hidden=true;$('kart').hidden=record.game!=='kart';$('dance').hidden=record.game!=='dance';$('runner').hidden=record.game!=='runner';
     document.querySelectorAll('[data-game]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.game===record.game)));window.history.replaceState(null,'','#'+record.game);return;
@@ -259,7 +262,7 @@ function watch(record){humanTrace=[];shotTrace=[];
   closeKart();closeDance();closeClassicDance();closeRunner();$('kart').hidden=true;$('dance').hidden=true;$('runner').hidden=true;
   if(['rescue-1','rescue-2','rescue-3','rescue-4','rescue-5','rescue-6','rescue-7','rescue-8'].includes(record?.format)){watchRescue(record);saveCurrent();cancelDecision();mode='ready';closeChess();closeStrategy();$('arcade').hidden=true;$('strategy').hidden=true;$('rescue').hidden=false;document.querySelectorAll('[data-game]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.game==='rescue')));window.history.replaceState(null,'','#rescue');return;}
   closeRescue();$('rescue').hidden=true;
-  if(['glimmer-1','glimmer-2','glimmer-3','glimmer-4'].includes(record?.format)){saveCurrent();cancelDecision();mode='ready';$('arcade').hidden=true;$('strategy').hidden=false;if(record.game==='chess'&&['glimmer-3','glimmer-4'].includes(record.format)){closeStrategy();watchChess(record);}else{closeChess();watchStrategy(record,cap);}document.querySelectorAll('[data-game]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.game===record.game)));window.history.replaceState(null,'','#'+record.game);return;}
+  if(['glimmer-1','glimmer-2','glimmer-3','glimmer-4','glimmer-5'].includes(record?.format)){saveCurrent();cancelDecision();mode='ready';$('arcade').hidden=true;$('strategy').hidden=false;if(record.game==='chess'&&['glimmer-3','glimmer-4','glimmer-5'].includes(record.format)){closeStrategy();watchChess(record);}else{closeChess();watchStrategy(record,cap);}document.querySelectorAll('[data-game]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.game===record.game)));window.history.replaceState(null,'','#'+record.game);return;}
   closeChess();closeStrategy();$('arcade').hidden=false;$('strategy').hidden=true;checkReplay(record);saveCurrent();cancelDecision();game=record.game;opponentMenu();reset({stash:false});
   replayData=record;reader=playback(record);match=begin(game,record.seed,record.opening,record.rules);replayCursor=0;
   $('seed').value=record.seed;mode='replay';setTiming();refresh(true);paint();
@@ -310,6 +313,8 @@ window.addEventListener('pagehide',stashArcade);
 $('pong-view').onchange=e=>{setPongView(e.target.value);refresh(true);paint();};
 $('pong-rotate').onclick=()=>{setPongView(PONG_VIEWS[(PONG_VIEWS.indexOf(pongView)+1)%4]);refresh(true);paint();};
 $('difficulty').onchange=e=>{difficulty=e.target.value;pongBrain=createPongOpponent();refresh(true);};
+$('snake-pace').onchange=e=>{snakePace=Number(e.target.value);localStorage.setItem('snake-pace',String(snakePace));reset();};
+$('result-retry').onclick=()=>start();$('result-fresh').onclick=()=>{$('seed').value=crypto.getRandomValues(new Uint32Array(1))[0];start();};
 $('opponent').onchange=e=>{opponent=e.target.value;if(mode!=='ready')reset();refresh(true);};
 $('new-seed').onclick=()=>{$('seed').value=crypto.getRandomValues(new Uint32Array(1))[0];reset();};
 $('seed').onchange=()=>reset();$('start').onclick=start;$('restart').onclick=()=>reset();

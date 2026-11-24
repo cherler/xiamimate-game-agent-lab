@@ -1,0 +1,38 @@
+/* Keep decisions on the playfield; disclose detail only on selection. */
+.kart-fuel .kart-nitro-meter{display:block;height:6px;border-radius:5px;background:#122d42;overflow:hidden;margin-top:3px;grid-column:1/-1}
+.kart-nitro-meter>i{display:block;height:100%;background:#82d8ff;transition:width .1s linear}
+.card-guidance{position:absolute;bottom:25%;left:50%;transform:translateX(-50%);z-index:8;max-width:85%;padding:6px 12px;border-radius:18px;background:#163a46;color:#fff;box-shadow:0 3px 12px #112e4333;font-size:13px;pointer-events:none}
+.mulligan-mark{gap:3px;width:auto!important;padding:2px 5px;border-radius:10px!important}.mulligan-mark small{font-size:10px;white-space:nowrap}
+.keyword-glossary{text-align:left;margin:10px 0 0}.keyword-glossary div{display:flex;gap:8px;border-top:1px solid #c5d6cd;padding:7px 0}.keyword-glossary dt{font-weight:800;white-space:nowrap}.keyword-glossary dd{margin:0;font-size:13px;line-height:1.5}
+.deck-stack.low-deck{color:#a64d3e}.ac-stat-context{display:block;font-size:11px;color:#547667}
+.ac-review-dialog{width:min(90vw,480px);max-height:80dvh;overflow:auto}.ac-review-dialog>button{float:right}
+.pong-skills small{display:block!important;min-height:1.1em}
+.snake-rule{display:flex;justify-content:center;gap:14px;font-size:12px;padding:5px;color:#416b63;flex:none}
+.result-actions{pointer-events:auto;display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.result-actions button{min-height:44px;font-size:14px}
+.rs-map-wrap{position:relative}.rs-contact{position:absolute;z-index:3;top:8px;left:50%;transform:translateX(-50%);border:1px solid #9eebcd;border-radius:20px;background:#153f49ed;color:#d7ffe8;padding:7px 14px;font-size:13px;white-space:nowrap;pointer-events:none}
+.rs-escort{color:#337c6c!important}.rs-live-bar #rs-field-goals{gap:8px;flex-wrap:wrap}
+.rhythm-lane-inputs button{position:relative}.rhythm-lane-feedback{position:absolute;left:0;right:0;bottom:22%;font-size:clamp(12px,2vw,18px);font-style:normal;color:#e6fff2;text-align:center;text-shadow:0 2px 4px #142639;pointer-events:none}
+.rhythm-lane-feedback[data-kind=miss]{color:#ffb4bd}.rhythm-timing-summary{display:flex;gap:18px;font-size:13px}.rhythm-timing-summary b{display:block;font-size:20px}
+.runner-coach{color:#ffdba3;font-weight:700;font-size:15px}
+#runner-practice,#rhythm-calibrate{background:#d7eae2;color:#193e4c;border:1px solid #a8cbbd;font-weight:700;min-height:44px}
+body.play-first.game-screen #rescue #rs-field-goals .rs-escort{color:#f6dca8!important}
+@media(max-width:1100px){
+ .visual-table .hero-side .deck-stack{display:inline-flex!important;align-items:center;gap:3px;position:static;width:auto;height:auto;min-width:28px;font-size:12px;background:transparent;box-shadow:none;border:0;padding:0}
+ .visual-table .deck-stack>.glyph{width:13px;height:13px}.visual-table .deck-stack::before,.visual-table .deck-stack::after{display:none}
+ .ac-table{width:100%;height:100%;max-width:none;grid-template-rows:minmax(0,1fr) 62px;background:#bfcdb8}
+ .ac-board{width:100%;height:100%;min-height:0}
+ .ac-bench{min-width:0;overflow-x:auto;overflow-y:hidden;grid-template-columns:repeat(8,minmax(44px,1fr));padding:10px 3px 2px;gap:3px;touch-action:pan-x}
+ .ac-bench-slot{min-height:44px;min-width:44px}.ac-bench-slot .ac-unit-name{font-size:9px}
+ .ac-bench-slot .ac-stars{font-size:12px}.ac-bench-slot .ac-avatar{height:83%}
+}
+@media(prefers-reduced-motion:reduce){.kart-nitro-meter>i{transition:none}}
+
+.ac-board-viewport{min-width:0;min-height:0;overflow:hidden}.ac-board-viewport>.ac-board{width:100%;height:100%}.ac-zoom-toggle{display:none}
+@media(max-height:500px) and (max-width:1100px),(max-width:360px){
+ .ac-zoom-toggle{display:inline-flex;font-size:10px;white-space:nowrap;padding:4px;min-height:28px}
+ .ac-board-viewport.focus-home{overflow-x:auto;touch-action:pan-x}
+ .ac-board-viewport.focus-home>.ac-board{height:200%;min-width:352px;transform:translateY(-50%)}
+ .ac-board-viewport.focus-home .ac-river{display:none}
+}
+
+.visual-table .hero-side .deck-stack.low-deck{color:#ffe1a6!important;background:#583a27!important;border-radius:4px;padding:2px 4px}

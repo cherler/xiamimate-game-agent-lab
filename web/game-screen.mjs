@@ -1,7 +1,7 @@
 // Mobile play uses the same live controls; settings stay in their game root so
 // rendering, disabled states, saved choices and replay handlers remain intact.
 const names={snake:'双蛇争食',pong:'乒乓球',cards:'微光牌局',chess:'微光棋阵',rescue:'微光救援',kart:'微光漂移',dance:'微光舞台',runner:'微光疾行'};
-const preferred={snake:'portrait',pong:'portrait',cards:'portrait',chess:'landscape',rescue:'landscape',kart:'landscape',dance:'landscape',runner:'portrait'};
+const preferred={snake:'portrait',pong:'portrait',cards:'portrait',chess:'portrait',rescue:'landscape',kart:'landscape',dance:'landscape',runner:'portrait'};
 const roots={snake:'arcade',pong:'arcade',cards:'strategy',chess:'strategy',rescue:'rescue',kart:'kart',dance:'dance',runner:'runner'};
 const pauseIds={snake:'start',pong:'start',kart:'kart-pause',dance:'rhythm-pause',runner:'runner-pause',rescue:'rs-start',chess:'ac-phase-pause'};
 const panelSelectors={snake:'.rail',pong:'.rail',kart:'.motion-options',dance:'.motion-options',runner:'.motion-options',rescue:'.rs-rail',cards:'.card-topbar',chess:'.ac-screen-settings'};

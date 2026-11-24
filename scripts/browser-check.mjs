@@ -9,7 +9,7 @@ import {chromium} from './playwright.mjs';
 const url=process.env.ARENA_URL||'http://127.0.0.1:4843';
 const browser=await chromium.launch({headless:true});const context=await browser.newContext({viewport:{width:1280,height:1000}}),page=await context.newPage();const errors=[],checks=[];
 const track=p=>p.on('pageerror',e=>errors.push(e.message));track(page);
-async function download(p,button,file){const wait=p.waitForEvent('download');await button.click();const d=await wait;await d.saveAs(path.join(results,file));const rec=JSON.parse(await fs.readFile(path.join(results,file),'utf8'));['glimmer-1','glimmer-2','glimmer-3','glimmer-4'].includes(rec.format)?replayStrategy(rec):checkReplay(rec);return rec;}
+async function download(p,button,file){const wait=p.waitForEvent('download');await button.click();const d=await wait;await d.saveAs(path.join(results,file));const rec=JSON.parse(await fs.readFile(path.join(results,file),'utf8'));['glimmer-1','glimmer-2','glimmer-3','glimmer-4','glimmer-5'].includes(rec.format)?replayStrategy(rec):checkReplay(rec);return rec;}
 try{
  await Promise.all([page.waitForResponse(r=>r.url().endsWith('/api/providers')),page.goto(url)]);
  assert.equal(await page.locator('[data-game=boxes]').count(),0);assert.equal(await page.locator('[data-game]').count(),5);

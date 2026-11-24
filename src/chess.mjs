@@ -30,9 +30,9 @@ function shop(s,actor){
  }
 }
 function xp(p,n){p.xp+=n;while(p.level<10&&p.xp>=LEVEL_XP[p.level]){p.xp-=LEVEL_XP[p.level];p.level++;}if(p.level===10)p.xp=0;}
-export function initChess(seed=1){
+export function initChess(seed=1,version=4){
  if(!Number.isInteger(seed)||seed<0||seed>0xffffffff)throw Error('开局无效');
- const s={game:'chess',version:3,seed,seq:0,round:1,roll:0,uid:0,phase:'prep',winner:null,reason:'',log:[],battle:null,lastBattle:null,lastGhost:null,pool:Object.fromEntries(UNIT_LIST.map(c=>[c.id,POOL_COPIES[c.cost]])),players:names.map((name,i)=>({name,hp:100,gold:1,level:1,xp:0,units:[],shop:[],inventory:[],loot:null,locked:false,ready:false,streak:0,placement:null,lastOpponent:null,lastIncome:null,style:['balanced','economy','strength','level'][i%4]}))};
+ const s={game:'chess',version,seed,seq:0,round:1,roll:0,uid:0,phase:'prep',winner:null,reason:'',log:[],battle:null,lastBattle:null,lastGhost:null,pool:Object.fromEntries(UNIT_LIST.map(c=>[c.id,POOL_COPIES[c.cost]])),players:names.map((name,i)=>({name,hp:100,gold:1,level:1,xp:0,units:[],shop:[],inventory:[],loot:null,locked:false,ready:false,streak:0,placement:null,lastOpponent:null,lastIncome:null,style:['balanced','economy','strength','level'][i%4]}))};
  for(let i=0;i<8;i++)shop(s,(i+seed%8)%8);s.pairings=pairings(s);return s;
 }
 function merge(p,type,preferred){
@@ -48,7 +48,7 @@ function battles(s){
  const alive=s.players.map((p,i)=>p.hp>0?i:null).filter(i=>i!==null),results=[];let visible=null;
  const fight=(a,b,ghost=false)=>{
   const own=structuredClone(board(s.players[a])),enemy=b===-1?creeps(s.round):structuredClone(board(s.players[b])).map(u=>({...u,cell:63-u.cell}));
-  const fightSeed=(s.seed^((s.round*65537+a*977+(b+1)*197)>>>0))>>>0,result=runBattle({seed:fightSeed,round:s.round,players:[{units:own},{units:enemy}]}),pve=b===-1;
+  const fightSeed=(s.seed^((s.round*65537+a*977+(b+1)*197)>>>0))>>>0,result=runBattle({version:s.version,seed:fightSeed,round:s.round,players:[{units:own},{units:enemy}]}),pve=b===-1;
   results.push({actor:a,opponent:b,win:result.winner===0,draw:result.winner===-1,damage:result.damage[0],pve,ghost});s.players[a].lastOpponent=b;
   if(!pve&&!ghost){results.push({actor:b,opponent:a,win:result.winner===1,draw:result.winner===-1,damage:result.damage[1],pve:false,ghost:false});s.players[b].lastOpponent=a;}
   if(a===0)visible={...result,opponent:b,pve,home:own,away:enemy};
@@ -121,6 +121,7 @@ export function formation(s,actor){
 }
 export function chessPlan(s,actor,style=s.players[actor].style||'balanced'){
  if(s.version<3)return Legacy.chessPlan(s,actor,style);
+ if(s.version>=4)return adaptiveChessPlan(s,actor,style);
  const actions=[];let t=s;const add=a=>{t=stepChess(t,actor,a);actions.push(a);};
  if(t.players[actor].loot)add({type:'loot',slot:chooseChessLoot(t,actor)});
  for(let count=0;count<24;count++){
@@ -134,6 +135,57 @@ export function chessPlan(s,actor,style=s.players[actor].style||'balanced'){
  }
  add(formation(t,actor));
  for(let i=0;i<3&&t.players[actor].inventory.length;i++){const id=t.players[actor].inventory[0],u=board(t.players[actor]).filter(u=>u.items.length<3).sort((a,b)=>chessItemValue(id,b)-chessItemValue(id,a)||unitValue(b)-unitValue(a))[0];if(!u||chessItemValue(id,u)<0)break;add({type:'equip',slot:0,uid:u.uid});}
+ add({type:'ready'});return actions;
+}
+
+function teamStrength(player){
+ const layout=formation({players:[player]},0).layout,ids=new Set(layout.map(u=>u.uid)),team=player.units.filter(u=>ids.has(u.uid));
+ return team.reduce((n,u)=>n+unitValue(u)+(u.items||[]).reduce((v,id)=>v+chessItemValue(id,u)*.35,0),0)+synergyDetails(team).reduce((n,t)=>n+t.level*12,0);
+}
+function reserveValue(player,u){
+ const copies=player.units.filter(v=>v.type===u.type&&v.star===u.star).length;
+ return unitValue(u)*.15+(copies>=2?(player.hp<30?4:12):0)+(u.items?.length||0)*8+(u.star===3?80:0);
+}
+function adaptiveChessPlan(s,actor,style){
+ const actions=[],bought=new Set();let t=s,rolls=0;
+ const add=a=>{t=stepChess(t,actor,a);actions.push(a);};
+ const arrange=()=>{const a=formation(t,actor),p=t.players[actor];if(a.layout.some(u=>p.units.find(v=>v.uid===u.uid).cell!==u.cell)||board(p).length!==a.layout.length)add(a);};
+ if(t.players[actor].loot)add({type:'loot',slot:chooseChessLoot(t,actor)});
+ arrange();
+ for(let i=0;i<32;i++){
+  const p=t.players[actor],urgent=p.hp<30,reserve=s.round<=5||urgent?0:style==='economy'?Math.min(50,10*Math.floor(s.round/4)):style==='strength'?Math.min(20,10*Math.floor(s.round/8)):Math.min(40,10*Math.floor(s.round/5));
+  const strength=teamStrength(p),candidates=[];
+  for(let slot=0;slot<p.shop.length;slot++){
+   const type=p.shop[slot],c=UNITS[type];if(!c||p.units.some(u=>u.type===type&&u.star===3))continue;
+   const merging=p.units.filter(u=>u.type===type&&u.star===1).length>=2;
+   const sells=bench(p).length<8||merging?[null]:bench(p).filter(u=>!bought.has(u.uid)&&u.type!==type);
+   for(const sell of sells){
+    const gold=p.gold+(sell?UNITS[sell.type].cost*3**(sell.star-1):0);if(gold-c.cost<reserve)continue;
+    const trial=structuredClone(p);if(sell)trial.units=trial.units.filter(u=>u.uid!==sell.uid);
+    trial.units.push({uid:'offer',type,star:1,cell:null,items:[]});merge(trial,type);
+    const pair=p.units.filter(u=>u.type===type&&u.star===1).length===1?(urgent?4:10):0;
+    const value=teamStrength(trial)-strength+pair-c.cost*.7-(sell?reserveValue(p,sell):0);
+    candidates.push({slot,type,sell,value});
+   }
+  }
+  candidates.sort((a,b)=>b.value-a.value||a.slot-b.slot||String(a.sell?.uid).localeCompare(String(b.sell?.uid)));
+  const next=candidates[0];
+  if(next?.value>1){
+   if(next.sell)add({type:'sell',uid:next.sell.uid});
+   const uid='c'+t.uid;add({type:'buy',slot:next.slot});bought.add(uid);arrange();continue;
+  }
+  if(p.level<10&&p.gold>=reserve+5&&(p.units.length>p.level||style==='level')&&p.level<Math.min(10,3+Math.floor(s.round/3))){add({type:'level'});arrange();continue;}
+  const limit=urgent?6:style==='strength'?3:style==='economy'?(s.round>=12?1:0):2;
+  // A full bench must not prevent looking for a better offer. Sell only when
+  // the replacement has been evaluated, so pairs and equipped cores stay safe.
+  if(p.gold>=reserve+2&&rolls<limit){add({type:'roll'});rolls++;continue;}
+  break;
+ }
+ arrange();
+ for(let i=0;i<3&&t.players[actor].inventory.length;i++){
+  const p=t.players[actor],id=p.inventory[0],u=board(p).filter(u=>u.items.length<3).sort((a,b)=>chessItemValue(id,b)-chessItemValue(id,a)||unitValue(b)-unitValue(a))[0];
+  if(!u||chessItemValue(id,u)<0)break;add({type:'equip',slot:0,uid:u.uid});
+ }
  add({type:'ready'});return actions;
 }
 export function chessPacket(s,actor){const p=s.players[actor];return {state:{round:s.round,yourHP:p.hp,gold:p.gold,population:p.level,owned:p.units.map(u=>({type:u.type,stars:u.star})),shop:p.shop},questions:{move:{type:'choice',instructions:'Choose an economy plan for an eight-player auto battler.',criteria:{balanced:'Buy useful copies, preserve interest.',economy:'Save for interest.',strength:'Spend to protect health.',level:'Prioritize population and higher-cost units.'}}}};}

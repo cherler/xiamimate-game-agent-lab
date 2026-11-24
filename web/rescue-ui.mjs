@@ -9,7 +9,7 @@ const esc=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll
 const icons={mobility:'↗',fire:'✦',gate:'▥'};
 let match,active=false,building=false,support=null,hover=null,raf=0,last=0,acc=0,hudAt=-1,hudPhase='',resultKey='',soundId=-1,lastShot=0;
 let watch=null,reader=null,replayPlaying=false,replayDone=false,speed=1;
-let restoreNotice='';
+let restoreNotice='',followingBefore=0,contactUntil=0,contactCount=0;
 let cancelInput=()=>{},orderMarker=null;
 let campaign={unlocked:1,choices:[],medals:{}};
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -21,7 +21,7 @@ function restore(){
  try{const r=JSON.parse(localStorage.getItem(SAVE));if(r){const state=replayRescue(r);match={state,record:{...r,end:null}};if(state.phase==='running')issueRescue(match,{type:'pause'});}}catch{try{const raw=localStorage.getItem(SAVE);if(raw){localStorage.setItem(SAVE+'-unreadable',raw);restoreNotice='上次行动未能恢复，已保留原记录。这次从部署重新开始。';}}catch{}}
 }
 function newMission(level=match?.state.level||1,difficulty=match?.state.difficulty||'normal'){
- cancelInput();orderMarker=null;
+ cancelInput();orderMarker=null;followingBefore=0;contactUntil=0;
  watch=null;reader=null;replayPlaying=false;replayDone=false;speed=1;
  match=beginRescue({level,seed:41003,difficulty,upgrades:campaign.choices.slice(0,level-1)});building=false;support=null;hover=null;acc=0;resultKey='';soundId=-1;save();if(active)mount();
 }
@@ -40,7 +40,7 @@ function mount(){
  if(!active)return;resultKey='';const s=match.state,m=rescueMap(s.level,s.version);
  root().innerHTML=`<div class="rs-heading"><div><span class="rs-eyebrow">GLIMMER RESCUE</span><h1>微光救援</h1></div><div class="rs-missions" aria-label="救援关卡">${RESCUE_LEVELS.map(i=>`<button data-mission="${i}" ${i>campaign.unlocked?'disabled':''} aria-current="${s.level===i?'step':'false'}"><b>${String(i).padStart(2,'0')}</b><span>${rescueMap(i).name}</span>${campaign.medals[i]?'✓':''}</button>`).join('')}</div><button id="rs-export" class="quiet">导出回放</button></div>
  <div class="rs-layout"><div class="rs-center"><div class="rs-map-head"><div><span id="rs-phase"></span><b>${esc(m.name)}</b></div><strong id="rs-timer">01:00</strong><button id="rs-start" class="primary">开始行动</button></div>
- <div class="rs-live-bar"><div id="rs-field-goals" aria-live="polite"></div><button id="rs-zoom" class="quiet" aria-pressed="false">放大</button></div><section id="rs-evac" class="rs-evac" aria-live="polite" ${s.version<3?'hidden':''}></section>${s.version>=4&&s.version<6?'<div class="rs-callbar"><span id="rs-call-note"></span><button id="rs-call" class="primary">呼叫接驳</button></div>':''}<div class="rs-map-wrap"><canvas id="rescue-board" width="1200" height="800" tabindex="0" aria-label="救援地图：蓝色军队、黄色平民、红色丧尸，点击地面，全队移动；自动射击与护送"></canvas><div id="rs-pause" hidden><span>Ⅱ</span><b>战术暂停</b></div></div>
+ <div class="rs-live-bar"><div id="rs-field-goals" aria-live="polite"></div><button id="rs-zoom" class="quiet" aria-pressed="false">放大</button></div><section id="rs-evac" class="rs-evac" aria-live="polite" ${s.version<3?'hidden':''}></section>${s.version>=4&&s.version<6?'<div class="rs-callbar"><span id="rs-call-note"></span><button id="rs-call" class="primary">呼叫接驳</button></div>':''}<div class="rs-map-wrap"><div id="rs-contact" class="rs-contact" role="status" hidden></div><canvas id="rescue-board" width="1200" height="800" tabindex="0" aria-label="救援地图：蓝色军队、黄色平民、红色丧尸，点击地面，全队移动；自动射击与护送"></canvas><div id="rs-pause" hidden><span>Ⅱ</span><b>战术暂停</b></div></div>
  <div class="rs-legend"><span><i class="rs-blue"></i>军队</span><span><i class="rs-gold"></i>平民</span><span><i class="rs-pink"></i>丧尸</span><span><i class="rs-green"></i>撤离区</span><span id="rs-hint">点地面，全队移动</span></div>
  <div class="rs-simple-commands"><div class="rs-team-state"><b id="rs-selected" role="status">全队行动</b><span id="rs-alive">5 人</span><span id="rs-autonomy"></span></div><div class="rs-orders"><button id="rs-retreat"><span>↙</span>撤回</button><button id="rs-hold"><span>⊙</span>驻守</button><button id="rs-gate"><span>▥</span>门障 <b>2</b></button></div></div>
  ${s.version>=4&&s.version<6?`<div class="rs-supportbar"><span>战术补给 <b id="rs-supplies">${s.supplies}</b></span><button id="rs-decoy" aria-pressed="false"><b>◉ 诱饵信标</b><small>引开尸群 6 秒 · 用 1 份</small></button><button id="rs-medic" aria-pressed="false"><b>＋ 范围急救</b><small>队员恢复 55 · 用 1 份</small></button></div>`:''}<p id="rs-notice" role="status" aria-live="polite"></p><section id="rs-result" hidden aria-live="polite"></section></div>
@@ -78,7 +78,8 @@ function hud(force=false){
  $('rs-wave-progress').style.width=Math.min(100,s.tick/(m.seconds*RESCUE_HZ)*100)+'%';root().querySelectorAll('[data-wave]').forEach(i=>i.classList.toggle('past',Number(i.dataset.wave)<=s.wave));
  const next=s.schedule[s.spawned],count=next?s.schedule.slice(s.spawned).filter(w=>w.wave===next.wave).length:0;$('rs-next-wave').textContent=next?`${m.entrances[next.entry].name} · ${count} 只 · ${Math.max(0,Math.ceil((next.tick-s.tick)/RESCUE_HZ))} 秒后进入`:'全部丧尸已入场';
  const objectives=(s.objectives||[]).map(o=>`<span class="${o.done?'complete':''}">${o.done?'✓':o.type==='power'?'ϟ':o.type==='nest'?'◎':'▣'} ${o.type==='power'?'供电':o.type==='nest'?'感染巢':'车队'} ${o.done?'完成':o.type==='power'?Math.ceil((o.required-o.progress)/30)+' 秒':o.type==='nest'?Math.round(o.hp)+' 耐久':o.blocked?'被包围':o.active?'行进中':'靠近护送'}</span>`).join('');
- $('rs-field-goals').innerHTML=objectives+`<span class="${st.saved>=m.quota?'complete':''}">${st.saved>=m.quota?'✓':'↙'} 撤离 ${st.saved}/${m.quota}</span><span class="${m.mode==='clear'?'clear-goal':''}">${m.mode==='clear'?'◎ 清剿 '+(st.enemies+st.pending):'尸潮 '+st.enemies}</span>`;
+ if(st.following>followingBefore){contactCount=st.following;contactUntil=performance.now()+2200;}followingBefore=st.following;
+ $('rs-field-goals').innerHTML=objectives+`<span class="${st.saved>=m.quota?'complete':''}">${st.saved>=m.quota?'✓':'↙'} 撤离 ${st.saved}/${m.quota}</span>${st.following?`<span class="rs-escort">↙ 跟随 ${st.following}</span>`:''}${st.boarding?`<span class="rs-escort">◷ 接驳 ${st.boarding}</span>`:''}<span class="${m.mode==='clear'?'clear-goal':''}">${m.mode==='clear'?'◎ 清剿 '+(st.enemies+st.pending):'尸潮 '+st.enemies}</span>`;
  $('rs-log').innerHTML=s.log.slice(-4).reverse().map(e=>`<li class="${e.kind}"><time>${String(Math.floor(e.tick/30/60)).padStart(2,'0')}:${String(Math.floor(e.tick/30)%60).padStart(2,'0')}</time>${esc(e.text)}</li>`).join('');
  $('rs-gate').querySelector('b').textContent=s.gateCharges;
  for(const id of ['rs-retreat','rs-hold','rs-gate'])$(id).disabled=!!watch||s.phase==='ended'||(id==='rs-gate'?s.gateCharges===0:ids().length===0);
@@ -109,7 +110,7 @@ function showResult(){
  queueMicrotask(()=>{if(active&&panel.isConnected)panel.scrollIntoView({block:'nearest',behavior:reduced?'auto':'smooth'});});
  if(!watch)save();
 }
-function paint(){if(active&&match&&$('rescue-board'))drawRescue($('rescue-board'),match.state,{selectedIds:ids(),building,support,hover,reduced,orderMarker:orderMarker&&performance.now()-orderMarker.at<1600?orderMarker:null});}
+function paint(){if(active&&$('rs-contact')){$('rs-contact').hidden=performance.now()>=contactUntil;$('rs-contact').textContent='✓ '+contactCount+' 人跟随  ↙ 撤回';}if(active&&match&&$('rescue-board'))drawRescue($('rescue-board'),match.state,{selectedIds:ids(),building,support,hover,reduced,orderMarker:orderMarker&&performance.now()-orderMarker.at<1600?orderMarker:null});}
 function sounds(){const s=match.state;for(const e of s.events){if(e.id<=soundId)continue;soundId=e.id;let kind=({rescue:'rescue',infection:'infection',build:'gate',victory:'victory',fallen:'damage',evacAlarm:'damage',evacComplete:'rescue',medic:'heal',supply:'rescue',decoy:'gate',blast:'blast',objective:'rescue'})[e.kind];if(e.kind==='shot'&&s.tick-lastShot>=7){lastShot=s.tick;kind='shot';}if(kind)window.dispatchEvent(new CustomEvent('glimmer-effect',{detail:kind}));}}
 function frame(now){
  if(!active)return;acc+=Math.min(now-last,120)*(watch?speed:1);last=now;

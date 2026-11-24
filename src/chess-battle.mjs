@@ -1,4 +1,4 @@
-import {UNITS,NEUTRALS,chessInfo,ITEMS,TRAITS} from './chess-catalog.mjs';
+import {UNITS,NEUTRALS,chessInfo,ITEMS,TRAITS,GUARD_SKILLS} from './chess-catalog.mjs';
 import {noise} from './common.mjs';
 export const distance=(a,b)=>Math.max(Math.abs(a%8-b%8),Math.abs(Math.floor(a/8)-Math.floor(b/8)));
 const adjacent=cell=>[-1,0,1].flatMap(dy=>[-1,0,1].filter(dx=>dx||dy).map(dx=>[cell%8+dx,Math.floor(cell/8)+dy])).filter(([x,y])=>x>=0&&x<8&&y>=0&&y<8).map(([x,y])=>y*8+x);
@@ -54,7 +54,10 @@ export function runBattle(s){
     if(u.type==='C09')hit([...enemies].sort((a,b)=>distance(u.cell,b.cell)-distance(u.cell,a.cell)||order(a)-order(b))[0],220);
     if(u.type==='C10'){for(const v of enemies.filter(v=>distance(u.cell,v.cell)===1))hit(v,140);shield(u,200);}
     if(u.type==='C11')hit(target,160);
-    if(skill==='guard'){shield(u,220);for(const v of units.filter(v=>v.actor===u.actor&&distance(u.cell,v.cell)<=1))shield(v,100);}
+    if(skill==='guard'){
+     if((s.version??4)>=4){const guard=GUARD_SKILLS[u.type];shield(u,guard.self);for(const v of units.filter(v=>v.actor===u.actor&&v.uid!==u.uid&&distance(u.cell,v.cell)<=1))shield(v,guard.nearby);}
+     else{shield(u,220);for(const v of units.filter(v=>v.actor===u.actor&&distance(u.cell,v.cell)<=1))shield(v,100);}
+    }
     if(skill==='bolt')hit(target,u.type==='C18'?260:180);
     if(skill==='heal')for(const v of injured.slice(0,3))heals.push([u,v,amount(220)]);
     if(skill==='quake'){for(const v of enemies.filter(v=>distance(u.cell,v.cell)<=2))hit(v,240);shield(u,250);}

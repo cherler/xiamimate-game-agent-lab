@@ -1,0 +1,1507 @@
+{
+  "format": "glimmer-4",
+  "game": "chess",
+  "seed": 3768415114,
+  "configs": null,
+  "actions": [
+    {
+      "actor": 1,
+      "action": {
+        "type": "buy",
+        "slot": 0
+      }
+    },
+    {
+      "actor": 1,
+      "action": {
+        "type": "arrange",
+        "layout": [
+          {
+            "uid": "c0",
+            "cell": 35
+          }
+        ]
+      }
+    },
+    {
+      "actor": 1,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": 2,
+      "action": {
+        "type": "buy",
+        "slot": 0
+      }
+    },
+    {
+      "actor": 2,
+      "action": {
+        "type": "arrange",
+        "layout": [
+          {
+            "uid": "c1",
+            "cell": 35
+          }
+        ]
+      }
+    },
+    {
+      "actor": 2,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": 3,
+      "action": {
+        "type": "buy",
+        "slot": 0
+      }
+    },
+    {
+      "actor": 3,
+      "action": {
+        "type": "arrange",
+        "layout": [
+          {
+            "uid": "c2",
+            "cell": 35
+          }
+        ]
+      }
+    },
+    {
+      "actor": 3,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": 4,
+      "action": {
+        "type": "buy",
+        "slot": 0
+      }
+    },
+    {
+      "actor": 4,
+      "action": {
+        "type": "arrange",
+        "layout": [
+          {
+            "uid": "c3",
+            "cell": 35
+          }
+        ]
+      }
+    },
+    {
+      "actor": 4,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": 5,
+      "action": {
+        "type": "buy",
+        "slot": 0
+      }
+    },
+    {
+      "actor": 5,
+      "action": {
+        "type": "arrange",
+        "layout": [
+          {
+            "uid": "c4",
+            "cell": 35
+          }
+        ]
+      }
+    },
+    {
+      "actor": 5,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": 6,
+      "action": {
+        "type": "buy",
+        "slot": 0
+      }
+    },
+    {
+      "actor": 6,
+      "action": {
+        "type": "arrange",
+        "layout": [
+          {
+            "uid": "c5",
+            "cell": 35
+          }
+        ]
+      }
+    },
+    {
+      "actor": 6,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": 7,
+      "action": {
+        "type": "buy",
+        "slot": 0
+      }
+    },
+    {
+      "actor": 7,
+      "action": {
+        "type": "arrange",
+        "layout": [
+          {
+            "uid": "c6",
+            "cell": 35
+          }
+        ]
+      }
+    },
+    {
+      "actor": 7,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": 0,
+      "action": {
+        "type": "lock"
+      }
+    },
+    {
+      "actor": 0,
+      "action": {
+        "type": "buy",
+        "slot": 0
+      }
+    },
+    {
+      "actor": 0,
+      "action": {
+        "type": "move",
+        "uid": "c7",
+        "cell": 35
+      }
+    },
+    {
+      "actor": 0,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": -1,
+      "action": {
+        "type": "advance"
+      }
+    },
+    {
+      "actor": 0,
+      "action": {
+        "type": "loot",
+        "slot": 0
+      }
+    },
+    {
+      "actor": 1,
+      "action": {
+        "type": "loot",
+        "slot": 1
+      }
+    },
+    {
+      "actor": 1,
+      "action": {
+        "type": "buy",
+        "slot": 0
+      }
+    },
+    {
+      "actor": 1,
+      "action": {
+        "type": "buy",
+        "slot": 2
+      }
+    },
+    {
+      "actor": 1,
+      "action": {
+        "type": "arrange",
+        "layout": [
+          {
+            "uid": "c8",
+            "cell": 35
+          },
+          {
+            "uid": "c0",
+            "cell": 36
+          }
+        ]
+      }
+    },
+    {
+      "actor": 1,
+      "action": {
+        "type": "equip",
+        "slot": 0,
+        "uid": "c8"
+      }
+    },
+    {
+      "actor": 1,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": 2,
+      "action": {
+        "type": "loot",
+        "slot": 0
+      }
+    },
+    {
+      "actor": 2,
+      "action": {
+        "type": "buy",
+        "slot": 1
+      }
+    },
+    {
+      "actor": 2,
+      "action": {
+        "type": "arrange",
+        "layout": [
+          {
+            "uid": "c10",
+            "cell": 35
+          },
+          {
+            "uid": "c1",
+            "cell": 36
+          }
+        ]
+      }
+    },
+    {
+      "actor": 2,
+      "action": {
+        "type": "equip",
+        "slot": 0,
+        "uid": "c10"
+      }
+    },
+    {
+      "actor": 2,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": 3,
+      "action": {
+        "type": "loot",
+        "slot": 1
+      }
+    },
+    {
+      "actor": 3,
+      "action": {
+        "type": "buy",
+        "slot": 0
+      }
+    },
+    {
+      "actor": 3,
+      "action": {
+        "type": "arrange",
+        "layout": [
+          {
+            "uid": "c2",
+            "cell": 35
+          },
+          {
+            "uid": "c11",
+            "cell": 36
+          }
+        ]
+      }
+    },
+    {
+      "actor": 3,
+      "action": {
+        "type": "equip",
+        "slot": 0,
+        "uid": "c2"
+      }
+    },
+    {
+      "actor": 3,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": 4,
+      "action": {
+        "type": "loot",
+        "slot": 2
+      }
+    },
+    {
+      "actor": 4,
+      "action": {
+        "type": "buy",
+        "slot": 0
+      }
+    },
+    {
+      "actor": 4,
+      "action": {
+        "type": "arrange",
+        "layout": [
+          {
+            "uid": "c3",
+            "cell": 35
+          },
+          {
+            "uid": "c12",
+            "cell": 36
+          }
+        ]
+      }
+    },
+    {
+      "actor": 4,
+      "action": {
+        "type": "equip",
+        "slot": 0,
+        "uid": "c3"
+      }
+    },
+    {
+      "actor": 4,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": 5,
+      "action": {
+        "type": "loot",
+        "slot": 1
+      }
+    },
+    {
+      "actor": 5,
+      "action": {
+        "type": "buy",
+        "slot": 2
+      }
+    },
+    {
+      "actor": 5,
+      "action": {
+        "type": "arrange",
+        "layout": [
+          {
+            "uid": "c13",
+            "cell": 35
+          },
+          {
+            "uid": "c4",
+            "cell": 36
+          }
+        ]
+      }
+    },
+    {
+      "actor": 5,
+      "action": {
+        "type": "equip",
+        "slot": 0,
+        "uid": "c13"
+      }
+    },
+    {
+      "actor": 5,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": 6,
+      "action": {
+        "type": "loot",
+        "slot": 2
+      }
+    },
+    {
+      "actor": 6,
+      "action": {
+        "type": "buy",
+        "slot": 0
+      }
+    },
+    {
+      "actor": 6,
+      "action": {
+        "type": "arrange",
+        "layout": [
+          {
+            "uid": "c5",
+            "cell": 35
+          },
+          {
+            "uid": "c14",
+            "cell": 36
+          }
+        ]
+      }
+    },
+    {
+      "actor": 6,
+      "action": {
+        "type": "equip",
+        "slot": 0,
+        "uid": "c5"
+      }
+    },
+    {
+      "actor": 6,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": 7,
+      "action": {
+        "type": "loot",
+        "slot": 1
+      }
+    },
+    {
+      "actor": 7,
+      "action": {
+        "type": "buy",
+        "slot": 4
+      }
+    },
+    {
+      "actor": 7,
+      "action": {
+        "type": "arrange",
+        "layout": [
+          {
+            "uid": "c15",
+            "cell": 35
+          },
+          {
+            "uid": "c6",
+            "cell": 36
+          }
+        ]
+      }
+    },
+    {
+      "actor": 7,
+      "action": {
+        "type": "equip",
+        "slot": 0,
+        "uid": "c6"
+      }
+    },
+    {
+      "actor": 7,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": 0,
+      "action": {
+        "type": "buy",
+        "slot": 3
+      }
+    },
+    {
+      "actor": 0,
+      "action": {
+        "type": "buy",
+        "slot": 1
+      }
+    },
+    {
+      "actor": 0,
+      "action": {
+        "type": "lock"
+      }
+    },
+    {
+      "actor": 0,
+      "action": {
+        "type": "arrange",
+        "layout": [
+          {
+            "uid": "c16",
+            "cell": 35
+          },
+          {
+            "uid": "c17",
+            "cell": 36
+          }
+        ]
+      }
+    },
+    {
+      "actor": 0,
+      "action": {
+        "type": "equip",
+        "uid": "c17",
+        "slot": 0
+      }
+    },
+    {
+      "actor": 0,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": -1,
+      "action": {
+        "type": "advance"
+      }
+    },
+    {
+      "actor": 0,
+      "action": {
+        "type": "loot",
+        "slot": 2
+      }
+    },
+    {
+      "actor": 1,
+      "action": {
+        "type": "loot",
+        "slot": 2
+      }
+    },
+    {
+      "actor": 1,
+      "action": {
+        "type": "buy",
+        "slot": 1
+      }
+    },
+    {
+      "actor": 1,
+      "action": {
+        "type": "buy",
+        "slot": 2
+      }
+    },
+    {
+      "actor": 1,
+      "action": {
+        "type": "buy",
+        "slot": 3
+      }
+    },
+    {
+      "actor": 1,
+      "action": {
+        "type": "arrange",
+        "layout": [
+          {
+            "uid": "c0",
+            "cell": 35
+          },
+          {
+            "uid": "c8",
+            "cell": 36
+          },
+          {
+            "uid": "c9",
+            "cell": 34
+          }
+        ]
+      }
+    },
+    {
+      "actor": 1,
+      "action": {
+        "type": "equip",
+        "slot": 0,
+        "uid": "c0"
+      }
+    },
+    {
+      "actor": 1,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": 2,
+      "action": {
+        "type": "loot",
+        "slot": 1
+      }
+    },
+    {
+      "actor": 2,
+      "action": {
+        "type": "buy",
+        "slot": 0
+      }
+    },
+    {
+      "actor": 2,
+      "action": {
+        "type": "buy",
+        "slot": 4
+      }
+    },
+    {
+      "actor": 2,
+      "action": {
+        "type": "roll"
+      }
+    },
+    {
+      "actor": 2,
+      "action": {
+        "type": "arrange",
+        "layout": [
+          {
+            "uid": "c21",
+            "cell": 35
+          },
+          {
+            "uid": "c10",
+            "cell": 36
+          },
+          {
+            "uid": "c22",
+            "cell": 34
+          }
+        ]
+      }
+    },
+    {
+      "actor": 2,
+      "action": {
+        "type": "equip",
+        "slot": 0,
+        "uid": "c21"
+      }
+    },
+    {
+      "actor": 2,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": 3,
+      "action": {
+        "type": "loot",
+        "slot": 0
+      }
+    },
+    {
+      "actor": 3,
+      "action": {
+        "type": "buy",
+        "slot": 1
+      }
+    },
+    {
+      "actor": 3,
+      "action": {
+        "type": "roll"
+      }
+    },
+    {
+      "actor": 3,
+      "action": {
+        "type": "arrange",
+        "layout": [
+          {
+            "uid": "c2",
+            "cell": 35
+          },
+          {
+            "uid": "c11",
+            "cell": 36
+          },
+          {
+            "uid": "c23",
+            "cell": 59
+          }
+        ]
+      }
+    },
+    {
+      "actor": 3,
+      "action": {
+        "type": "equip",
+        "slot": 0,
+        "uid": "c2"
+      }
+    },
+    {
+      "actor": 3,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": 4,
+      "action": {
+        "type": "loot",
+        "slot": 2
+      }
+    },
+    {
+      "actor": 4,
+      "action": {
+        "type": "buy",
+        "slot": 3
+      }
+    },
+    {
+      "actor": 4,
+      "action": {
+        "type": "roll"
+      }
+    },
+    {
+      "actor": 4,
+      "action": {
+        "type": "buy",
+        "slot": 4
+      }
+    },
+    {
+      "actor": 4,
+      "action": {
+        "type": "arrange",
+        "layout": [
+          {
+            "uid": "c24",
+            "cell": 35
+          },
+          {
+            "uid": "c12",
+            "cell": 36
+          },
+          {
+            "uid": "c3",
+            "cell": 34
+          }
+        ]
+      }
+    },
+    {
+      "actor": 4,
+      "action": {
+        "type": "equip",
+        "slot": 0,
+        "uid": "c3"
+      }
+    },
+    {
+      "actor": 4,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": 5,
+      "action": {
+        "type": "loot",
+        "slot": 0
+      }
+    },
+    {
+      "actor": 5,
+      "action": {
+        "type": "buy",
+        "slot": 1
+      }
+    },
+    {
+      "actor": 5,
+      "action": {
+        "type": "buy",
+        "slot": 2
+      }
+    },
+    {
+      "actor": 5,
+      "action": {
+        "type": "buy",
+        "slot": 0
+      }
+    },
+    {
+      "actor": 5,
+      "action": {
+        "type": "arrange",
+        "layout": [
+          {
+            "uid": "c4",
+            "cell": 35
+          },
+          {
+            "uid": "c13",
+            "cell": 36
+          },
+          {
+            "uid": "c28",
+            "cell": 59
+          }
+        ]
+      }
+    },
+    {
+      "actor": 5,
+      "action": {
+        "type": "equip",
+        "slot": 0,
+        "uid": "c4"
+      }
+    },
+    {
+      "actor": 5,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": 6,
+      "action": {
+        "type": "loot",
+        "slot": 0
+      }
+    },
+    {
+      "actor": 6,
+      "action": {
+        "type": "buy",
+        "slot": 1
+      }
+    },
+    {
+      "actor": 6,
+      "action": {
+        "type": "roll"
+      }
+    },
+    {
+      "actor": 6,
+      "action": {
+        "type": "buy",
+        "slot": 4
+      }
+    },
+    {
+      "actor": 6,
+      "action": {
+        "type": "arrange",
+        "layout": [
+          {
+            "uid": "c30",
+            "cell": 35
+          },
+          {
+            "uid": "c14",
+            "cell": 36
+          },
+          {
+            "uid": "c5",
+            "cell": 34
+          }
+        ]
+      }
+    },
+    {
+      "actor": 6,
+      "action": {
+        "type": "equip",
+        "slot": 0,
+        "uid": "c5"
+      }
+    },
+    {
+      "actor": 6,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": 7,
+      "action": {
+        "type": "loot",
+        "slot": 0
+      }
+    },
+    {
+      "actor": 7,
+      "action": {
+        "type": "buy",
+        "slot": 0
+      }
+    },
+    {
+      "actor": 7,
+      "action": {
+        "type": "buy",
+        "slot": 2
+      }
+    },
+    {
+      "actor": 7,
+      "action": {
+        "type": "roll"
+      }
+    },
+    {
+      "actor": 7,
+      "action": {
+        "type": "arrange",
+        "layout": [
+          {
+            "uid": "c31",
+            "cell": 35
+          },
+          {
+            "uid": "c15",
+            "cell": 36
+          },
+          {
+            "uid": "c32",
+            "cell": 34
+          }
+        ]
+      }
+    },
+    {
+      "actor": 7,
+      "action": {
+        "type": "equip",
+        "slot": 0,
+        "uid": "c31"
+      }
+    },
+    {
+      "actor": 7,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": 0,
+      "action": {
+        "type": "buy",
+        "slot": 1
+      }
+    },
+    {
+      "actor": 0,
+      "action": {
+        "type": "buy",
+        "slot": 2
+      }
+    },
+    {
+      "actor": 0,
+      "action": {
+        "type": "arrange",
+        "layout": [
+          {
+            "uid": "c16",
+            "cell": 35
+          },
+          {
+            "uid": "c33",
+            "cell": 56
+          },
+          {
+            "uid": "c17",
+            "cell": 36
+          }
+        ]
+      }
+    },
+    {
+      "actor": 0,
+      "action": {
+        "type": "equip",
+        "uid": "c33",
+        "slot": 0
+      }
+    },
+    {
+      "actor": 0,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": -1,
+      "action": {
+        "type": "advance"
+      }
+    },
+    {
+      "actor": 0,
+      "action": {
+        "type": "loot",
+        "slot": 0
+      }
+    },
+    {
+      "actor": 1,
+      "action": {
+        "type": "loot",
+        "slot": 0
+      }
+    },
+    {
+      "actor": 1,
+      "action": {
+        "type": "arrange",
+        "layout": [
+          {
+            "uid": "c0",
+            "cell": 35
+          },
+          {
+            "uid": "c8",
+            "cell": 36
+          },
+          {
+            "uid": "c9",
+            "cell": 34
+          }
+        ]
+      }
+    },
+    {
+      "actor": 1,
+      "action": {
+        "type": "equip",
+        "slot": 0,
+        "uid": "c0"
+      }
+    },
+    {
+      "actor": 1,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": 2,
+      "action": {
+        "type": "loot",
+        "slot": 2
+      }
+    },
+    {
+      "actor": 2,
+      "action": {
+        "type": "buy",
+        "slot": 2
+      }
+    },
+    {
+      "actor": 2,
+      "action": {
+        "type": "buy",
+        "slot": 1
+      }
+    },
+    {
+      "actor": 2,
+      "action": {
+        "type": "buy",
+        "slot": 4
+      }
+    },
+    {
+      "actor": 2,
+      "action": {
+        "type": "arrange",
+        "layout": [
+          {
+            "uid": "c21",
+            "cell": 35
+          },
+          {
+            "uid": "c37",
+            "cell": 56
+          },
+          {
+            "uid": "c10",
+            "cell": 36
+          }
+        ]
+      }
+    },
+    {
+      "actor": 2,
+      "action": {
+        "type": "equip",
+        "slot": 0,
+        "uid": "c21"
+      }
+    },
+    {
+      "actor": 2,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": 3,
+      "action": {
+        "type": "loot",
+        "slot": 0
+      }
+    },
+    {
+      "actor": 3,
+      "action": {
+        "type": "buy",
+        "slot": 0
+      }
+    },
+    {
+      "actor": 3,
+      "action": {
+        "type": "buy",
+        "slot": 1
+      }
+    },
+    {
+      "actor": 3,
+      "action": {
+        "type": "roll"
+      }
+    },
+    {
+      "actor": 3,
+      "action": {
+        "type": "arrange",
+        "layout": [
+          {
+            "uid": "c11",
+            "cell": 35
+          },
+          {
+            "uid": "c2",
+            "cell": 36
+          },
+          {
+            "uid": "c23",
+            "cell": 59
+          }
+        ]
+      }
+    },
+    {
+      "actor": 3,
+      "action": {
+        "type": "equip",
+        "slot": 0,
+        "uid": "c11"
+      }
+    },
+    {
+      "actor": 3,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": 4,
+      "action": {
+        "type": "loot",
+        "slot": 1
+      }
+    },
+    {
+      "actor": 4,
+      "action": {
+        "type": "buy",
+        "slot": 0
+      }
+    },
+    {
+      "actor": 4,
+      "action": {
+        "type": "buy",
+        "slot": 2
+      }
+    },
+    {
+      "actor": 4,
+      "action": {
+        "type": "buy",
+        "slot": 3
+      }
+    },
+    {
+      "actor": 4,
+      "action": {
+        "type": "arrange",
+        "layout": [
+          {
+            "uid": "c3",
+            "cell": 35
+          },
+          {
+            "uid": "c12",
+            "cell": 36
+          },
+          {
+            "uid": "c42",
+            "cell": 43
+          }
+        ]
+      }
+    },
+    {
+      "actor": 4,
+      "action": {
+        "type": "equip",
+        "slot": 0,
+        "uid": "c3"
+      }
+    },
+    {
+      "actor": 4,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": 5,
+      "action": {
+        "type": "loot",
+        "slot": 1
+      }
+    },
+    {
+      "actor": 5,
+      "action": {
+        "type": "buy",
+        "slot": 2
+      }
+    },
+    {
+      "actor": 5,
+      "action": {
+        "type": "arrange",
+        "layout": [
+          {
+            "uid": "c4",
+            "cell": 35
+          },
+          {
+            "uid": "c13",
+            "cell": 36
+          },
+          {
+            "uid": "c28",
+            "cell": 59
+          }
+        ]
+      }
+    },
+    {
+      "actor": 5,
+      "action": {
+        "type": "equip",
+        "slot": 0,
+        "uid": "c4"
+      }
+    },
+    {
+      "actor": 5,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": 6,
+      "action": {
+        "type": "loot",
+        "slot": 2
+      }
+    },
+    {
+      "actor": 6,
+      "action": {
+        "type": "roll"
+      }
+    },
+    {
+      "actor": 6,
+      "action": {
+        "type": "roll"
+      }
+    },
+    {
+      "actor": 6,
+      "action": {
+        "type": "arrange",
+        "layout": [
+          {
+            "uid": "c30",
+            "cell": 35
+          },
+          {
+            "uid": "c14",
+            "cell": 36
+          },
+          {
+            "uid": "c5",
+            "cell": 34
+          }
+        ]
+      }
+    },
+    {
+      "actor": 6,
+      "action": {
+        "type": "equip",
+        "slot": 0,
+        "uid": "c5"
+      }
+    },
+    {
+      "actor": 6,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": 7,
+      "action": {
+        "type": "loot",
+        "slot": 0
+      }
+    },
+    {
+      "actor": 7,
+      "action": {
+        "type": "buy",
+        "slot": 3
+      }
+    },
+    {
+      "actor": 7,
+      "action": {
+        "type": "roll"
+      }
+    },
+    {
+      "actor": 7,
+      "action": {
+        "type": "buy",
+        "slot": 1
+      }
+    },
+    {
+      "actor": 7,
+      "action": {
+        "type": "arrange",
+        "layout": [
+          {
+            "uid": "c31",
+            "cell": 35
+          },
+          {
+            "uid": "c15",
+            "cell": 36
+          }
+        ]
+      }
+    },
+    {
+      "actor": 7,
+      "action": {
+        "type": "equip",
+        "slot": 0,
+        "uid": "c31"
+      }
+    },
+    {
+      "actor": 7,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": 0,
+      "action": {
+        "type": "buy",
+        "slot": 2
+      }
+    },
+    {
+      "actor": 0,
+      "action": {
+        "type": "buy",
+        "slot": 3
+      }
+    },
+    {
+      "actor": 0,
+      "action": {
+        "type": "equip",
+        "uid": "c16",
+        "slot": 0
+      }
+    },
+    {
+      "actor": 0,
+      "action": {
+        "type": "ready"
+      }
+    },
+    {
+      "actor": -1,
+      "action": {
+        "type": "advance"
+      }
+    }
+  ],
+  "end": {
+    "seq": 174,
+    "winner": null,
+    "hash": "cb1a9530"
+  }
+}

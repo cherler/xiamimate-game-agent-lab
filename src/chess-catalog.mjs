@@ -1,5 +1,11 @@
 import {UNIT_LIST as FIRST} from './chess-catalog-v1.mjs';
 const unit=(id,name,race,role,cost,hp,attackValue,range,skill,art,effect)=>({id,name,race,role,cost,hp,attackValue,range,interval:role==='游击'||role==='刺客'?.95:1.2,skill,art,effect});
+export const GUARD_SKILLS={C14:{self:200,nearby:100,seconds:4},C17:{self:220,nearby:100,seconds:4}};
+export function chessSkillText(id,version=4,mult=1){
+ const shield=GUARD_SKILLS[id];
+ if(shield)return version<4?`自身与相邻友军各获得 ${Math.round(100*mult)} 点屏障，持续 4 秒。`:`自身获得 ${Math.round(shield.self*mult)} 点屏障，相邻友军获得 ${Math.round(shield.nearby*mult)} 点，持续 ${shield.seconds} 秒。`;
+ return chessInfo(id)?.effect||'';
+}
 export const UNIT_LIST=[...FIRST.map(c=>({...c,role:c.id==='C08'?'刺客':c.role,skill:c.id})),
  unit('C13','星尘射手','星塔','游击',1,360,52,4,'bolt','S01','星矢：对当前目标造成 180 点伤害。'),
  unit('C14','潮汐卫兵','潮汐','前卫',1,620,38,1,'guard','N02','潮盾：获得 200 点屏障。'),

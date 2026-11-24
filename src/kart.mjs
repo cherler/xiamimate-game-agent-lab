@@ -9,8 +9,8 @@ export const TRACKS=Object.freeze(Object.fromEntries(Object.entries(sections).ma
  return [id,{id,name:id==='harbor'?'晴湾环岛':'云岭弯道',description:id==='harbor'?'宽弯 · 初次上路':'连续弯 · 漂移挑战',segments,length:segments.length*SEGMENT,laps:2}];
 })));
 export const curveAt=(track,z)=>track.segments[((Math.floor(z/SEGMENT)%track.segments.length)+track.segments.length)%track.segments.length].curve;
-export function createKart({track='harbor',version=2,difficulty=version===1?'practice':'standard',seed=41003}={}){
- if(!TRACKS[track]||![1,2].includes(version)||!(version===1?['practice','standard']:['practice','standard','expert']).includes(difficulty))throw Error('未知赛道或难度');
+export function createKart({track='harbor',version=3,difficulty=version===1?'practice':'standard',seed=41003}={}){
+ if(!TRACKS[track]||![1,2,3].includes(version)||!(version===1?['practice','standard']:['practice','standard','expert']).includes(difficulty))throw Error('未知赛道或难度');
  return {version,track,difficulty,seed:seed>>>0,tick:0,time:0,phase:'countdown',countdown:3,finishTime:null,rank:null,events:[],cars:['你','橘子','晴空','薄荷'].map((name,i)=>({id:i,name,z:i?-i*18:0,x:[-.25,.3,-.45,.55][i],speed:0,slip:0,drifting:false,drift:0,drifts:0,meter:0,nitro:0,boost:0,mini:0,cooldown:0,finishTime:null,collisions:0}))};
 }
 export function kartInput(input={}){return {steer:clamp(Number(input.steer)||0,-1,1),gas:!!input.gas,brake:!!input.brake,drift:!!input.drift,boost:!!input.boost};}
@@ -58,7 +58,7 @@ export function stepKart(state,input={}){
   c.x+=(c.slip-curve*speedRatio*.5)*speedRatio*KART_DT*1.9;
   const offroad=Math.abs(c.x)>1;
   const max=c.boost>0?335:c.mini>0?295:260;
-  c.speed=clamp(c.speed+(action.gas?83: -32)*KART_DT-(action.brake?175*KART_DT:0)-(c.drifting?24*KART_DT:0)-(offroad?150*KART_DT:0),0,max);
+  c.speed=clamp(c.speed+(action.gas?83: -32)*KART_DT-(action.brake?175*KART_DT:0)-(c.drifting?24*KART_DT:0)-(offroad?(s.version>=3?Math.min(150,c.speed*2):150)*KART_DT:0),0,max);
   if(Math.abs(c.x)>1.32){c.x=clamp(c.x,-1.32,1.32);c.slip*=.6;c.speed=Math.min(c.speed,110);if(!c.cooldown){c.collisions++;c.cooldown=.65;if(!c.id)s.events.push('wall');}c.drift=0;}
   // Charge requires an actual corner, speed and staying on the road. Straight weaving is not fuel.
   if(c.drifting&&!offroad&&Math.abs(curve)>.25&&Math.sign(curve)===Math.sign(action.steer))c.drift+=KART_DT*(.28+Math.abs(curve)*.18);
@@ -80,8 +80,8 @@ export function stepKart(state,input={}){
 }
 export function sealKart(initial,inputs,state){return {format:'kart-'+state.version,game:'kart',options:initial,inputs,end:{tick:state.tick,hash:fingerprint(state)}};}
 export function replayKart(record){
- if(!['kart-1','kart-2'].includes(record?.format)||record.game!=='kart'||!Array.isArray(record.inputs)||record.inputs.length>12000||!Number.isInteger(record.end?.tick)||record.end.tick<0||record.end.tick>11000)throw Error('无效赛车回放');
- let state=createKart({...record.options,version:record.format==='kart-1'?1:2}),input=kartInput(),cursor=0,previous=-1;
+ if(!['kart-1','kart-2','kart-3'].includes(record?.format)||record.game!=='kart'||!Array.isArray(record.inputs)||record.inputs.length>12000||!Number.isInteger(record.end?.tick)||record.end.tick<0||record.end.tick>11000)throw Error('无效赛车回放');
+ let state=createKart({...record.options,version:Number(record.format.slice(5))}),input=kartInput(),cursor=0,previous=-1;
  for(const row of record.inputs){if(!Number.isInteger(row.tick)||row.tick<0||row.tick<=previous||row.tick>=record.end.tick)throw Error('无效赛车操作');previous=row.tick;}
  while(state.tick<record.end.tick){if(record.inputs[cursor]?.tick===state.tick)input=kartInput(record.inputs[cursor++].input);const next=stepKart(state,input);if(next===state)throw Error('终点后的操作');state=next;}
  if(fingerprint(state)!==record.end.hash)throw Error('赛车回放校验失败');return state;

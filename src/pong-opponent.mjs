@@ -28,3 +28,20 @@ export function pongOpponentInput(s,brain,{side=1,difficulty='easy',policy='rule
  }
  return clamp(Math.round(s.paddles[side]+clamp(brain.goal-s.paddles[side],-cfg.speed,cfg.speed)),HALF,HEIGHT-HALF);
 }
+
+// Expert skills use the same delayed observations as movement. The practice
+// opponent stays unchanged, and no human input or armed skill is consulted.
+export function pongOpponentAction(s,brain,options={}){
+ const target=pongOpponentInput(s,brain,options),side=options.side??1;
+ if(s.version<3||options.difficulty!=='hard'||(options.policy??'rule')!=='rule'||s.serve||brain.phase!=='track')return target;
+ const seen=brain.history.find(o=>o.tick===brain.observedTick);
+ if(!seen||seen.epoch!==s.epoch)return target;
+ const [x,,vx]=seen.ball,until=(side===1?RIGHT-x:LEFT-x)/vx;
+ if(!(until>0))return target;
+ if(Math.abs(brain.goal-s.paddles[side])>100&&until<22&&!s.cooldowns[side].dash)return {target,skill:'dash'};
+ if(until<32&&!s.armed[side]){
+  const skill=seen.epoch%2?'spin':'power';
+  if(!s.cooldowns[side][skill])return {target,skill};
+ }
+ return target;
+}

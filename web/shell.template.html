@@ -31,21 +31,21 @@
           <span id="timer">01:30</span>
           <div class="team away"><strong id="score1">0</strong><span id="name1">对手</span><i class="dot coral"></i></div>
         </div>
-        <div class="screen"><canvas id="board" width="660" height="470" tabindex="0" aria-label="双蛇争食棋盘"></canvas><div hidden id="result" class="result"><strong id="result-title"></strong><span id="result-reason"></span></div></div>
+        <div class="screen"><canvas id="board" width="660" height="470" tabindex="0" aria-label="双蛇争食棋盘"></canvas><div hidden id="result" class="result"><strong id="result-title"></strong><span id="result-reason"></span><div class="result-actions"><button id="result-retry" class="primary" hidden>再战同局</button><button id="result-fresh" class="quiet" hidden>换一局</button></div></div></div>
         <div id="pong-skills" class="pong-skills" role="group" aria-label="击球技巧" hidden>
           <button id="pong-dash" aria-label="冲刺，Shift" aria-pressed="false"><span aria-hidden="true">↯</span><b>冲刺 <kbd>Shift</kbd></b><small>快速追球</small></button>
           <button id="pong-power" aria-label="下一拍快球，J" aria-pressed="false"><span aria-hidden="true">➤</span><b>快球 <kbd>J</kbd></b><small>加速回击</small></button>
           <button id="pong-spin" aria-label="下一拍旋球，K" aria-pressed="false"><span aria-hidden="true">↝</span><b>旋球 <kbd>K</kbd></b><small>滑拍变弧线</small></button>
         </div>
       </div>
-      <div class="start-row"><button id="start" class="primary">开始对局</button><button id="restart" class="quiet" hidden>重开</button></div>
+      <div id="snake-rule" class="snake-rule"><span>● 争食</span><span>× 碰撞出局</span><span>◷ 到时比食量</span></div><div class="start-row"><button id="start" class="primary">开始对局</button><button id="restart" class="quiet" hidden>重开</button></div>
       <div id="pong-view-controls" hidden><span>球拍</span><select id="pong-view" aria-label="我的球拍位置"><option value="bottom">下方</option><option value="left">左侧</option><option value="top">上方</option><option value="right">右侧</option></select><button id="pong-rotate" class="quiet" aria-label="旋转球台九十度">↻ 旋转</button></div>
       <p id="rally" class="rally"></p><div class="controls-row"><p id="how"></p><div id="pad" class="pad" aria-label="移动方向"><button data-key="left" aria-label="向左">←</button><button data-key="up" aria-label="向上">↑</button><button data-key="down" aria-label="向下">↓</button><button data-key="right" aria-label="向右">→</button></div></div>
     </section>
     <aside class="rail">
       <section class="setup"><h2>对手设置</h2>
         <label for="opponent">对手</label><select id="opponent"></select>
-        <div id="pong-level" hidden><label for="difficulty">难度</label><select id="difficulty"><option value="easy" selected>轻松练习</option><option value="normal">标准对手</option><option value="hard">进阶挑战</option></select></div><label for="seed">开局种子</label><div class="seed-row"><input id="seed" type="number" min="0" max="4294967295" value="41003"><button class="quiet" id="new-seed">换一个</button></div>
+        <div id="snake-pace-wrap"><label for="snake-pace">节奏</label><select id="snake-pace"><option value="650">舒缓练习</option><option value="500" selected>标准争食</option></select></div><div id="pong-level" hidden><label for="difficulty">难度</label><select id="difficulty"><option value="easy" selected>轻松练习</option><option value="normal">标准对手</option><option value="hard">进阶挑战</option></select></div><label for="seed">开局种子</label><div class="seed-row"><input id="seed" type="number" min="0" max="4294967295" value="41003"><button class="quiet" id="new-seed">换一个</button></div>
       </section>
       <details class="arcade-details"><summary>对手决策与回放</summary><section class="decisions"><div class="section-title"><h2>最近决策</h2><span id="source"></span></div><ol id="events"></ol><p id="empty">开局后可查看对手的选择。</p></section>
       <section class="record-controls"><h2>对局回放</h2><div><button id="sample" class="secondary">观看实测</button><button id="last" class="quiet" disabled>回看上局</button><button id="export" class="quiet" disabled>导出</button></div></section>

@@ -48,5 +48,5 @@ test('kart rivals: the same driver faces progressively stronger opponents on bot
 test('kart rivals: a complete new race can be exported and reproduced exactly',()=>{
  const options={track:'ridge',difficulty:'expert',seed:17};let state=createKart(options);const inputs=[];
  while(state.phase!=='finished'){const input=kartAI(state,0);inputs.push({tick:state.tick,input});state=stepKart(state,input);}
- const record=sealKart(options,inputs,state);assert.equal(record.format,'kart-2');assert.deepEqual(replayKart(record),state);
+ const record=sealKart(options,inputs,state);assert.equal(record.format,'kart-3');assert.deepEqual(replayKart(record),state);
 });

@@ -1,0 +1,102 @@
+{
+  "format": "rescue-8",
+  "game": "rescue",
+  "config": {
+    "level": 4,
+    "seed": 41003,
+    "difficulty": "normal",
+    "upgrades": [
+      "fire",
+      "mobility",
+      "fire"
+    ]
+  },
+  "commands": [
+    {
+      "tick": 0,
+      "command": {
+        "type": "start"
+      }
+    },
+    {
+      "tick": 0,
+      "command": {
+        "type": "move",
+        "ids": [
+          "s0",
+          "s1",
+          "s2",
+          "s3",
+          "s4"
+        ],
+        "x": 2.5,
+        "y": 3.5
+      }
+    },
+    {
+      "tick": 86,
+      "command": {
+        "type": "move",
+        "ids": [
+          "s0",
+          "s1",
+          "s2",
+          "s3",
+          "s4"
+        ],
+        "x": 12.5,
+        "y": 5.5
+      }
+    },
+    {
+      "tick": 328,
+      "command": {
+        "type": "move",
+        "ids": [
+          "s0",
+          "s1",
+          "s2",
+          "s3",
+          "s4"
+        ],
+        "x": 19.5,
+        "y": 4.5
+      }
+    },
+    {
+      "tick": 386,
+      "command": {
+        "type": "move",
+        "ids": [
+          "s0",
+          "s1",
+          "s2",
+          "s3",
+          "s4"
+        ],
+        "x": 19.5,
+        "y": 11.5
+      }
+    },
+    {
+      "tick": 439,
+      "command": {
+        "type": "move",
+        "ids": [
+          "s0",
+          "s1",
+          "s2",
+          "s3",
+          "s4"
+        ],
+        "x": 3.5,
+        "y": 12.5
+      }
+    }
+  ],
+  "end": {
+    "tick": 1406,
+    "hash": "c05e7315",
+    "winner": true
+  }
+}

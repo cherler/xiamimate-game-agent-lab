@@ -1,9 +1,9 @@
 import {beginRescue,issueRescue,advanceRescue,sealRescue,rescueMap} from '../src/rescue.mjs';
 // Only commands available to a player: click a destination for the whole team,
 // wait by the objective, and retreat. No direct state changes or extra powers.
-export function siegeScenario({level=1,seed=41003,plan='escort',decisionEvery=1,upgrades=level===1?[]:['fire','mobility','fire','gate','mobility'].slice(0,level-1)}={}){
+export function siegeScenario({level=1,seed=41003,version=8,difficulty='normal',plan='escort',decisionEvery=1,upgrades=level===1?[]:['fire','mobility','fire','gate','mobility'].slice(0,level-1)}={}){
  const escort=['escort','supply'].includes(plan);
- const match=beginRescue({level,seed,upgrades}),ids=()=>match.state.soldiers.filter(u=>u.hp>0).map(u=>u.id);
+ const match=beginRescue({level,seed,upgrades,version,difficulty}),ids=()=>match.state.soldiers.filter(u=>u.hp>0).map(u=>u.id);
  let stage=0,peak=0,lastMove=-999,moves=0;const milestones=[];
  const order=(x,y)=>{issueRescue(match,{type:'move',ids:ids(),x,y});lastMove=match.state.tick;moves++;};
  const next=(x,y)=>{stage++;milestones.push({stage,t:match.state.tick/30,saved:match.state.saved,kills:match.state.kills});if(x!==undefined)order(x,y);};

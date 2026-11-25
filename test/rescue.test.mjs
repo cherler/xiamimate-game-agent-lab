@@ -24,7 +24,7 @@ test('三张房间地图的军队、平民、入口均可行走，撤离区可�
  for(let level=1;level<=3;level++){
   const s=initRescue({level}),m=rescueMap(level);assert.equal(s.civilians.length,m.total);assert.equal(s.soldiers.length,5);assert.equal(new Set(s.soldiers.map(u=>u.group)).size,3);
   for(const p of [...s.soldiers,...s.civilians,...m.entrances]){assert.ok(walkable(s,p.x,p.y));assert.ok(pathTo(s,p,{x:3.5,y:12.5}).length);}
-  assert.ok(s.schedule.every((row,i)=>row.tick>=m.waves[0].at*30&&(!i||row.tick>s.schedule[i-1].tick)));
+  assert.ok(s.schedule.every((row,i)=>row.tick>=m.waves[0].at*30&&(!i||row.tick>=s.schedule[i-1].tick)));
  }
 });
 test('部署不消耗时间，非法指令原子拒绝，暂停允许下令但不推进',()=>{

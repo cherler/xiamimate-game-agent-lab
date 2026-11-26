@@ -1,4 +1,5 @@
 import {rescueMap,lineOfSight,walkable,RESCUE_HZ,rescueRaging,entranceSealed} from '../src/rescue.mjs';
+import {RESCUE_MUTANTS} from '../src/rescue-mutants.mjs';
 import {screenFraction,rotatedScreen} from './screen-coordinates.mjs';
 import {rescueToCanvas,rescueFromCanvas,rescueTransform} from './rescue-view.mjs';
 const C={floor:'#dce5e8',wall:'#294957',wallTop:'#395d6a',ink:'#254755',soldier:'#61c2f2',civilian:'#ffd16e',zombie:'#dc7089',exit:'#7bdec0'};
@@ -34,7 +35,7 @@ export function drawRescue(canvas,s,{selected='all',selectedIds=null,building=fa
  for(let i=0;i<3;i++)chevron(ex.x+ex.w+.25+i*.3,ex.y+ex.h/2,'#38977d',Math.PI);
  for(const crate of s.crates||[]){
   if(crate.claimed){if(crate.alertTick>s.tick){circle(crate.x,crate.y,.8,null,'#bf4c5c',.08);label('⚠ '+Math.ceil((crate.alertTick-s.tick)/30)+'s',crate.x,crate.y,-.9,.36,'#a9364e');}continue;}
-  const rapid=crate.reward==='overdrive';circle(crate.x,crate.y,.85,null,rapid?'#b1773f88':'#799b8688',.035);if(rapid){const entry=m.entrances.filter((e,i)=>!e.evacOnly&&!entranceSealed(s,i)).sort((a,b)=>Math.hypot(a.x-crate.x,a.y-crate.y)-Math.hypot(b.x-crate.x,b.y-crate.y))[0];line(crate,entry,'#b1773f66',.035);}ctx.fillStyle=rapid?'#f1b861':'#f6dc96';ctx.fillRect(crate.x-.33,crate.y-.28,.66,.56);ctx.strokeStyle='#a77935';ctx.lineWidth=.06;ctx.strokeRect(crate.x-.33,crate.y-.28,.66,.56);text(rapid?'ϟ':'+',crate.x,crate.y,.5,'#95692e');label(rapid?'速射 '+crate.seconds+'s · ⚠'+crate.warning+'s':'+1',crate.x,crate.y,.65,.28,'#916832');
+  const rapid=crate.reward==='overdrive';circle(crate.x,crate.y,.85,null,rapid?'#b1773f88':'#799b8688',.035);if(rapid){const entry=m.entrances.filter((e,i)=>!e.evacOnly&&!entranceSealed(s,i)).sort((a,b)=>Math.hypot(a.x-crate.x,a.y-crate.y)-Math.hypot(b.x-crate.x,b.y-crate.y))[0];if(entry)line(crate,entry,'#b1773f66',.035);}ctx.fillStyle=rapid?'#f1b861':'#f6dc96';ctx.fillRect(crate.x-.33,crate.y-.28,.66,.56);ctx.strokeStyle='#a77935';ctx.lineWidth=.06;ctx.strokeRect(crate.x-.33,crate.y-.28,.66,.56);text(rapid?'ϟ':'+',crate.x,crate.y,.5,'#95692e');label(rapid?'速射 '+crate.seconds+'s · ⚠'+crate.warning+'s':'+1',crate.x,crate.y,.65,.28,'#916832');
  }
  if(s.overdriveUntil>s.tick){const u=s.soldiers.find(u=>u.hp>0&&u.role==='shield');if(u){circle(u.x,u.y,.48,null,'#edaf4b',.08);text('ϟ '+Math.ceil((s.overdriveUntil-s.tick)/30)+'s',u.x,u.y-.8,.32,'#9b630f');}}
  for(const o of s.objectives||[]){
@@ -70,12 +71,22 @@ export function drawRescue(canvas,s,{selected='all',selectedIds=null,building=fa
    ctx.fillStyle='#526d72';ctx.fillRect(o.x-.6,o.y+.55,1.2,.1);ctx.fillStyle='#64bf9b';ctx.fillRect(o.x-.6,o.y+.55,1.2*o.hp/o.maxHp,.1);
   }
  }
+ for(const r of s.refuges||[]){
+  if(r.released){if(r.breached){ctx.save();ctx.setLineDash([.12,.15]);circle(r.x,r.y,r.r,null,'#ae5e6377',.06);ctx.restore();}continue;}
+  const danger=r.blocked||r.hp<r.maxHp*.4,color=danger?'#b44858':'#9d7937';
+  circle(r.x,r.y,r.r+.2,danger?'#df71851c':'#efc66f1c',color,.055);
+  // A shield outline and health bar mark the refuge as something to defend.
+  const x=r.x,y=r.y-r.r-.45;ctx.beginPath();ctx.moveTo(x-.18,y-.18);ctx.lineTo(x+.18,y-.18);ctx.lineTo(x+.15,y+.08);ctx.lineTo(x,y+.22);ctx.lineTo(x-.15,y+.08);ctx.closePath();ctx.fillStyle='#f6e1a4';ctx.fill();ctx.strokeStyle=color;ctx.lineWidth=.055;ctx.stroke();
+  ctx.fillStyle='#a29578';ctx.fillRect(r.x-.65,r.y+r.r+.25,1.3,.11);ctx.fillStyle=danger?'#d0646c':'#baa055';ctx.fillRect(r.x-.65,r.y+r.r+.25,1.3*r.hp/r.maxHp,.11);
+  if(r.active){ctx.beginPath();ctx.arc(r.x,r.y,r.r+.3,-Math.PI/2,-Math.PI/2+Math.PI*2*r.progress/r.required);ctx.strokeStyle='#398e70';ctx.lineWidth=.12;ctx.stroke();}
+  label(r.blocked?'清除近敌':r.active?'接应 '+Math.ceil((r.required-r.progress)/30)+'s':'接应',r.x,r.y,-r.r-.9,.32,color);
+ }
  for(const d of s.decoys||[]){const time=Math.ceil((d.expires-s.tick)/30);circle(d.x,d.y,.3,'#c5a3da','#7b5494');circle(d.x,d.y,.6+(reduced?0:s.tick%30/35),null,'#9c74b588',.05);text('◉',d.x,d.y,.38,'#684179');text('诱饵 '+time+'s',d.x,d.y-.7,.29,'#74458b');for(const z of s.zombies)if(z.target===d.id)line(z,d,'#9863ad66',.035);}
- if(support&&hover){const valid=s.soldiers.some(u=>u.hp>0&&Math.hypot(u.x-hover.x,u.y-hover.y)<=4&&lineOfSight(s,u,hover)),color=valid?(support==='medic'?'#318a63':'#9460ad'):'#af5360';circle(hover.x,hover.y,support==='medic'?2.4:6,color+'18',color+'88',.04);text(support==='medic'?'+55':'诱敌 6 秒',hover.x,hover.y-.6,.4,color);}
+ if(support&&hover){const artillery=support==='artillery',valid=artillery?walkable(s,hover.x,hover.y):s.soldiers.some(u=>u.hp>0&&Math.hypot(u.x-hover.x,u.y-hover.y)<=4&&lineOfSight(s,u,hover)),color=valid?(artillery?'#b77824':support==='medic'?'#318a63':'#9460ad'):'#af5360';circle(hover.x,hover.y,artillery?3:support==='medic'?2.4:6,color+'18',color+'88',.04);text(artillery?'✦ 炮击':support==='medic'?'+55':'诱敌 6 秒',hover.x,hover.y-.6,.4,color);}
  for(const d of m.doors){
   const g=s.gates.find(g=>g.id===d.id&&g.hp>0),v=d.vertical;
   ctx.fillStyle=g?'#7bbfac':building?'#b6efda':'#b8cbc9';ctx.fillRect(d.x-(v?.21:.49),d.y-(v?.49:.21),v?.42:.98,v?.98:.42);
-  if(g){line({x:d.x-(v?0:.4),y:d.y-(v?.4:0)},{x:d.x+(v?0:.4),y:d.y+(v?.4:0)},'#32715f',.12);ctx.fillStyle='#244b40';ctx.fillRect(d.x-.4,d.y+.6,.8,.08);ctx.fillStyle=C.exit;ctx.fillRect(d.x-.4,d.y+.6,.8*g.hp/g.maxHp,.08);}
+  if(g){if(g.hitTick>s.tick-6)circle(g.x,g.y,.6,'#ffe4b988');if(g.hp<g.maxHp*.6){line({x:g.x-.13,y:g.y-.3},{x:g.x+.12,y:g.y},'#8b5143',.09);line({x:g.x+.12,y:g.y},{x:g.x-.15,y:g.y+.3},'#8b5143',.09);}line({x:d.x-(v?0:.4),y:d.y-(v?.4:0)},{x:d.x+(v?0:.4),y:d.y+(v?.4:0)},'#32715f',.12);ctx.fillStyle='#244b40';ctx.fillRect(d.x-.4,d.y+.6,.8,.08);ctx.fillStyle=C.exit;ctx.fillRect(d.x-.4,d.y+.6,.8*g.hp/g.maxHp,.08);}
   if(building&&!g){circle(d.x,d.y,.67,'#4ecba52b','#237f68',.055);text('+',d.x,d.y,.7,'#237f68');}
  }
  const chosen=s.soldiers.filter(u=>u.hp>0&&(selectedIds?selectedIds.includes(u.id):selected==='all'||u.group===selected));
@@ -90,20 +101,33 @@ export function drawRescue(canvas,s,{selected='all',selectedIds=null,building=fa
   const bottom=e.y>m.h/2,edgeY=bottom?m.h-.96:.2,labelY=e.y+(bottom?-.8:.7);ctx.fillStyle=imminent?'#b94762':'#704d60';ctx.fillRect(e.x-.75,edgeY,1.5,.76);text(portrait?(bottom?'▶':'◀'):(bottom?'▲':'▼'),e.x,edgeY+.36,.45,'#fff');
   if(next){text(`${next.assault?'⚠ ':''}${Math.max(0,Math.ceil(wait))}s`,e.x,labelY,.38,imminent?'#a2314e':'#89566a');}else if(e.evacOnly&&!s.evac?.alerts)text('撤离信号',e.x,labelY,.27,'#89566a');ctx.globalAlpha=1;
  }
- for(const c of s.civilians.filter(c=>['waiting','following','boarding'].includes(c.status))){
+ for(const c of s.civilians.filter(c=>['sheltered','waiting','following','boarding'].includes(c.status))){
   if(c.status==='following'){const leader=s.soldiers.find(u=>u.id===c.leader&&u.hp>0);if(leader&&Math.hypot(leader.x-c.x,leader.y-c.y)<3&&lineOfSight(s,c,leader))line(c,leader,'#b68b3f55',.035);}
   circle(c.x,c.y+.07,c.r+.04,'#183c4d25');circle(c.x,c.y,c.r,C.civilian,'#9c7538',.035);circle(c.x,c.y-.045,.045,'#fff3cb');
   if(c.avoidingUntil>s.tick){chevron(c.x,c.y-.4,'#b28331',c.angle);}
   else if(c.status==='waiting'){text('·',c.x,c.y-.4,.45,'#b28331');}
+  if(c.hp<c.maxHp){ctx.fillStyle='#b76552';ctx.fillRect(c.x-.2,c.y+.32,.4*c.hp/c.maxHp,.055);}
   if(c.status==='boarding')circle(c.x,c.y,.27,null,'#429b83',.045);
   if(c.infection){ctx.beginPath();ctx.arc(c.x,c.y,.32,-Math.PI/2,-Math.PI/2+Math.PI*2*c.infection/(s.difficulty==='challenge'?1:s.version>=7?24:18));ctx.strokeStyle='#c23a5b';ctx.lineWidth=.09;ctx.stroke();text('!',c.x,c.y-.6,.38,'#ad2347');}
  }
  for(const z of s.zombies){
+  const mutant=RESCUE_MUTANTS[z.mutation];
+  if(z.aim){
+   const bomber=z.mutation==='bomber',color=bomber?'#be542e':'#bd314e';ctx.save();ctx.setLineDash([.16,.14]);line(z,z.aim,color+'bb',.045);ctx.restore();
+   if(bomber)circle(z.aim.x,z.aim.y,1.35,'#df76461c',color,.055);
+   else{circle(z.aim.x,z.aim.y,.25,null,color,.06);line({x:z.aim.x-.4,y:z.aim.y},{x:z.aim.x+.4,y:z.aim.y},color,.045);}
+  }
+  if(s.version>=10&&s.achievements.evacuated!==null&&s.zombies.length<=8){circle(z.x,z.y,.5,null,'#bd3b57',.05);label('▼',z.x,z.y,-.65,.32,'#a72e49');}
   if(m.mode==='clear'&&m.seconds-s.tick/30<=20){circle(z.x,z.y,.55,null,'#bd3b57',.08);text('▼',z.x,z.y-.8,.42,'#a72e49');}
   if(raging){circle(z.x,z.y,z.r+.1,null,'#e46d3c',.045);chevron(z.x,z.y-.42,'#bd4629',-Math.PI/2);}
-  circle(z.x,z.y+.07,z.r+.06,'#69324424');circle(z.x,z.y,z.r,!reduced&&z.hitTick>s.tick-3?'#fff3cb':z.brute?'#8a4a6f':raging?'#ec815d':C.zombie,'#973d58',.045);
+  circle(z.x,z.y+.07,z.r+.06,'#69324424');circle(z.x,z.y,z.r,!reduced&&z.hitTick>s.tick-3?'#fff3cb':mutant?mutant.color:z.brute?'#8a4a6f':raging?'#ec815d':C.zombie,'#973d58',.045);
   const dx=Math.cos(z.angle),dy=Math.sin(z.angle);circle(z.x+dx*.1-dy*.07,z.y+dy*.1+dx*.07,.027,'#613342');circle(z.x+dx*.1+dy*.07,z.y+dy*.1-dx*.07,.027,'#613342');
-  if(z.brute){circle(z.x,z.y,z.r+.05,null,'#e1ae79',.08);}if(z.fast){chevron(z.x-.25,z.y,'#c85b77',z.angle);}
+  if(z.mutation==='breaker'){circle(z.x,z.y,z.r+.07,null,'#e5bd8b',.11);for(const a of [z.angle-.7,z.angle+.7])line({x:z.x+Math.cos(a)*.18,y:z.y+Math.sin(a)*.18},{x:z.x+Math.cos(a)*.43,y:z.y+Math.sin(a)*.43},'#5c3c56',.15);}
+  else if(z.brute)circle(z.x,z.y,z.r+.05,null,'#e1ae79',.08);
+  if(z.mutation==='gunner'){line({x:z.x+dx*.12,y:z.y+dy*.12},{x:z.x+dx*.65,y:z.y+dy*.65},'#60313e',.14);circle(z.x-dx*.13,z.y-dy*.13,.13,'#d1a778');}
+  if(z.mutation==='bomber'){circle(z.x-dx*.19,z.y-dy*.19,.2,'#474a2d','#dbbd60',.07);circle(z.x+dx*.34,z.y+dy*.34,.11,'#f2c46e','#8f5729',.045);}
+  if(z.mutation==='runner'||!z.mutation&&z.fast){chevron(z.x-dx*.28,z.y-dy*.28,'#c16e29',z.angle);chevron(z.x-dx*.44,z.y-dy*.44,'#c16e29',z.angle);}
+
   if(z.hp<z.maxHp){ctx.fillStyle='#ad4962';ctx.fillRect(z.x-.22,z.y-.36,.44*z.hp/z.maxHp,.045);}
  }
  for(const u of s.soldiers){
@@ -120,6 +144,12 @@ export function drawRescue(canvas,s,{selected='all',selectedIds=null,building=fa
   else if(u.intent==='cover'||u.intent==='protect'){circle(u.x,u.y,u.r+.24,null,u.intent==='protect'?'#34876d':'#ba8637',.045);text(u.intent==='protect'?'掩护':'避险',u.x,u.y-.65,.24,u.intent==='protect'?'#28715e':'#996928');}
  }
  for(const b of s.bullets){if(b.kind==='grenade'){circle(b.x,b.y,.14,'#ffc16b','#a26930',.035);}else line({x:b.x-b.dx*(b.kind==='gunner'?.44:.28),y:b.y-b.dy*(b.kind==='gunner'?.44:.28)},b,b.kind==='gunner'?'#ffdb7e':'#fff7c0',b.kind==='gunner'?.09:.065);}
+ for(const b of s.enemyBullets||[])line({x:b.x-b.dx*.5,y:b.y-b.dy*.5},b,'#c63a51',.09);
+ for(const b of s.enemyBombs||[]){
+  const pending=s.tick<b.impact;circle(b.x,b.y,b.radius,pending?'#df764634':'#bd583344',pending?'#bd512b':'#9d5034',.065);
+  if(pending){text('! '+Math.max(0,(b.impact-s.tick)/30).toFixed(1),b.x,b.y,.34,'#a33a24');}
+  else for(let i=0;i<5;i++){const a=i*Math.PI*2/5;chevron(b.x+Math.cos(a)*.7,b.y+Math.sin(a)*.7,'#d87834',-Math.PI/2);}
+ }
  for(const strike of s.airstrikes||[]){
   circle(strike.x,strike.y,strike.radius,'#efba5528','#a76d28',.07);const r=strike.radius;
   for(const a of [0,Math.PI/2,Math.PI,Math.PI*1.5])line({x:strike.x+Math.cos(a)*(r-.25),y:strike.y+Math.sin(a)*(r-.25)},{x:strike.x+Math.cos(a)*(r+.25),y:strike.y+Math.sin(a)*(r+.25)},'#a76d28',.08);
@@ -128,21 +158,21 @@ export function drawRescue(canvas,s,{selected='all',selectedIds=null,building=fa
  for(const e of s.events){
   const age=s.tick-e.tick,p=age/30;if(age<0||age>32)continue;ctx.globalAlpha=Math.max(0,1-p);
   if(e.kind==='shot'&&age<4&&!reduced){const x=e.x+Math.cos(e.angle)*.46,y=e.y+Math.sin(e.angle)*.46;circle(x,y,.12,'#fff6c3');}
-  if(e.kind==='blast'&&age<16){circle(e.x,e.y,reduced?.45:.25+e.radius*Math.min(1,age/9),'#f8b85555','#e8953d',.09);if(!reduced)for(let i=0;i<8;i++){const a=i*Math.PI/4;line({x:e.x+Math.cos(a)*p,y:e.y+Math.sin(a)*p},{x:e.x+Math.cos(a)*p*3,y:e.y+Math.sin(a)*p*3},'#ffefb3',.08);}}
+  if(['blast','enemyBlast'].includes(e.kind)&&age<16){circle(e.x,e.y,reduced?.45:.25+e.radius*Math.min(1,age/9),'#f8b85555','#e8953d',.09);if(!reduced)for(let i=0;i<8;i++){const a=i*Math.PI/4;line({x:e.x+Math.cos(a)*p,y:e.y+Math.sin(a)*p},{x:e.x+Math.cos(a)*p*3,y:e.y+Math.sin(a)*p*3},'#ffefb3',.08);}}
   if(e.kind==='airBlast'&&age<24){circle(e.x,e.y,reduced?e.radius:.3+e.radius*Math.min(1,age/8),'#f6cf7b66','#cf812e',.12);circle(e.x,e.y,.55,'#fff5ca99');if(age<8&&!reduced)line({x:e.x-1.2,y:e.y-4},{x:e.x,y:e.y},'#fff0b8',.16);}
   if(e.kind==='hit'&&age<10&&!reduced)for(let i=0;i<3;i++){const a=i*2.2+e.id;line({x:e.x+Math.cos(a)*.2,y:e.y+Math.sin(a)*.2},{x:e.x+Math.cos(a)*(.25+p),y:e.y+Math.sin(a)*(.25+p)},'#ffeeb0',.05);}
-  if(['death','infection','fallen','rescue','build','order'].includes(e.kind)){
+  if(['death','infection','fallen','rescue','build','order','break','refugeBreach'].includes(e.kind)){
    const color=e.kind==='rescue'?'#218e73':e.kind==='order'?'#2187ad':e.kind==='build'?'#51a58b':'#b64463';circle(e.x,e.y,.18+(reduced?.1:p*.7),null,color,.06);
    if(e.kind==='rescue')text('+1',e.x,e.y-.5-p*.5,.38,'#247e67');
    if(e.kind==='infection')text('感染',e.x,e.y-.5-p*.5,.32,'#aa2d4c');
-   if(e.kind==='death'&&!reduced)for(let i=0;i<4;i++){const a=i*Math.PI/2+.3;circle(e.x+Math.cos(a)*p*.8,e.y+Math.sin(a)*p*.8,.055,'#b5526c');}
+   if(['death','break','refugeBreach'].includes(e.kind)&&!reduced)for(let i=0;i<4;i++){const a=i*Math.PI/2+.3;circle(e.x+Math.cos(a)*p*.8,e.y+Math.sin(a)*p*.8,.055,'#b5526c');}
   }
   if(e.kind==='overdrive'){circle(e.x,e.y,.4+p*.7,null,'#e9b34c',.08);text('速射 25s',e.x,e.y-.5-p*.4,.4,'#a56712');}
   if(e.kind==='medic'||e.kind==='supply'){circle(e.x,e.y,.4+p*.6,null,'#29946b',.06);text(e.kind==='supply'?'补给 +1':e.amount?'+'+e.amount:'抢救',e.x,e.y-.4-p*.4,.38,'#217b56');}
   ctx.globalAlpha=1;
  }
  if(s.level===1&&(s.phase==='deploy'||s.phase==='running'&&s.tick<300)&&!orderMarker&&!s.soldiers.some(u=>u.path.length)){
-  const civilians=s.civilians.filter(c=>c.status==='waiting'),u=chosen[0];
+  const civilians=s.civilians.filter(c=>['sheltered','waiting'].includes(c.status)),u=chosen[0];
   if(civilians.length){const x=civilians.reduce((n,c)=>n+c.x,0)/civilians.length,y=Math.min(...civilians.map(c=>c.y))-1;
    circle(x,y,.45,'#fff1caaa','#a77935',.045);text(portrait?'←':'↓',x,y,.6,'#896329');label('接应',x,y,-.8,.42,'#896329');
    if(u)label('你',u.x,u.y,-.85,.4,'#17698a');
@@ -156,5 +186,6 @@ export function drawRescue(canvas,s,{selected='all',selectedIds=null,building=fa
  canvas.dataset.evac=evac?.phase||'legacy';canvas.dataset.evacProgress=String(evac?.progress||0);canvas.dataset.raging=String(raging);canvas.dataset.boarding=String(s.civilians.filter(c=>c.status==='boarding').length);
  canvas.dataset.supplies=String(s.supplies??0);canvas.dataset.decoys=String(s.decoys?.length||0);
  canvas.dataset.overdrive=String(Math.max(0,(s.overdriveUntil||0)-s.tick));canvas.dataset.version=String(s.version);canvas.dataset.level=String(s.level);canvas.dataset.enemies=String(s.zombies.length);canvas.dataset.objectives=JSON.stringify((s.objectives||[]).map(({id,done,active,progress,hp})=>({id,done,active,progress,hp})));
+ canvas.dataset.achievements=JSON.stringify(s.achievements||{});canvas.dataset.artillery=JSON.stringify(s.artillery||{});canvas.dataset.refuges=JSON.stringify((s.refuges||[]).map(({id,hp,released,breached})=>({id,hp,released,breached})));canvas.dataset.mutants=JSON.stringify(Object.fromEntries(Object.keys(RESCUE_MUTANTS).map(k=>[k,s.zombies.filter(z=>z.mutation===k).length])));canvas.dataset.enemyAttacks=String((s.enemyBullets?.length||0)+(s.enemyBombs?.length||0));
  canvas.dataset.selected=chosen.map(u=>u.id).join(',');canvas.dataset.selecting=String(!!selectionBox);canvas.dataset.order=orderMarker?(orderMarker.ok?'accepted':'rejected'):'';
 }

@@ -9,7 +9,7 @@ const esc=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll
 const icons={mobility:'↗',fire:'✦',gate:'▥'};
 let match,active=false,building=false,support=null,hover=null,raf=0,last=0,acc=0,hudAt=-1,hudPhase='',resultKey='',soundId=-1,lastShot=0;
 let watch=null,reader=null,replayPlaying=false,replayDone=false,speed=1;
-let restoreNotice='',followingBefore=0,contactUntil=0,contactCount=0;
+let restoreNotice='',followingBefore=0,contactUntil=0,contactCount=0,contactText='';
 let cancelInput=()=>{},orderMarker=null;
 let campaign={unlocked:1,choices:[],medals:{}};
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -21,14 +21,14 @@ function restore(){
  try{const r=JSON.parse(localStorage.getItem(SAVE));if(r){const state=replayRescue(r);match={state,record:{...r,end:null}};if(state.phase==='running')issueRescue(match,{type:'pause'});}}catch{try{const raw=localStorage.getItem(SAVE);if(raw){localStorage.setItem(SAVE+'-unreadable',raw);restoreNotice='上次行动未能恢复，已保留原记录。这次从部署重新开始。';}}catch{}}
 }
 function newMission(level=match?.state.level||1,difficulty=match?.state.difficulty||'normal'){
- cancelInput();orderMarker=null;followingBefore=0;contactUntil=0;
+ cancelInput();orderMarker=null;followingBefore=0;contactUntil=0;contactText='';
  watch=null;reader=null;replayPlaying=false;replayDone=false;speed=1;
  match=beginRescue({level,seed:41003,difficulty,upgrades:campaign.choices.slice(0,level-1)});building=false;support=null;hover=null;acc=0;resultKey='';soundId=-1;save();if(active)mount();
 }
 export function openRescue(){active=true;document.body.classList.add('rescue-mode');if(!match){restore();if(!match)newMission();}mount();last=performance.now();cancelAnimationFrame(raf);raf=requestAnimationFrame(frame);}
 export function closeRescue(){cancelInput();if(active&&match&&!watch&&match.state.phase==='running')issueRescue(match,{type:'pause'});save();active=false;replayPlaying=false;cancelAnimationFrame(raf);document.body.classList.remove('rescue-mode');}
 export function rescueNotice(text){if(active&&$('rs-notice'))$('rs-notice').textContent=text;}
-function command(a){if(watch)return false;try{issueRescue(match,a);rescueNotice('');if(a.type==='gate')building=false;if(['decoy','medic'].includes(a.type))support=null;save();hud(true);paint();return true;}catch(e){rescueNotice(e.message);return false;}}
+function command(a){if(watch)return false;try{issueRescue(match,a);rescueNotice('');if(a.type==='gate')building=false;if(['decoy','medic','artillery'].includes(a.type))support=null;save();hud(true);paint();return true;}catch(e){rescueNotice(e.message);return false;}}
 function ids(){return match.state.soldiers.filter(u=>u.hp>0).map(u=>u.id);}
 function nearbyGate(){const s=match.state,m=rescueMap(s.level,s.version);return m.doors.filter(d=>!s.gates.some(g=>g.id===d.id&&g.hp>0)).map(d=>({d,distance:Math.min(...s.soldiers.filter(u=>u.hp>0).map(u=>Math.hypot(u.x-d.x,u.y-d.y)))})).filter(x=>x.distance<3).sort((a,b)=>a.distance-b.distance)[0]?.d;}
 function deployGate(){const door=nearbyGate();if(door)command({type:'gate',door:door.id});else rescueNotice('靠近门口后，就能一键布置门障');}
@@ -38,19 +38,20 @@ function retreat(){const ex=rescueMap(match.state.level,match.state.version).exi
 function mount(){
  cancelInput();
  if(!active)return;resultKey='';const s=match.state,m=rescueMap(s.level,s.version);
- root().innerHTML=`<div class="rs-heading"><div><span class="rs-eyebrow">GLIMMER RESCUE</span><h1>微光救援</h1></div><div class="rs-missions" aria-label="救援关卡">${RESCUE_LEVELS.map(i=>`<button data-mission="${i}" ${i>campaign.unlocked?'disabled':''} aria-current="${s.level===i?'step':'false'}"><b>${String(i).padStart(2,'0')}</b><span>${rescueMap(i).name}</span>${campaign.medals[i]?'✓':''}</button>`).join('')}</div><button id="rs-export" class="quiet">导出回放</button></div>
+ root().innerHTML=`<div class="rs-heading"><div><span class="rs-eyebrow">GLIMMER RESCUE</span><h1>微光救援</h1></div><div class="rs-missions" aria-label="救援关卡">${RESCUE_LEVELS.map(i=>`<button data-mission="${i}" ${i>campaign.unlocked?'disabled':''} aria-current="${s.level===i?'step':'false'}"><b>${String(i).padStart(2,'0')}</b><span>${rescueMap(i).name}</span>${missionMedals(i)}</button>`).join('')}</div><button id="rs-export" class="quiet">导出回放</button></div>
  <div class="rs-layout"><div class="rs-center"><div class="rs-map-head"><div><span id="rs-phase"></span><b>${esc(m.name)}</b></div><strong id="rs-timer">01:00</strong><button id="rs-start" class="primary">开始行动</button></div>
  <div class="rs-live-bar"><div id="rs-field-goals" aria-live="polite"></div><button id="rs-zoom" class="quiet" aria-pressed="false">放大</button></div><section id="rs-evac" class="rs-evac" aria-live="polite" ${s.version<3?'hidden':''}></section>${s.version>=4&&s.version<6?'<div class="rs-callbar"><span id="rs-call-note"></span><button id="rs-call" class="primary">呼叫接驳</button></div>':''}<div class="rs-map-wrap"><div id="rs-contact" class="rs-contact" role="status" hidden></div><canvas id="rescue-board" width="1200" height="800" tabindex="0" aria-label="救援地图：蓝色军队、黄色平民、红色丧尸，点击地面，全队移动；自动射击与护送"></canvas><div id="rs-pause" hidden><span>Ⅱ</span><b>战术暂停</b></div></div>
  <div class="rs-legend"><span><i class="rs-blue"></i>军队</span><span><i class="rs-gold"></i>平民</span><span><i class="rs-pink"></i>丧尸</span><span><i class="rs-green"></i>撤离区</span><span id="rs-hint">点地面，全队移动</span></div>
- <div class="rs-simple-commands"><div class="rs-team-state"><b id="rs-selected" role="status">全队行动</b><span id="rs-alive">5 人</span><span id="rs-autonomy"></span></div><div class="rs-orders"><button id="rs-retreat"><span>↙</span>撤回</button><button id="rs-hold"><span>⊙</span>驻守</button><button id="rs-gate"><span>▥</span>门障 <b>2</b></button></div></div>
+ <div class="rs-simple-commands"><div class="rs-team-state"><b id="rs-selected" role="status">全队行动</b><span id="rs-alive">5 人</span><span id="rs-autonomy"></span></div><div class="rs-orders ${s.version>=10?'has-artillery':''}"><button id="rs-retreat"><span>↙</span>撤回</button><button id="rs-hold"><span>⊙</span>驻守</button><button id="rs-gate"><span>▥</span>门障 <b>2</b></button>${s.version>=10?'<button id="rs-artillery" aria-pressed="false" aria-label="炮击支援，点选后选择地图落点"><span>✦</span><em>炮击</em><b>2</b></button>':''}</div></div>
  ${s.version>=4&&s.version<6?`<div class="rs-supportbar"><span>战术补给 <b id="rs-supplies">${s.supplies}</b></span><button id="rs-decoy" aria-pressed="false"><b>◉ 诱饵信标</b><small>引开尸群 6 秒 · 用 1 份</small></button><button id="rs-medic" aria-pressed="false"><b>＋ 范围急救</b><small>队员恢复 55 · 用 1 份</small></button></div>`:''}<p id="rs-notice" role="status" aria-live="polite"></p><section id="rs-result" hidden aria-live="polite"></section></div>
  <aside class="rs-rail"><section class="rs-objective"><span class="rs-eyebrow">本关目标</span><h2>${s.version>=3?(m.mode==='hold'?'撤离平民 · 守住接驳':'撤离平民 · 清剿尸群'):(m.mode==='hold'?'保护平民 · 守住防线':'保护平民 · 清除感染')}</h2><div class="rs-goal"><strong id="rs-safe">${m.total}</strong><span>/ ${m.total} 人${s.version>=3?'已撤离':'存活'}<br><b>至少${s.version>=3?'撤离':'保住'} ${m.quota} 人</b></span></div><div id="rs-civilians" class="rs-people" aria-label="平民状态"></div><div class="rs-civil-count"><span>已撤离 <b id="rs-saved">0</b></span><span>跟随 <b id="rs-following">0</b></span><span ${s.version<3?'hidden':''}>集结 <b id="rs-boarding">0</b></span><span>感染 <b id="rs-lost">0</b></span></div><p class="rs-win-rule">${s.version>=7&&m.objectives.length?m.brief+' · 守住 '+m.extraction.seconds+' 秒':s.version>=3?'接应 → 集结 → 守住 '+m.extraction.seconds+' 秒'+(m.mode==='clear'?'，再清除全部尸群':'') :m.mode==='hold'?(s.version>=2?'全员撤离即可完成；也可坚持 '+m.seconds+' 秒或清除全部丧尸':'坚持 '+m.seconds+' 秒，或清除全部丧尸'):'在 '+m.seconds+' 秒内清除全部丧尸'}</p></section>
  <section class="rs-threat"><div><h2>感染潮</h2><span id="rs-wave">0 / ${m.waves.length}</span></div><div class="rs-wave-track">${m.waves.map((w,i)=>`<i data-wave="${i+1}" style="--at:${w.at/m.seconds*100}%" title="第 ${i+1} 波 · ${w.at} 秒"></i>`).join('')}<b id="rs-wave-progress"></b></div><div class="rs-threat-count"><span><b id="rs-enemies">0</b>场上丧尸</span><span><b id="rs-kills">0</b>已清除</span></div><p id="rs-next-wave"></p></section>
- <section class="rs-intel"><h2>战场动态</h2><ol id="rs-log"></ol></section><section class="rs-settings">${s.version<9&&!watch?'<div class="rs-legacy"><span>历史行动</span><button id="rs-modern" class="quiet">尸潮版 · 重新部署</button></div>':''}<div id="rs-upgrades">${s.upgrades.map(id=>`<span title="${UPGRADES[id].text}">${icons[id]} ${UPGRADES[id].name}</span>`).join('')}</div><label>感染强度<select id="rs-difficulty" ${s.phase==='deploy'&&!watch?'':'disabled'}><option value="normal">尸潮 · 标准</option><option value="challenge">险境 · 触碰即感染</option></select></label><button id="rs-restart" class="quiet">重新部署本关</button><button id="rs-new-campaign" class="quiet">从第一关开始</button><div id="rs-replay-controls" ${watch?'':'hidden'}><label>回放速度<select id="rs-speed"><option value="1">1×</option><option value="2">2×</option><option value="4">4×</option></select></label><span id="rs-replay-status"></span></div></section></aside></div>`;
+ <section class="rs-intel"><h2>战场动态</h2><ol id="rs-log"></ol></section><section class="rs-settings">${s.version<10&&!watch?'<div class="rs-legacy"><span>历史行动</span><button id="rs-modern" class="quiet">收复版 · 重新部署</button></div>':''}<div id="rs-upgrades">${s.upgrades.map(id=>`<span title="${UPGRADES[id].text}">${icons[id]} ${UPGRADES[id].name}</span>`).join('')}</div><label>感染强度<select id="rs-difficulty" ${s.phase==='deploy'&&!watch?'':'disabled'}><option value="normal">尸潮 · 标准</option><option value="challenge">险境 · 触碰即感染</option></select></label><button id="rs-restart" class="quiet">重新部署本关</button><button id="rs-new-campaign" class="quiet">从第一关开始</button><div id="rs-replay-controls" ${watch?'':'hidden'}><label>回放速度<select id="rs-speed"><option value="1">1×</option><option value="2">2×</option><option value="4">4×</option></select></label><span id="rs-replay-status"></span></div></section></aside></div>`;
  root().querySelectorAll('[data-mission]').forEach(b=>b.onclick=()=>newMission(Number(b.dataset.mission)));
  if($('rs-call'))$('rs-call').onclick=()=>command({type:'evacuate'});
  for(const type of ['decoy','medic'])if($('rs-'+type))$('rs-'+type).onclick=()=>{support=support===type?null:type;building=false;rescueNotice(support?'点队员附近的地面使用'+(type==='decoy'?'诱饵':'急救'):'');hud(true);paint();};
  if($('rs-modern'))$('rs-modern').onclick=()=>{try{localStorage.setItem(SAVE+'-previous',JSON.stringify(sealRescue(match)));}catch{}newMission();};
+ if($('rs-artillery'))$('rs-artillery').onclick=()=>{support=support==='artillery'?null:'artillery';building=false;rescueNotice(support?'选择炮击落点':'');hud(true);paint();};
  $('rs-start').onclick=pause;$('rs-retreat').onclick=retreat;$('rs-hold').onclick=()=>command({type:'hold',ids:ids()});$('rs-gate').onclick=deployGate;
  $('rs-export').onclick=exportReplay;$('rs-restart').textContent=watch?'回到行动':'重新部署本关';$('rs-restart').onclick=()=>{if(watch){watch=null;reader=null;replayPlaying=false;replayDone=false;match=null;restore();if(!match)newMission(1);else mount();}else newMission();};$('rs-new-campaign').onclick=()=>{campaign={unlocked:1,choices:[],medals:{}};saveCampaign();newMission(1);};
  $('rs-difficulty').value=s.difficulty;$('rs-difficulty').onchange=e=>newMission(s.level,e.target.value);$('rs-speed').value=String(speed);$('rs-speed').onchange=e=>{speed=Number(e.target.value);};
@@ -66,29 +67,31 @@ function mount(){
 }
 function hud(force=false){
  if(!active||!match)return;const s=match.state;if(!force&&s.phase===hudPhase&&s.tick-hudAt<6)return;hudAt=s.tick;hudPhase=s.phase;const m=rescueMap(s.level,s.version),st=rescueStats(s);
- $('rs-phase').textContent=watch?'回放':({deploy:'部署中',running:'行动中',paused:'已暂停',ended:s.winner?'救援成功':'行动结束'})[s.phase];
+ $('rs-phase').textContent=watch?'回放':s.version>=10&&s.achievements.evacuated!==null&&s.phase==='running'?'收复中':({deploy:'部署中',running:'行动中',paused:'已暂停',ended:s.winner?'救援成功':'行动结束'})[s.phase];
  $('rs-selected').textContent=watch?'行动回放':s.soldiers.some(u=>u.intent==='cover')?'队员寻找掩护':s.soldiers.some(u=>u.intent==='protect')?'护卫掩护平民':s.soldiers.some(u=>u.hp>0&&u.path.length)?'全队行进':'全队防守';
  $('rs-autonomy').textContent=s.version>=7?'机枪 · 榴弹 · 自动救护 '+s.supplies:s.version>=6?'自动射击 · 自动救护 '+s.supplies:'自动射击';
  $('rs-timer').textContent=String(Math.floor(st.remaining/60)).padStart(2,'0')+':'+String(st.remaining%60).padStart(2,'0');$('rs-timer').classList.toggle('urgent',st.remaining<=15);
  $('rs-start').textContent=watch?(replayDone?'回放结束':replayPlaying?'暂停回放':'继续回放'):({deploy:'▶ 开始',running:'Ⅱ 暂停',paused:'▶ 继续',ended:s.winner?'✓ 行动完成':'行动结束'})[s.phase];$('rs-start').disabled=watch?replayDone:s.phase==='ended';
  $('rs-pause').hidden=watch?!(!replayPlaying&&!replayDone):s.phase!=='paused';
  $('rs-safe').textContent=s.version>=3?st.saved:st.safe;$('rs-safe').classList.toggle('danger',st.safe<=m.quota);$('rs-saved').textContent=st.saved;$('rs-following').textContent=st.following;$('rs-boarding').textContent=st.boarding;$('rs-lost').textContent=st.lost;$('rs-alive').textContent=st.alive+' 人';
- $('rs-civilians').innerHTML=s.civilians.map(c=>`<i class="${c.status} ${c.infection?'threatened':''}" title="${({waiting:'等待接应',following:'跟随小队',boarding:'等待接驳，仍需保护',saved:'安全撤离',infected:'已感染'})[c.status]}">${c.status==='saved'?'✓':c.status==='infected'?'×':''}</i>`).join('');
+ $('rs-civilians').innerHTML=s.civilians.map(c=>`<i class="${c.status} ${c.infection?'threatened':''}" title="${({sheltered:'避难点内',waiting:'等待接应',following:'跟随小队',boarding:'等待接驳，仍需保护',saved:'安全撤离',infected:'已感染'})[c.status]}">${c.status==='saved'?'✓':c.status==='infected'?'×':''}</i>`).join('');
  $('rs-enemies').textContent=st.enemies;$('rs-kills').textContent=s.kills;$('rs-wave').textContent=s.wave+' / '+m.waves.length;
  $('rs-wave-progress').style.width=Math.min(100,s.tick/(m.seconds*RESCUE_HZ)*100)+'%';root().querySelectorAll('[data-wave]').forEach(i=>i.classList.toggle('past',Number(i.dataset.wave)<=s.wave));
  const next=s.schedule.slice(s.spawned).find(w=>!entranceSealed(s,w.entry)),count=next?s.schedule.slice(s.spawned).filter(w=>w.wave===next.wave&&!entranceSealed(s,w.entry)).length:0;$('rs-next-wave').textContent=next?`${m.entrances[next.entry].name} · ${count} 只 · ${Math.max(0,Math.ceil((next.tick-s.tick)/RESCUE_HZ))} 秒后进入`:'全部丧尸已入场';
  const objectives=objectiveBadges(s);
- if(st.following>followingBefore){contactCount=st.following;contactUntil=performance.now()+2200;}followingBefore=st.following;
- $('rs-field-goals').innerHTML=objectives+`<span class="${st.saved>=m.quota?'complete':''}">${st.saved>=m.quota?'✓':'↙'} 撤离 ${st.saved}/${m.quota}</span>${st.following?`<span class="rs-escort">↙ 跟随 ${st.following}</span>`:''}${st.boarding?`<span class="rs-escort">◷ 接驳 ${st.boarding}</span>`:''}<span class="${m.mode==='clear'?'clear-goal':''}">${m.mode==='clear'?'◎ 清剿 '+(st.enemies+st.pending):'尸潮 '+st.enemies}</span>`;
+ if(st.following>followingBefore){contactCount=st.following;contactText='';contactUntil=performance.now()+2200;}followingBefore=st.following;
+ $('rs-field-goals').innerHTML=s.version>=10?objectives+operationBadges(s,st,m):objectives+`<span class="${st.saved>=m.quota?'complete':''}">${st.saved>=m.quota?'✓':'↙'} 撤离 ${st.saved}/${m.quota}</span>${st.following?`<span class="rs-escort">↙ 跟随 ${st.following}</span>`:''}${st.boarding?`<span class="rs-escort">◷ 接驳 ${st.boarding}</span>`:''}<span class="${m.mode==='clear'?'clear-goal':''}">${m.mode==='clear'?'◎ 清剿 '+(st.enemies+st.pending):'尸潮 '+st.enemies}</span>`;
  $('rs-log').innerHTML=s.log.slice(-4).reverse().map(e=>`<li class="${e.kind}"><time>${String(Math.floor(e.tick/30/60)).padStart(2,'0')}:${String(Math.floor(e.tick/30)%60).padStart(2,'0')}</time>${esc(e.text)}</li>`).join('');
+ persistAchievements(s);
  $('rs-gate').querySelector('b').textContent=s.gateCharges;
+ if($('rs-artillery')){const b=$('rs-artillery'),cooldown=Math.max(0,Math.ceil((s.artillery.readyAt-s.tick)/30));b.disabled=!!watch||!['running','paused'].includes(s.phase)||!s.artillery.charges||cooldown>0;b.setAttribute('aria-pressed',String(support==='artillery'));b.querySelector('b').textContent=s.artillery.charges;b.querySelector('em').textContent=cooldown?cooldown+'s':'炮击';}
  for(const id of ['rs-retreat','rs-hold','rs-gate'])$(id).disabled=!!watch||s.phase==='ended'||(id==='rs-gate'?s.gateCharges===0:ids().length===0);
- $('rs-hint').textContent=watch?'行动回放':support?'点队员 4 格内的地面 · 共享战术补给':building?'点亮起的门口，放置门障':s.phase==='deploy'?'开始行动后，点地面带全队出发':s.phase==='ended'?'行动结算':s.evac?.phase==='unpowered'?'前往 ϟ 配电站，守住供电进度':s.evac?.phase==='gathering'?(s.version>=6?'回到撤离区，自动开始接驳':'可以先布置防线，再呼叫接驳'):s.evac?.phase==='contested'?'清除撤离区附近丧尸，继续读秒':s.evac?.phase==='unguarded'?'留下队员守卫撤离区':s.evac?.phase==='loading'?'保住撤离区，门障可拖慢尸潮':'点地面，全队移动 · 平民会自动跟随';
+ $('rs-hint').textContent=watch?'行动回放':support==='artillery'?'选择炮击落点':support?'点队员 4 格内的地面 · 共享战术补给':building?'点亮起的门口，放置门障':s.phase==='deploy'?'开始行动后，点地面带全队出发':s.phase==='ended'?'行动结算':s.evac?.phase==='unpowered'?'前往 ϟ 配电站，守住供电进度':s.evac?.phase==='gathering'?(s.version>=6?'回到撤离区，自动开始接驳':'可以先布置防线，再呼叫接驳'):s.evac?.phase==='contested'?'清除撤离区附近丧尸，继续读秒':s.evac?.phase==='unguarded'?'留下队员守卫撤离区':s.evac?.phase==='loading'?'保住撤离区，门障可拖慢尸潮':'点地面，全队移动 · 平民会自动跟随';
  $('rs-difficulty').disabled=s.phase!=='deploy'||!!watch;$('rs-replay-status').textContent=watch?(replayDone?'已校验的回放':'回放中 · 不可下令'):'';
  if(s.version>=3){
   const e=s.evac,remaining=Math.ceil((e.required-e.progress)/30),raging=st.raging&&s.winner===null,alarm=e.alertTick!==null&&s.tick<e.alertTick;
   const status=({unpowered:'配电站未恢复 · 接驳停运',idle:'接应平民 → 撤离区集结',gathering:s.version>=6?'平民已集结 · 等待护卫返回':'平民已集结 · 选择时机呼叫',called:'呼叫已发出 · 准备守住阵地',waiting:'等待平民返回集结',loading:'正在接驳 · 守住阵地',contested:'敌人逼近 · 读秒暂停',unguarded:'缺少护卫 · 读秒暂停',complete:'接驳完成'})[e.phase];
-  const box=$('rs-evac');box.dataset.phase=e.phase;box.className='rs-evac '+e.phase+(raging?' raging':'');
+  const box=$('rs-evac');box.hidden=s.version>=10&&e.phase==='complete'&&st.boarding===0;box.dataset.phase=e.phase;box.className='rs-evac '+e.phase+(raging?' raging':'');
   box.innerHTML=`<div class="rs-evac-dial" style="--progress:${e.progress/e.required*100}%"><b>${e.phase==='complete'?'✓':remaining}</b><small>${e.phase==='complete'?'已撤离':'秒'}</small></div><div class="rs-evac-info"><strong>${status}</strong><span>${st.boarding?st.boarding+' 人等待撤离':'至少撤离 '+m.quota+' 人'}${e.phase==='idle'?(s.version>=6?' · 返回后自动接驳':s.version>=4?' · 集结后自主呼叫':' · 进入后呼叫接驳'):''}</span><div class="rs-evac-track" role="progressbar" aria-label="撤离接驳进度" aria-valuemin="0" aria-valuemax="${e.required}" aria-valuenow="${e.progress}"><i style="width:${e.progress/e.required*100}%"></i></div></div><b class="rs-rage-label">${alarm?'⚠ 尸潮 '+Math.ceil((e.alertTick-s.tick)/30)+' 秒后突入':raging?'▲ 尸潮狂暴':e.phase==='complete'?'✓ 已登车':'↙ 集结点'}</b>`;
  }
  if(s.version>=4&&s.version<6){
@@ -112,17 +115,18 @@ function objectiveBadges(s){
 }
 function showResult(){
  const s=match.state,key=(s.phase==='ended'?'ended':'other')+'/'+s.level+'/'+!!watch+'/'+campaign.choices.length;if(key===resultKey)return;resultKey=key;const panel=$('rs-result');panel.hidden=s.phase!=='ended';if(panel.hidden)return;
+ const eligible=s.winner||s.version>=10&&(s.achievements.evacuated!==null||s.achievements.reclaimed!==null);
  const m=rescueMap(s.level,s.version),allSaved=s.saved===m.total,allAlive=s.soldiers.every(u=>u.hp>0);
- if(s.winner&&!watch){const old=campaign.medals[s.level]||{};campaign.medals[s.level]={allSaved:old.allSaved||allSaved,allAlive:old.allAlive||allAlive};campaign.unlocked=Math.max(campaign.unlocked,Math.min(RESCUE_LEVELS.length,s.level+1));saveCampaign();}
- const needUpgrade=s.winner&&!watch&&s.level<RESCUE_LEVELS.length&&!campaign.choices[s.level-1];
- panel.innerHTML=`<div class="rs-result-heading"><span>${s.winner?'✦':'◇'}</span><div><h2>${s.winner?'救援成功':s.reason==='清剿时间耗尽'?'清剿未完成':'救援未完成'}</h2><p>${esc(s.reason)} · 保住 ${m.total-s.lost} 人，撤离 ${s.saved} 人</p></div></div><div class="rs-medals">${allSaved?'<span>✧ 全员撤离</span>':''}${allAlive?'<span>✧ 小队无伤亡</span>':''}</div>${watch?'<p>行动回放结束</p>':needUpgrade?`<h3>升级 · 三选一</h3><div class="rs-upgrade-choices">${Object.entries(UPGRADES).map(([id,u])=>`<button data-upgrade="${id}"><i>${icons[id]}</i><b>${u.name}</b><small>${u.text}</small></button>`).join('')}</div>`:`<button id="rs-next" class="primary">${s.winner&&s.level<RESCUE_LEVELS.length?'下一关 →':s.winner?'九关完成 · 再挑战':'重新部署'}</button>`}`;
+ if(eligible&&!watch){const old=campaign.medals[s.level]||{};campaign.medals[s.level]={...old,allSaved:old.allSaved||allSaved,allAlive:old.allAlive||allAlive};campaign.unlocked=Math.max(campaign.unlocked,Math.min(RESCUE_LEVELS.length,s.level+1));saveCampaign();}
+ const needUpgrade=eligible&&!watch&&s.level<RESCUE_LEVELS.length&&!campaign.choices[s.level-1];
+ panel.innerHTML=`<div class="rs-result-heading"><span>${s.winner?'✦':'◇'}</span><div><h2>${s.version>=10?(s.achievements.reclaimed!==null?'领地已收复':'行动结束'):s.winner?'救援成功':s.reason==='清剿时间耗尽'?'清剿未完成':'救援未完成'}</h2><p>${esc(s.reason)} · 保住 ${m.total-s.lost} 人，撤离 ${s.saved} 人</p></div></div><div class="rs-medals">${operationMedals(s)}${allSaved?'<span>✧ 全员撤离</span>':''}${allAlive?'<span>✧ 小队无伤亡</span>':''}</div>${watch?'<p>行动回放结束</p>':needUpgrade?`<h3>升级 · 三选一</h3><div class="rs-upgrade-choices">${Object.entries(UPGRADES).map(([id,u])=>`<button data-upgrade="${id}"><i>${icons[id]}</i><b>${u.name}</b><small>${u.text}</small></button>`).join('')}</div>`:`<button id="rs-next" class="primary">${eligible&&s.level<RESCUE_LEVELS.length?'下一关 →':eligible?'九关完成 · 再挑战':'重新部署'}</button>`}`;
  panel.querySelectorAll('[data-upgrade]').forEach(b=>b.onclick=()=>{campaign.choices[s.level-1]=b.dataset.upgrade;campaign.unlocked=Math.max(campaign.unlocked,s.level+1);saveCampaign();newMission(s.level+1);});
- if($('rs-next'))$('rs-next').onclick=()=>newMission(s.winner&&s.level<RESCUE_LEVELS.length?s.level+1:s.winner?1:s.level);
+ if($('rs-next'))$('rs-next').onclick=()=>newMission(eligible&&s.level<RESCUE_LEVELS.length?s.level+1:eligible?1:s.level);
  queueMicrotask(()=>{if(active&&panel.isConnected)panel.scrollIntoView({block:'nearest',behavior:reduced?'auto':'smooth'});});
  if(!watch)save();
 }
-function paint(){if(active&&$('rs-contact')){$('rs-contact').hidden=performance.now()>=contactUntil;$('rs-contact').textContent='✓ '+contactCount+' 人跟随  ↙ 撤回';}if(active&&match&&$('rescue-board'))drawRescue($('rescue-board'),match.state,{selectedIds:ids(),building,support,hover,reduced,orderMarker:orderMarker&&performance.now()-orderMarker.at<1600?orderMarker:null});}
-function sounds(){const s=match.state;for(const e of s.events){if(e.id<=soundId)continue;soundId=e.id;let kind=({rescue:'rescue',infection:'infection',build:'gate',victory:'victory',fallen:'damage',evacAlarm:'damage',evacComplete:'rescue',medic:'heal',supply:'rescue',decoy:'gate',blast:'blast',airBlast:'blast',objective:'rescue'})[e.kind];if(e.kind==='shot'&&s.tick-lastShot>=7){lastShot=s.tick;kind='shot';}if(kind)window.dispatchEvent(new CustomEvent('glimmer-effect',{detail:kind}));}}
+function paint(){if(active&&$('rs-contact')){$('rs-contact').hidden=performance.now()>=contactUntil;$('rs-contact').textContent=contactText||'✓ '+contactCount+' 人跟随  ↙ 撤回';}if(active&&match&&$('rescue-board'))drawRescue($('rescue-board'),match.state,{selectedIds:ids(),building,support,hover,reduced,orderMarker:orderMarker&&performance.now()-orderMarker.at<1600?orderMarker:null});}
+function sounds(){const s=match.state;for(const e of s.events){if(e.id<=soundId)continue;soundId=e.id;let kind=({rescue:'rescue',infection:'infection',build:'gate',victory:'victory',fallen:'damage',evacAlarm:'damage',evacComplete:'rescue',medic:'heal',supply:'rescue',decoy:'gate',blast:'blast',airBlast:'blast',enemyBlast:'blast',artillerySupply:'rescue',achievement:'rescue',refugeReady:'rescue',refugeBreach:'damage',objective:'rescue'})[e.kind];if(e.kind==='shot'&&s.tick-lastShot>=7){lastShot=s.tick;kind='shot';}if(kind)window.dispatchEvent(new CustomEvent('glimmer-effect',{detail:kind}));}}
 function frame(now){
  if(!active)return;acc+=Math.min(now-last,120)*(watch?speed:1);last=now;
  try{while(acc>=1000/RESCUE_HZ){acc-=1000/RESCUE_HZ;
@@ -142,3 +146,26 @@ window.addEventListener('glimmer-screen-pause',()=>{if(active){cancelInput();if(
 window.addEventListener('glimmer-screen-layout',()=>{if(active){cancelInput();const wrap=$('rescue-board')?.parentElement;if(wrap){wrap.classList.remove('rs-zoomed');wrap.scrollLeft=wrap.scrollTop=0;$('rs-zoom').setAttribute('aria-pressed','false');$('rs-zoom').textContent='放大';}}});
 
 export const rescueMusicActive=()=>active&&(watch?replayPlaying&&!replayDone:match?.state.phase==='running');
+
+function missionMedals(level){
+ const m=campaign.medals[level];if(!m)return '';
+ if(m.evacuated===undefined&&m.reclaimed===undefined)return '✓';
+ return `<small class="rs-mission-medals" aria-label="群众撤离${m.evacuated?'已获得':'未获得'}，领地收复${m.reclaimed?'已获得':'未获得'}"><i class="${m.evacuated?'earned':''}">↙</i><i class="${m.reclaimed?'earned':''}">⚑</i></small>`;
+}
+function persistAchievements(s){
+ if(watch||s.version<10)return;
+ const evacuated=s.achievements.evacuated!==null,reclaimed=s.achievements.reclaimed!==null,old=campaign.medals[s.level]||{};
+ if(!evacuated&&!reclaimed||(!evacuated||old.evacuated)&&(!reclaimed||old.reclaimed))return;
+ campaign.medals[s.level]={...old,evacuated:!!old.evacuated||evacuated,reclaimed:!!old.reclaimed||reclaimed};
+ campaign.unlocked=Math.max(campaign.unlocked,Math.min(RESCUE_LEVELS.length,s.level+1));saveCampaign();save();
+ contactCount=0;contactText=reclaimed&&!old.reclaimed?'⚑ 领地收复':'↙ 群众撤离 · 炮击 +1';contactUntil=performance.now()+2800;
+ root().querySelectorAll('[data-mission]').forEach(b=>{const level=Number(b.dataset.mission);if(level<=campaign.unlocked)b.disabled=false;if(level===s.level){b.innerHTML=`<b>${String(level).padStart(2,'0')}</b><span>${rescueMap(level).name}</span>${missionMedals(level)}`;}});
+}
+function operationBadges(s,st,m){
+ const rescued=s.achievements.evacuated!==null,cleared=s.achievements.reclaimed!==null,pending=s.schedule.slice(s.spawned).filter(w=>!entranceSealed(s,w.entry)).length;
+ return `<span class="${rescued?'complete':''}">↙ ${rescued?'撤离 ✓':s.saved+'/'+m.quota}</span><span class="clear-goal ${cleared?'complete':''}">⚑ ${cleared?'收复 ✓':'清剿 '+(st.enemies+pending)}</span>${st.following?`<span class="rs-escort">跟随 ${st.following}</span>`:''}${st.boarding?`<span class="rs-escort">接驳 ${st.boarding}</span>`:''}`;
+}
+function operationMedals(s){
+ if(s.version<10)return '';
+ return ['evacuated','reclaimed'].map((key,i)=>`<span class="${s.achievements[key]!==null?'earned':'unearned'}">${i?'⚑ 领地收复':'↙ 群众撤离'} ${s.achievements[key]!==null?'✓':'—'}</span>`).join('');
+}

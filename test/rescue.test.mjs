@@ -39,7 +39,7 @@ test('五名队员能穿过两道窄门，不穿墙、不被友方卡死',()=>{
  assert.ok(s.soldiers.every(u=>distance(u,{x:19.5,y:8.5})<2));assert.ok(s.soldiers.every(u=>u.path.length===0));
 });
 test('门障挡丧尸、放行军队和射击，消耗次数并能被摧毁',()=>{
- let s=initRescue();s=commandRescue(s,{type:'gate',door:'door0'});assert.equal(s.gateCharges,1);assert.ok(walkable(s,8.5,8.5));assert.equal(walkable(s,8.5,8.5,'zombie'),false);assert.ok(lineOfSight(s,{x:7.5,y:8.5},{x:9.5,y:8.5}));assert.throws(()=>commandRescue(s,{type:'gate',door:'door0'}));
+ let s=initRescue({version:9});s=commandRescue(s,{type:'gate',door:'door0'});assert.equal(s.gateCharges,1);assert.ok(walkable(s,8.5,8.5));assert.equal(walkable(s,8.5,8.5,'zombie'),false);assert.ok(lineOfSight(s,{x:7.5,y:8.5},{x:9.5,y:8.5}));assert.throws(()=>commandRescue(s,{type:'gate',door:'door0'}));
  s=commandRescue(s,{type:'start'});s.schedule=[{tick:5000,entry:0,fast:false,wave:1}];s.civilians.forEach(c=>{c.status='saved';});s.saved=10;s.zombies=[zombie('z0',9.45,8.5)];s.uid=1;s.gates[0].hp=15;
  for(let i=0;i<30&&s.gates[0].hp>0;i++)s=stepRescue(s);assert.equal(s.gates[0].hp,0);assert.ok(walkable(s,8.5,8.5,'zombie'));assert.ok(s.events.some(e=>e.kind==='break'));
 });

@@ -1,9 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {initRescue,commandRescue,stepRescue,rescueMap,walkable,pathTo,replayRescue} from '../src/rescue.mjs';
+import {initRescue,commandRescue,stepRescue,rescueMap as getRescueMap,walkable,pathTo,replayRescue} from '../src/rescue.mjs';
 const RESCUE_LEVELS=[1,2,3,4,5,6];
 import {siegeScenario} from '../scripts/rescue-siege-scenarios.mjs';
+const rescueMap=(level,version=8)=>getRescueMap(level,version);
 const zombie=(id,x,y,hp=100)=>({id,kind:'zombie',x,y,r:.23,hp,maxHp:hp,fast:false,brute:false,angle:0,path:[],goal:null,target:null,nav:0,cooldown:999,hitTick:-100});
 function quiet(level=1){const s=commandRescue(initRescue({level,version:8}),{type:'start'});s.schedule=[{tick:6300,entry:0,fast:false,wave:1}];s.civilians=[];for(const u of s.soldiers)u.cooldown=9999;for(const o of s.objectives)o.nextSpawn=9999;return s;}
 function place(u,x,y){Object.assign(u,{x,y,anchor:{x,y},path:[],goal:null,orderedAt:0});}

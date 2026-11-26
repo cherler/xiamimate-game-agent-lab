@@ -1,9 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {initRescue,commandRescue,stepRescue,rescueMap,walkable,pathTo,replayRescue,rescueZombieSpeed,entranceSealed} from '../src/rescue.mjs';
+import {initRescue as createRescue,commandRescue,stepRescue,rescueMap as getRescueMap,walkable,pathTo,replayRescue,rescueZombieSpeed,entranceSealed} from '../src/rescue.mjs';
 import {RESCUE_LEVELS} from '../src/rescue-maps.mjs';
 import {escalationScenario} from '../scripts/rescue-escalation-scenarios.mjs';
+const initRescue=(options={})=>createRescue({version:9,...options}),rescueMap=(level,version=9)=>getRescueMap(level,version);
 const place=(u,x,y)=>Object.assign(u,{x,y,anchor:{x,y},path:[],goal:null,orderedAt:0});
 const zombie=(id,x,y,hp=1000)=>({id,kind:'zombie',x,y,r:.23,hp,maxHp:hp,fast:false,brute:false,angle:0,path:[],goal:null,target:null,nav:-1,cooldown:9999,hitTick:-100});
 function quiet(level){const s=commandRescue(initRescue({level}),{type:'start'});s.schedule=[];s.civilians=[];s.reinforceAt=9999;for(const u of s.soldiers)u.cooldown=9999;for(const o of s.objectives)o.nextSpawn=9999;return s;}

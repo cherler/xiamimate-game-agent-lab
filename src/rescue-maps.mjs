@@ -25,8 +25,9 @@ export const RESCUE_MAPS = [
   [{at:12,entry:0,count:8,fast:0},{at:30,entry:1,count:9,fast:1},{at:50,entry:2,count:9,fast:2},{at:71,entry:0,count:10,fast:2},{at:92,entry:2,count:12,fast:3}])
 ];
 const latestMaps=new Map();
-export function rescueMap(id,version=9){
+export function rescueMap(id,version=10){
  const key=version+':'+id;if(version>=3&&latestMaps.has(key))return latestMaps.get(key);
+ if(version>=10){const result=reclamationMap(id);latestMaps.set(key,result);return result;}
  if(version>=9){const result=escalationMap(id);latestMaps.set(key,result);return result;}
  if(version>=8){const result=structuredClone(rescueMap(id,7));if(id>1){const [x,y]=({2:[9.5,2.5],3:[10.5,2.5],4:[2.5,3.5],5:[11.5,1.5],6:[14.5,7.5]})[id];result.supplies.push({id:'overdrive-cache',x,y,reward:'overdrive',seconds:25,warning:4});}latestMaps.set(key,result);return result;}
  if(version>=7){const result=siegeMap(id,id<=3?rescueMap(id,6):null);latestMaps.set(key,result);return result;}
@@ -121,5 +122,20 @@ function escalationMap(id){
   if(id===9)m.extraction={...m.extraction,seconds:68,count:360,fast:120};
   m.supplies=[{id:'siege-supply',x:13.5,y:11.5},{id:'north-supply',x:13.5,y:4.5},{id:'overdrive-cache',x:18.5,y:6.5,reward:'overdrive',seconds:25,warning:4}];
  }
+ return m;
+}
+
+
+function reclamationMap(id){
+ const m=structuredClone(rescueMap(id,9));
+ m.mode='reclaim';m.seconds=Math.max(180,m.seconds+80);
+ // Front-load the conflict and spend less of the mission waiting at the exit.
+ m.waves=m.waves.map((w,i)=>({...w,at:Math.max(5,Math.round(w.at*.8)),fast:Math.ceil(w.count*(id===1?.24:id===2?.26:.28))}));
+ m.extraction={...m.extraction,seconds:id===1?7:9,count:Math.ceil(m.extraction.count*.55),fast:Math.ceil(m.extraction.count*.2)};
+ // Spread rescue work across rooms without making the canvas smaller on phones.
+ if(id===1)m.groups=[{x:19,y:5,n:6},{x:11,y:11,n:4}];
+ if(id===2)m.groups=[{x:18,y:11,n:6},{x:17,y:4,n:6},{x:4,y:4,n:3}];
+ m.refuges=m.groups.map((g,i)=>({id:'refuge'+i,kind:'refuge',x:g.x+.7,y:g.y+(Math.ceil(g.n/3)-1)*.325,hp:600+id*35,seconds:id===1?3:4,group:i}));
+ m.brief='接应平民获救援成就；继续清剿、收复领地';
  return m;
 }

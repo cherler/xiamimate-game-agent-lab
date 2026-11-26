@@ -33,3 +33,6 @@ body.rescue-mode main,body.rescue-mode .head-inner{max-width:clamp(980px,calc(15
 /* Six destinations stay together in the settings drawer and on narrow desktops. */
 .rs-missions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));flex:1;max-width:650px;gap:4px}.rs-missions button{justify-content:center}#rs-export{flex:none;white-space:nowrap}.rs-missions button{padding:8px;min-height:44px}.rs-heading h1{white-space:nowrap}#rs-field-goals{flex-wrap:wrap;row-gap:4px}.rs-evac.unpowered{background:#e8e4f4;border-color:#aaa3c9}
 @media(max-width:720px){.rs-missions button{flex:1 1 30%}.rs-missions span{font-size:11px}}
+.rs-simple-commands .rs-orders.has-artillery{grid-template-columns:repeat(4,minmax(0,1fr))}
+#rs-artillery{background:#fff0ce;color:#815b28;border-color:#c9ad6d}#rs-artillery em{font-style:normal}#rs-artillery[aria-pressed=true]{background:#f3d188;box-shadow:inset 0 0 0 2px #ac762d}
+.rs-mission-medals{display:flex;gap:3px}.rs-mission-medals i{font-style:normal;color:#9cabaf}.rs-mission-medals i.earned{color:#24836b}.rs-medals .unearned{opacity:.55;background:transparent}

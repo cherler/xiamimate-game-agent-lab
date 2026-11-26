@@ -25,7 +25,7 @@ export const RESCUE_MAPS = [
   [{at:12,entry:0,count:8,fast:0},{at:30,entry:1,count:9,fast:1},{at:50,entry:2,count:9,fast:2},{at:71,entry:0,count:10,fast:2},{at:92,entry:2,count:12,fast:3}])
 ];
 const latestMaps=new Map();
-export function rescueMap(id,version=10){
+export function rescueMap(id,version=11){
  const key=version+':'+id;if(version>=3&&latestMaps.has(key))return latestMaps.get(key);
  if(version>=10){const result=reclamationMap(id);latestMaps.set(key,result);return result;}
  if(version>=9){const result=escalationMap(id);latestMaps.set(key,result);return result;}

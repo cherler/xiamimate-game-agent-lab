@@ -1,8 +1,8 @@
 import {beginRescue,issueRescue,advanceRescue,sealRescue,rescueMap,pathTo,lineOfSight} from '../src/rescue.mjs';
 import {CAMPAIGN_UPGRADES} from './rescue-escalation-scenarios.mjs';
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y),live=u=>u.hp>0;
-export function reclamationScenario({level=1,seed=41003,difficulty='normal',plan='active',upgrades=CAMPAIGN_UPGRADES.slice(0,level-1),onStep=()=>{}}={}){
- const match=beginRescue({level,seed,difficulty,upgrades,version:10}),m=rescueMap(level,10);let destination=null,lastMove=-999,peak=0,selectedRefuge=null;const milestones=[];
+export function reclamationScenario({version=10,level=1,seed=41003,difficulty='normal',plan='active',upgrades=CAMPAIGN_UPGRADES.slice(0,level-1),onStep=()=>{}}={}){
+ const match=beginRescue({level,seed,difficulty,upgrades,version}),m=rescueMap(level,version);let destination=null,lastMove=-999,peak=0,selectedRefuge=null;const milestones=[];
  const order=p=>{const s=match.state;try{issueRescue(match,{type:'move',ids:s.soldiers.filter(live).map(u=>u.id),x:p.x,y:p.y});destination={...p};lastMove=s.tick;}catch{}};
  issueRescue(match,{type:'start'});
  while(match.state.winner===null){let s=match.state;

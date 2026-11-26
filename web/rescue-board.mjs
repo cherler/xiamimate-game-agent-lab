@@ -1,5 +1,5 @@
 import {rescueMap,lineOfSight,walkable,RESCUE_HZ,rescueRaging,entranceSealed} from '../src/rescue.mjs';
-import {RESCUE_MUTANTS} from '../src/rescue-mutants.mjs';
+import {rescueMutants} from '../src/rescue-mutants.mjs';
 import {screenFraction,rotatedScreen} from './screen-coordinates.mjs';
 import {rescueToCanvas,rescueFromCanvas,rescueTransform} from './rescue-view.mjs';
 const C={floor:'#dce5e8',wall:'#294957',wallTop:'#395d6a',ink:'#254755',soldier:'#61c2f2',civilian:'#ffd16e',zombie:'#dc7089',exit:'#7bdec0'};
@@ -8,7 +8,7 @@ export function drawRescue(canvas,s,{selected='all',selectedIds=null,building=fa
  if(!canvas.clientWidth)return;
  const dpr=Math.min(devicePixelRatio||1,2),width=Math.round(canvas.clientWidth*dpr),height=Math.round(canvas.clientHeight*dpr),portrait=height>width;
  if(canvas.width!==width||canvas.height!==height){canvas.width=width;canvas.height=height;}
- const ctx=canvas.getContext('2d'),m=rescueMap(s.level,s.version),unit=width/(portrait?m.h:m.w),raging=rescueRaging(s),evac=s.evac;
+ const ctx=canvas.getContext('2d'),m=rescueMap(s.level,s.version),mutants=rescueMutants(s.version),unit=width/(portrait?m.h:m.w),raging=rescueRaging(s),evac=s.evac;
  ctx.setTransform(...rescueTransform(width,height));ctx.clearRect(0,0,m.w,m.h);ctx.lineCap='round';ctx.lineJoin='round';
  const circle=(x,y,r,fill,stroke,lw=.05)=>{ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);if(fill){ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw;ctx.stroke();}};
  const line=(a,b,color,lw=.05)=>{ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.strokeStyle=color;ctx.lineWidth=lw;ctx.stroke();};
@@ -111,8 +111,8 @@ export function drawRescue(canvas,s,{selected='all',selectedIds=null,building=fa
   if(c.infection){ctx.beginPath();ctx.arc(c.x,c.y,.32,-Math.PI/2,-Math.PI/2+Math.PI*2*c.infection/(s.difficulty==='challenge'?1:s.version>=7?24:18));ctx.strokeStyle='#c23a5b';ctx.lineWidth=.09;ctx.stroke();text('!',c.x,c.y-.6,.38,'#ad2347');}
  }
  for(const z of s.zombies){
-  const mutant=RESCUE_MUTANTS[z.mutation];
-  if(z.aim){
+  const mutant=mutants[z.mutation];
+  if(s.version===10&&z.aim){
    const bomber=z.mutation==='bomber',color=bomber?'#be542e':'#bd314e';ctx.save();ctx.setLineDash([.16,.14]);line(z,z.aim,color+'bb',.045);ctx.restore();
    if(bomber)circle(z.aim.x,z.aim.y,1.35,'#df76461c',color,.055);
    else{circle(z.aim.x,z.aim.y,.25,null,color,.06);line({x:z.aim.x-.4,y:z.aim.y},{x:z.aim.x+.4,y:z.aim.y},color,.045);}
@@ -144,8 +144,8 @@ export function drawRescue(canvas,s,{selected='all',selectedIds=null,building=fa
   else if(u.intent==='cover'||u.intent==='protect'){circle(u.x,u.y,u.r+.24,null,u.intent==='protect'?'#34876d':'#ba8637',.045);text(u.intent==='protect'?'掩护':'避险',u.x,u.y-.65,.24,u.intent==='protect'?'#28715e':'#996928');}
  }
  for(const b of s.bullets){if(b.kind==='grenade'){circle(b.x,b.y,.14,'#ffc16b','#a26930',.035);}else line({x:b.x-b.dx*(b.kind==='gunner'?.44:.28),y:b.y-b.dy*(b.kind==='gunner'?.44:.28)},b,b.kind==='gunner'?'#ffdb7e':'#fff7c0',b.kind==='gunner'?.09:.065);}
- for(const b of s.enemyBullets||[])line({x:b.x-b.dx*.5,y:b.y-b.dy*.5},b,'#c63a51',.09);
- for(const b of s.enemyBombs||[]){
+ for(const b of s.version===10?s.enemyBullets:[])line({x:b.x-b.dx*.5,y:b.y-b.dy*.5},b,'#c63a51',.09);
+ for(const b of s.version===10?s.enemyBombs:[]){
   const pending=s.tick<b.impact;circle(b.x,b.y,b.radius,pending?'#df764634':'#bd583344',pending?'#bd512b':'#9d5034',.065);
   if(pending){text('! '+Math.max(0,(b.impact-s.tick)/30).toFixed(1),b.x,b.y,.34,'#a33a24');}
   else for(let i=0;i<5;i++){const a=i*Math.PI*2/5;chevron(b.x+Math.cos(a)*.7,b.y+Math.sin(a)*.7,'#d87834',-Math.PI/2);}
@@ -186,6 +186,6 @@ export function drawRescue(canvas,s,{selected='all',selectedIds=null,building=fa
  canvas.dataset.evac=evac?.phase||'legacy';canvas.dataset.evacProgress=String(evac?.progress||0);canvas.dataset.raging=String(raging);canvas.dataset.boarding=String(s.civilians.filter(c=>c.status==='boarding').length);
  canvas.dataset.supplies=String(s.supplies??0);canvas.dataset.decoys=String(s.decoys?.length||0);
  canvas.dataset.overdrive=String(Math.max(0,(s.overdriveUntil||0)-s.tick));canvas.dataset.version=String(s.version);canvas.dataset.level=String(s.level);canvas.dataset.enemies=String(s.zombies.length);canvas.dataset.objectives=JSON.stringify((s.objectives||[]).map(({id,done,active,progress,hp})=>({id,done,active,progress,hp})));
- canvas.dataset.achievements=JSON.stringify(s.achievements||{});canvas.dataset.artillery=JSON.stringify(s.artillery||{});canvas.dataset.refuges=JSON.stringify((s.refuges||[]).map(({id,hp,released,breached})=>({id,hp,released,breached})));canvas.dataset.mutants=JSON.stringify(Object.fromEntries(Object.keys(RESCUE_MUTANTS).map(k=>[k,s.zombies.filter(z=>z.mutation===k).length])));canvas.dataset.enemyAttacks=String((s.enemyBullets?.length||0)+(s.enemyBombs?.length||0));
+ canvas.dataset.achievements=JSON.stringify(s.achievements||{});canvas.dataset.artillery=JSON.stringify(s.artillery||{});canvas.dataset.refuges=JSON.stringify((s.refuges||[]).map(({id,hp,released,breached})=>({id,hp,released,breached})));canvas.dataset.mutants=JSON.stringify(Object.fromEntries(Object.keys(mutants).map(k=>[k,s.zombies.filter(z=>z.mutation===k).length])));canvas.dataset.enemyAttacks=String((s.enemyBullets?.length||0)+(s.enemyBombs?.length||0));
  canvas.dataset.selected=chosen.map(u=>u.id).join(',');canvas.dataset.selecting=String(!!selectionBox);canvas.dataset.order=orderMarker?(orderMarker.ok?'accepted':'rejected'):'';
 }

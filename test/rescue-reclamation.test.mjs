@@ -1,9 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {initRescue,commandRescue,stepRescue,beginRescue,issueRescue,advanceRescue,sealRescue,replayRescue,rescueMap,walkable,pathTo,rescueZombieSpeed} from '../src/rescue.mjs';
-import {RESCUE_MUTANTS} from '../src/rescue-mutants.mjs';
+import {initRescue as createRescue,commandRescue,stepRescue,beginRescue as createMatch,issueRescue,advanceRescue,sealRescue,replayRescue,rescueMap,walkable,pathTo,rescueZombieSpeed} from '../src/rescue.mjs';
+import {LEGACY_RESCUE_MUTANTS as RESCUE_MUTANTS} from '../src/rescue-mutants.mjs';
 import {reclamationScenario} from '../scripts/rescue-reclamation-scenarios.mjs';
+const initRescue=(options={})=>createRescue({version:10,...options}),beginRescue=(options={})=>createMatch({version:10,...options});
 const put=(u,x,y)=>Object.assign(u,{x,y,anchor:{x,y},path:[],goal:null,orderedAt:99999,cooldown:99999});
 const advance=(s,n)=>{for(let i=0;i<n;i++)s=stepRescue(s);return s;};
 const zombie=(id,x,y,mutation=null,hp=1000)=>({id,kind:'zombie',x,y,r:RESCUE_MUTANTS[mutation]?.r||.23,hp,maxHp:hp,mutation,brute:mutation==='breaker',fast:mutation==='runner',angle:0,path:[],goal:null,target:null,nav:-1,cooldown:0,hitTick:-100,gateId:null,attackAt:0,aim:null,burst:null});

@@ -17,6 +17,7 @@ import {openKart,closeKart,watchKart,kartMusicActive} from './kart-ui.mjs';
 import {openDance,closeDance,watchDance} from './dance-ui.mjs';
 import {closeDance as closeClassicDance,watchDance as watchClassicDance} from './dance-classic-ui.mjs';
 import {openRunner,closeRunner,watchRunner,runnerMusicActive} from './runner-ui.mjs';
+import {openInk,closeInk,watchInk,inkMusicActive} from './ink-ui.mjs';
 import {createRunnerAudio} from './runner-audio.mjs';
 
 const $=id=>document.getElementById(id), canvas=$('board');
@@ -48,7 +49,7 @@ function beep(freq=480){
   osc.type='sine';osc.frequency.value=freq;vol.gain.setValueAtTime(.048,start);
   vol.gain.exponentialRampToValueAtTime(.001,start+.075);osc.connect(vol);vol.connect(effectsBus||audio.destination);osc.onended=()=>{osc.disconnect();vol.disconnect();};osc.start(start);osc.stop(start+.08);
 }
-window.addEventListener('glimmer-effect',e=>{if(e.detail.startsWith('runner-')){if(sound&&audio)(runnerAudio??=createRunnerAudio(audio,effectsBus)).cue(e.detail);return;}if(e.detail==='blast'){if(sound&&audio){const t=audio.currentTime,o=audio.createOscillator(),g=audio.createGain();o.type='triangle';o.frequency.setValueAtTime(145,t);o.frequency.exponentialRampToValueAtTime(38,t+.16);g.gain.setValueAtTime(.16,t);g.gain.exponentialRampToValueAtTime(.001,t+.2);o.connect(g);g.connect(effectsBus);o.start(t);o.stop(t+.21);o.onended=()=>{o.disconnect();g.disconnect();};}return;}const frequencies={'rhythm-hit':650,'rhythm-hold':880,'rhythm-break':160,coin:820,cast:520,power:430,damage:170,heal:660,shield:780,block:260,freeze:880,buff:590,draw:360,silence:240,shot:125,rescue:720,infection:145,gate:320,victory:850};beep(frequencies[e.detail]||440);if(['heal','buff','cast','victory','rescue'].includes(e.detail))setTimeout(()=>beep((frequencies[e.detail]||440)*1.25),65);});
+window.addEventListener('glimmer-effect',e=>{if(e.detail.startsWith('runner-')){if(sound&&audio)(runnerAudio??=createRunnerAudio(audio,effectsBus)).cue(e.detail);return;}if(e.detail==='blast'){if(sound&&audio){const t=audio.currentTime,o=audio.createOscillator(),g=audio.createGain();o.type='triangle';o.frequency.setValueAtTime(145,t);o.frequency.exponentialRampToValueAtTime(38,t+.16);g.gain.setValueAtTime(.16,t);g.gain.exponentialRampToValueAtTime(.001,t+.2);o.connect(g);g.connect(effectsBus);o.start(t);o.stop(t+.21);o.onended=()=>{o.disconnect();g.disconnect();};}return;}const frequencies={'ink-shot':260,'ink-splat':750,'rhythm-hit':650,'rhythm-hold':880,'rhythm-break':160,coin:820,cast:520,power:430,damage:170,heal:660,shield:780,block:260,freeze:880,buff:590,draw:360,silence:240,shot:125,rescue:720,infection:145,gate:320,victory:850};beep(frequencies[e.detail]||440);if(['heal','buff','cast','victory','rescue'].includes(e.detail))setTimeout(()=>beep((frequencies[e.detail]||440)*1.25),65);});
 window.addEventListener('glimmer-runner-motion',e=>{if(sound&&audio)(runnerAudio??=createRunnerAudio(audio,effectsBus)).update(e.detail);else runnerAudio?.stop();});
 function cancelDecision(){gate?.cancel();gate=null;prepared=null;request?.abort();request=null;}
 function saveCurrent(){
@@ -252,6 +253,7 @@ function frame(now){
   lastTime=now;requestAnimationFrame(frame);
 }
 function watch(record){humanTrace=[];shotTrace=[];
+  if(record?.format==='ink-1'){navigate('ink',true,true);watchInk(record);return;}closeInk();$('ink').hidden=true;
   if(['kart-1','kart-2','kart-3','dance-1','rhythm-1','rhythm-2','runner-1','runner-2','runner-3'].includes(record?.format)){
     const play={'kart-1':watchKart,'kart-2':watchKart,'kart-3':watchKart,'dance-1':watchClassicDance,'rhythm-1':watchDance,'rhythm-2':watchDance,'runner-1':watchRunner,'runner-2':watchRunner,'runner-3':watchRunner}[record.format];play(record);
     if(!['kart-1','kart-2','kart-3'].includes(record.format))closeKart();if(record.format!=='dance-1')closeClassicDance();if(!['rhythm-1','rhythm-2'].includes(record.format))closeDance();if(!['runner-1','runner-2','runner-3'].includes(record.format))closeRunner();document.body.classList.add('motion-mode');
@@ -293,15 +295,15 @@ function restoreArcade(target){
  opponentMenu();refresh(true);paint();
 }
 function navigate(target,updateURL=true,force=false){
- if(!['snake','pong','cards','chess','rescue','kart','dance','runner'].includes(target))target='snake';
+ if(!['snake','pong','cards','chess','rescue','kart','dance','runner','ink'].includes(target))target='snake';
  if(updateURL)window.history.replaceState(null,'','#'+target);
  const current=document.querySelector('[data-game][aria-pressed=true]')?.dataset.game;
  if(!force&&current===target&&((GAMES[target]&&!$('arcade').hidden)||!GAMES[target]))return;
- stashArcade();cancelDecision();mode='paused';closeRescue();closeStrategy();closeChess();closeKart();closeDance();closeClassicDance();closeRunner();
+ stashArcade();cancelDecision();mode='paused';closeRescue();closeStrategy();closeChess();closeKart();closeDance();closeClassicDance();closeRunner();closeInk();
  $('arcade').hidden=!GAMES[target];$('strategy').hidden=!['cards','chess'].includes(target);$('rescue').hidden=target!=='rescue';
- $('kart').hidden=target!=='kart';$('dance').hidden=target!=='dance';$('runner').hidden=target!=='runner';
+ $('kart').hidden=target!=='kart';$('dance').hidden=target!=='dance';$('runner').hidden=target!=='runner';$('ink').hidden=target!=='ink';
  if(GAMES[target])restoreArcade(target);
- else if(target==='runner')openRunner();else if(target==='kart')openKart();else if(target==='dance')openDance();else if(target==='rescue')openRescue();else if(target==='chess')openChess();else openStrategy('cards',cap);
+ else if(target==='ink')openInk();else if(target==='runner')openRunner();else if(target==='kart')openKart();else if(target==='dance')openDance();else if(target==='rescue')openRescue();else if(target==='chess')openChess();else openStrategy('cards',cap);
  document.querySelectorAll('[data-game]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.game===target)));
  document.querySelector('[data-game="'+target+'"]').scrollIntoView({block:'nearest',inline:'nearest'});
 }
@@ -370,7 +372,7 @@ canvas.onpointercancel=()=>{touch=null;keyY=0;};
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&(playing()||mode==='replay'))start();});
 new ResizeObserver(()=>{if(match)paint();}).observe(canvas);
 opponentMenu();restoreArcade('snake');requestAnimationFrame(frame);
-if(['pong','cards','chess','rescue','kart','dance','runner'].includes(location.hash.slice(1)))document.querySelector('[data-game="'+location.hash.slice(1)+'"]').click();
+if(['pong','cards','chess','rescue','kart','dance','runner','ink'].includes(location.hash.slice(1)))document.querySelector('[data-game="'+location.hash.slice(1)+'"]').click();
 if(location.protocol.startsWith('http')&&!staticDemo){
   fetch('/api/providers',{signal:AbortSignal.timeout(3500)}).then(r=>r.json()).then(v=>{
     if(!v.arena)return;cap={...v,rooms:true};loaded=true;updateStrategyProviders(cap);if(mode==='ready'){opponentMenu(true);refresh(true);}
@@ -380,4 +382,4 @@ if(location.protocol.startsWith('http')&&!staticDemo){
 window.addEventListener('glimmer-screen-pause',()=>{if(!$('arcade').hidden&&(playing()||mode==='replay')){mode=playing()?'paused':'replay-paused';keyY=0;pongQueue=[];cancelDecision();refresh(true);}});
 initGameScreen();
 
-soundSystem=initArenaAudio(()=>{const current=document.querySelector('.switcher [aria-pressed=true]')?.dataset.game||'snake';const states={cards:strategyMusicActive,chess:chessMusicActive,rescue:rescueMusicActive,kart:kartMusicActive,runner:runnerMusicActive};return {game:current,playing:states[current]?.()??(['snake','pong'].includes(current)&&(mode==='playing'||mode==='replay'))};},(context,bus)=>{audio=context;effectsBus=bus;});
+soundSystem=initArenaAudio(()=>{const current=document.querySelector('.switcher [aria-pressed=true]')?.dataset.game||'snake';const states={cards:strategyMusicActive,chess:chessMusicActive,rescue:rescueMusicActive,kart:kartMusicActive,runner:runnerMusicActive,ink:inkMusicActive};return {game:current,playing:states[current]?.()??(['snake','pong'].includes(current)&&(mode==='playing'||mode==='replay'))};},(context,bus)=>{audio=context;effectsBus=bus;});

@@ -9,7 +9,7 @@ const effect=name=>window.dispatchEvent(new CustomEvent('glimmer-effect',{detail
 function clearControls(){keys.clear();pointers.clear();move={x:0,y:0};firing=false;diving=false;aimPoint=null;for(const n of root()?.querySelectorAll('.ink-stick i')||[])n.style.transform='';$('ink-dive')?.setAttribute('aria-pressed','false');}
 function save(){if(!match||watch)return;try{storage.setItem(SAVE,JSON.stringify(sealInk(match)));}catch{}}
 function restore(){try{const r=JSON.parse(storage.getItem(SAVE));if(r){match={state:replayInk(r),record:{...structuredClone(r),end:null}};return;}}catch{}match=beginInk();}
-export function openInk(){active=true;document.body.classList.add('ink-mode');if(!match)restore();lastSave=state().tick;running=false;mount();last=performance.now();raf=requestAnimationFrame(frame);}
+export function openInk(){cancelAnimationFrame(raf);active=true;document.body.classList.add('ink-mode');if(!match)restore();lastSave=state().tick;running=false;mount();last=performance.now();raf=requestAnimationFrame(frame);}
 export function closeInk(){if(active)pause();active=false;cancelAnimationFrame(raf);document.body.classList.remove('ink-mode');if(watch){watch=null;reader=null;replayDone=false;match=null;}}
 export function inkMusicActive(){return active&&running;}
 function pause(){running=false;acc=0;previous=null;clearControls();save();hud();draw();}
@@ -45,3 +45,5 @@ function bindInput(){const canvas=$('ink-board');
 window.addEventListener('keydown',e=>{if(!active||e.ctrlKey||e.metaKey||e.altKey||e.target.closest('input,select,textarea,dialog,[data-screen-settings]'))return;if(['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','ShiftLeft','ShiftRight','Space'].includes(e.code)){e.preventDefault();if(running&&!watch)keys.add(e.code);}if(e.code==='Escape'&&running)pause();});
 window.addEventListener('keyup',e=>keys.delete(e.code));window.addEventListener('blur',()=>{if(active)pause();});document.addEventListener('visibilitychange',()=>{if(document.hidden&&active)pause();});window.addEventListener('pagehide',save);window.addEventListener('glimmer-screen-pause',()=>{if(active)pause();});window.addEventListener('glimmer-screen-layout',()=>{if(active){clearControls();draw();}});
 export function watchInk(record){replayInk(record);closeInk();active=true;watch=structuredClone(record);reader=playbackInk(watch);match=beginInk(record.config);match.state=reader.next().value;running=false;replayDone=false;previous=null;aim=null;lastSound=0;document.body.classList.add('ink-mode');mount();last=performance.now();raf=requestAnimationFrame(frame);}
+
+export function inkNotice(message){if(active&&!running){const target=root().querySelector('.ink-subtitle');if(target)target.textContent=message;}}

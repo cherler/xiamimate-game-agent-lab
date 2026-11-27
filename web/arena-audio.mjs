@@ -1,7 +1,7 @@
 import {localGameStorage as storage} from './storage.mjs';
 import {loadMusic} from './music-assets.mjs';
 import {MusicPlayer} from './music-player.mjs';
-export const GAME_MUSIC={snake:{id:'xiami',name:'虾米的奇妙日常',mood:'木琴 · 拨弦',gain:.66},pong:{id:'raspberry',name:'Raspberry Jam',mood:'轻快律动',gain:.65},cards:{id:'calm',name:'Calm Theme',mood:'安静思考',gain:.5},chess:{id:'street',name:'My Street',mood:'轻松布阵',gain:.55},rescue:{id:'siege',name:'破晓救援',mood:'MiniMax · 弦乐与电子节拍',gain:.9},kart:{id:'raceway',name:'Pure Raceway',mood:'竞速电子',gain:.75},runner:{id:'skyline',name:'Sky Blue Street',mood:'城市疾跑',gain:1}};
+export const GAME_MUSIC={ink:{id:'raspberry',name:'Raspberry Jam',mood:'轻快涂地',gain:.62},snake:{id:'xiami',name:'虾米的奇妙日常',mood:'木琴 · 拨弦',gain:.66},pong:{id:'raspberry',name:'Raspberry Jam',mood:'轻快律动',gain:.65},cards:{id:'calm',name:'Calm Theme',mood:'安静思考',gain:.5},chess:{id:'street',name:'My Street',mood:'轻松布阵',gain:.55},rescue:{id:'siege',name:'破晓救援',mood:'MiniMax · 弦乐与电子节拍',gain:.9},kart:{id:'raceway',name:'Pure Raceway',mood:'竞速电子',gain:.75},runner:{id:'skyline',name:'Sky Blue Street',mood:'城市疾跑',gain:1}};
 export function readAudioPreferences(){try{const p=JSON.parse(storage.getItem('arena-audio-v1'));if(p)return {enabled:p.enabled!==false,music:Number.isFinite(p.music)?Math.max(0,Math.min(1,p.music)):.55,effects:Number.isFinite(p.effects)?Math.max(0,Math.min(1,p.effects)):.8};}catch{}return {enabled:true,music:.55,effects:.8};}
 export function initArenaAudio(scene,onContext){
  let prefs=readAudioPreferences(),context,player,effects,unlocked=false,lastError='',lastStatus='';

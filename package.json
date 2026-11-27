@@ -53,6 +53,7 @@
     "check:novice": "node scripts/check-novice-feedback-browser.mjs",
     "check:playfield": "node scripts/check-mobile-playfield-browser.mjs",
     "bench:rescue-reclamation": "node scripts/check-rescue-reclamation.mjs",
+    "check:ink": "node scripts/check-ink-browser.mjs",
     "check:rescue-reclamation": "node scripts/check-rescue-reclamation-browser.mjs"
   },
   "devDependencies": {

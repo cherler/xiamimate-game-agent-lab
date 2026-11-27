@@ -1,12 +1,12 @@
 // Mobile play uses the same live controls; settings stay in their game root so
 // rendering, disabled states, saved choices and replay handlers remain intact.
-const names={snake:'双蛇争食',pong:'乒乓球',cards:'微光牌局',chess:'微光棋阵',rescue:'微光救援',kart:'微光漂移',dance:'微光舞台',runner:'微光疾行'};
-const preferred={snake:'portrait',pong:'portrait',cards:'portrait',chess:'portrait',rescue:'landscape',kart:'landscape',dance:'landscape',runner:'portrait'};
-const roots={snake:'arcade',pong:'arcade',cards:'strategy',chess:'strategy',rescue:'rescue',kart:'kart',dance:'dance',runner:'runner'};
-const pauseIds={snake:'start',pong:'start',kart:'kart-pause',dance:'rhythm-pause',runner:'runner-pause',rescue:'rs-start',chess:'ac-phase-pause'};
-const panelSelectors={snake:'.rail',pong:'.rail',kart:'.motion-options',dance:'.motion-options',runner:'.motion-options',rescue:'.rs-rail',cards:'.card-topbar',chess:'.ac-screen-settings'};
+const names={snake:'双蛇争食',pong:'乒乓球',cards:'微光牌局',chess:'微光棋阵',rescue:'微光救援',kart:'微光漂移',dance:'微光舞台',runner:'微光疾行',ink:'微光喷射'};
+const preferred={snake:'portrait',pong:'portrait',cards:'portrait',chess:'portrait',rescue:'landscape',kart:'landscape',dance:'landscape',runner:'portrait',ink:'landscape'};
+const roots={snake:'arcade',pong:'arcade',cards:'strategy',chess:'strategy',rescue:'rescue',kart:'kart',dance:'dance',runner:'runner',ink:'ink'};
+const pauseIds={snake:'start',pong:'start',kart:'kart-pause',dance:'rhythm-pause',runner:'runner-pause',rescue:'rs-start',chess:'ac-phase-pause',ink:'ink-pause'};
+const panelSelectors={snake:'.rail',pong:'.rail',kart:'.motion-options',dance:'.motion-options',runner:'.motion-options',rescue:'.rs-rail',cards:'.card-topbar',chess:'.ac-screen-settings',ink:'.ink-settings'};
 // These games handle rotated canvas sizing and pointer coordinates explicitly.
-const turnable=new Set(['rescue','dance']),landscapeGames=new Set();
+const turnable=new Set(['rescue','dance','ink']),landscapeGames=new Set();
 let current='snake',windowed=false,forced=false,menu=false,lobby=false,owner=false,requesting=false,rootObserver,buttonObserver,lastOrientation='',focusReturn=null;
 const $=id=>document.getElementById(id),small=()=>matchMedia('(max-width: 700px), (pointer: coarse) and (max-width: 1200px)').matches;
 const fullscreen=()=>document.fullscreenElement||document.webkitFullscreenElement;

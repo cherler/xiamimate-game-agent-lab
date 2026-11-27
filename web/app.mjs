@@ -17,7 +17,7 @@ import {openKart,closeKart,watchKart,kartMusicActive} from './kart-ui.mjs';
 import {openDance,closeDance,watchDance} from './dance-ui.mjs';
 import {closeDance as closeClassicDance,watchDance as watchClassicDance} from './dance-classic-ui.mjs';
 import {openRunner,closeRunner,watchRunner,runnerMusicActive} from './runner-ui.mjs';
-import {openInk,closeInk,watchInk,inkMusicActive} from './ink-ui.mjs';
+import {openInk,closeInk,watchInk,inkMusicActive,inkNotice} from './ink-ui.mjs';
 import {createRunnerAudio} from './runner-audio.mjs';
 
 const $=id=>document.getElementById(id), canvas=$('board');
@@ -332,7 +332,7 @@ $('export').onclick=()=>{
 $('import').onclick=()=>$('upload').click();
 $('upload').onchange=async e=>{
   const f=e.target.files[0];try{if(!f||f.size>4_000_000)throw Error();watch(JSON.parse(await f.text()));}
-  catch{say('无法读取此回放，请选择本轮导出的对局文件。');rescueNotice('无法读取此回放，请选择导出的对局文件。');const message=document.querySelector('#dance:not([hidden]) #rhythm-notice, #kart:not([hidden]) #kart-best, #runner:not([hidden]) #runner-best');if(message)message.textContent='无法读取此回放，请选择导出的对局文件。';}e.target.value='';
+  catch{if(document.querySelector('.switcher [aria-pressed=true]')?.dataset.game==='ink'){$('ink').hidden=false;openInk();inkNotice('无法读取回放，当前对局已保留');}say('无法读取此回放，请选择本轮导出的对局文件。');rescueNotice('无法读取此回放，请选择导出的对局文件。');const message=document.querySelector('#dance:not([hidden]) #rhythm-notice, #kart:not([hidden]) #kart-best, #runner:not([hidden]) #runner-best');if(message)message.textContent='无法读取此回放，请选择导出的对局文件。';}e.target.value='';
 };
 const keys={ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right',w:'up',s:'down',a:'left',d:'right'};
 window.addEventListener('keydown',e=>{

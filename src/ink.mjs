@@ -69,7 +69,10 @@ export function stepInk(s,input={},autoplay=false){
 }
 export function beginInk(config={}){const state=createInk(config);return {state,record:{format:'ink-1',game:'ink',config:{seed:state.seed,map:state.map,difficulty:state.difficulty},inputs:[],ticks:0,end:null}};}
 export function advanceInk(match,input){if(match.state.winner!==null)return match.state;const a=normalizeInkInput(input),last=match.record.inputs.at(-1);if(!last||JSON.stringify(last.action)!==JSON.stringify(a))match.record.inputs.push({tick:match.state.tick,action:a});stepInk(match.state,a);match.record.ticks=match.state.tick;return match.state;}
-export function sealInk(match){return structuredClone({...match.record,end:fingerprint(match.state)});}
+// Math.sin/cos may differ by the last bit across JS engines. Quantize only the
+// checksum, preserving live physics and compatibility with the first recordings.
+export function inkFingerprint(state){return fingerprint(JSON.parse(JSON.stringify(state,(_,v)=>typeof v==='number'&&!Number.isInteger(v)?Math.round(v*1e6)/1e6:v)));}
+export function sealInk(match){return structuredClone({...match.record,end:inkFingerprint(match.state)});}
 export function validateInkRecord(r){if(r?.format!=='ink-1'||r.game!=='ink'||!r.config||!Number.isInteger(r.ticks)||r.ticks<0||r.ticks>5400||!Array.isArray(r.inputs)||r.inputs.length>r.ticks||r.end!==null&&typeof r.end!=='string')throw Error('无效的喷射回放');createInk(r.config);let prev=-1;for(const i of r.inputs){if(!Number.isInteger(i.tick)||i.tick<=prev||i.tick>=r.ticks||JSON.stringify(normalizeInkInput(i.action))!==JSON.stringify(i.action))throw Error('无效的喷射操作');prev=i.tick;}return r;}
-export function* playbackInk(r){validateInkRecord(r);const s=createInk(r.config);let at=0,a={};yield s;while(s.tick<r.ticks){if(r.inputs[at]?.tick===s.tick)a=r.inputs[at++].action;stepInk(s,a);yield s;}if(r.end&&fingerprint(s)!==r.end)throw Error('喷射回放校验失败');}
+export function* playbackInk(r){validateInkRecord(r);const s=createInk(r.config);let at=0,a={};yield s;while(s.tick<r.ticks){if(r.inputs[at]?.tick===s.tick)a=r.inputs[at++].action;stepInk(s,a);yield s;}if(r.end&&inkFingerprint(s)!==r.end&&fingerprint(s)!==r.end)throw Error('喷射回放校验失败');}
 export function replayInk(r){let s;for(const v of playbackInk(r))s=v;return s;}

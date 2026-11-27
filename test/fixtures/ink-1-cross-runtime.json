@@ -1,0 +1,153 @@
+{
+  "format": "ink-1",
+  "game": "ink",
+  "config": {
+    "seed": 41003,
+    "map": "dock",
+    "difficulty": "normal"
+  },
+  "inputs": [
+    {
+      "tick": 0,
+      "action": {
+        "x": 1,
+        "y": 0,
+        "angle": -0.0068,
+        "fire": true,
+        "dive": false
+      }
+    },
+    {
+      "tick": 1,
+      "action": {
+        "x": 1,
+        "y": 0,
+        "angle": -0.0069,
+        "fire": true,
+        "dive": false
+      }
+    },
+    {
+      "tick": 3,
+      "action": {
+        "x": 1,
+        "y": 0,
+        "angle": -0.007,
+        "fire": true,
+        "dive": false
+      }
+    },
+    {
+      "tick": 5,
+      "action": {
+        "x": 1,
+        "y": 0,
+        "angle": -0.0071,
+        "fire": true,
+        "dive": false
+      }
+    },
+    {
+      "tick": 7,
+      "action": {
+        "x": 1,
+        "y": 0,
+        "angle": -0.0072,
+        "fire": true,
+        "dive": false
+      }
+    },
+    {
+      "tick": 8,
+      "action": {
+        "x": 1,
+        "y": 0,
+        "angle": -0.0073,
+        "fire": true,
+        "dive": false
+      }
+    },
+    {
+      "tick": 10,
+      "action": {
+        "x": 1,
+        "y": 0,
+        "angle": -0.0074,
+        "fire": true,
+        "dive": false
+      }
+    },
+    {
+      "tick": 12,
+      "action": {
+        "x": 1,
+        "y": 0,
+        "angle": -0.0075,
+        "fire": true,
+        "dive": false
+      }
+    },
+    {
+      "tick": 13,
+      "action": {
+        "x": 1,
+        "y": 0,
+        "angle": -0.0076,
+        "fire": true,
+        "dive": false
+      }
+    },
+    {
+      "tick": 15,
+      "action": {
+        "x": 1,
+        "y": 0,
+        "angle": -0.0077,
+        "fire": true,
+        "dive": false
+      }
+    },
+    {
+      "tick": 16,
+      "action": {
+        "x": 1,
+        "y": 0,
+        "angle": -0.0078,
+        "fire": true,
+        "dive": false
+      }
+    },
+    {
+      "tick": 18,
+      "action": {
+        "x": 1,
+        "y": 0,
+        "angle": -0.0079,
+        "fire": true,
+        "dive": false
+      }
+    },
+    {
+      "tick": 19,
+      "action": {
+        "x": 1,
+        "y": 0,
+        "angle": -0.008,
+        "fire": true,
+        "dive": false
+      }
+    },
+    {
+      "tick": 21,
+      "action": {
+        "x": 0,
+        "y": 0,
+        "angle": -0.0081,
+        "fire": false,
+        "dive": false
+      }
+    }
+  ],
+  "ticks": 22,
+  "end": "d9e261e0"
+}
